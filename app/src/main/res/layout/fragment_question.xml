@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".QuestionFragment"
+    android:gravity="center"
+    >
+
+    <!-- TODO: Update blank fragment layout -->
+    <android.support.v7.widget.CardView
+
+        android:elevation="2dp"
+        android:background="@android:color/white"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+            <TextView
+                android:id="@+id/pregunta"
+                android:layout_width="match_parent"
+                style="@style/PreguntaFont"
+                android:gravity="center"
+                android:text="hola"
+                android:layout_height="wrap_content"
+                />
+            <android.support.v7.widget.RecyclerView
+                android:layout_below="@id/pregunta"
+                android:id="@+id/listaRespuestas"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/nextArrow"
+                android:layout_alignParentEnd="true"
+                android:padding="16dp"
+                android:layout_below="@+id/listaRespuestas"
+                android:layout_width="80dp"
+                android:layout_height="56dp"
+                android:src = "@drawable/baseline_arrow_right_alt_black_48"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>
