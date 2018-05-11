@@ -16,9 +16,9 @@ class NutriQuestMain : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nutri_quest_main)
-        nQController = NQController(this)
-        //loadNextPregunta()
-        changeFragment(0)
+        nQController = NQController()
+
+        changeFragment(0)//nQController.nextQuestion(this, 0))
     }
 
     /*fun loadNextPregunta(){
@@ -29,9 +29,9 @@ class NutriQuestMain : AppCompatActivity() {
         val bundle = Bundle()
 
         //place holder de la clase NQcontroller
-        val id = idPregunta + 1
-
-        bundle.putInt("idPregunta", id)
+        val idActual = nQController.nextQuestion(this,idPregunta)
+        bundle.putInt("idPreguntaAnterior", idPregunta)
+        bundle.putInt("idPreguntaActual", idActual)
 
         val tempfrag = QuestionFragment.newInstance()
         tempfrag.arguments = (bundle)

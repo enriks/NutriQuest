@@ -15,16 +15,15 @@ class NutriQuestExecuter{
             try {
                 val db = NutriQuestDB(ct).readableDatabase
                 val sql = "SELECT pregunta FROM Preguntas WHERE _id = $idPregunta UNION SELECT respuesta FROM RespuestasPosibles where idPregunta = $idPregunta order by pregunta desc"
-                val sql2 = "select r.pregunta pregunta,e.respuesta respuesta from Preguntas r, RespuestasPosibles e where r._id = $idPregunta ORDER BY r._id desc"
+                val sql2 = "select p.pregunta pregunta,r.respuesta respuesta from Preguntas p, RespuestasPosibles r where p._id = $idPregunta and r.idPregunta = $idPregunta ORDER BY p._id desc"
                 var pregunta:String
                 var respuestasPosibles: ArrayList<String> = ArrayList()
-                val cursor = db.rawQuery(sql, null)
+                val cursor = db.rawQuery(sql2, null)
                 var i = 0
                 if(cursor.moveToFirst()){
                     pregunta = cursor.getString(cursor.getColumnIndex("pregunta"))
-                    cursor.moveToNext()
                     while (!cursor.isAfterLast) {
-                        respuestasPosibles.add(i, cursor.getString(cursor.getColumnIndex("pregunta")))
+                        respuestasPosibles.add(i, cursor.getString(cursor.getColumnIndex("respuesta")))
                         i++
                         cursor.moveToNext()
                     }
@@ -42,16 +41,19 @@ class NutriQuestExecuter{
         fun guardarRespuesta(ct: Context, idPregunta: Int, respuestas:List<String>){
             try {
                 val db = NutriQuestDB(ct).writableDatabase
-                var sql = "INSERT INTO respuestas (respuesta, idPregunta) VALUES "
-                for(i in 1..respuestas.size){
-                    val valuestemp = "('${respuestas[i]}', $idPregunta),"
+                var sql = "INSERT INTO Respuestas (respuesta, idPregunta) VALUES "
+                for(i in 0 until respuestas.size){
+                    val valuestemp = "('${respuestas[i]}', $idPregunta)"
                     sql += valuestemp
+                    if(i+1 < respuestas.size)
+                        sql += ","
                 }
+                Log.d("insertstatement", sql)
                 db.execSQL(sql)
                 db.close()
             }
             catch (e:Exception){
-
+                Log.d("excepcionInsertRespuesta", e.message)
             }
         }
 
@@ -70,7 +72,7 @@ class NutriQuestExecuter{
             return numeroPreguntas
         }
 
-        fun devolverRespuestasPilar(ct: Context):ArrayList<Pregunta>{
+        /*fun devolverRespuestasPilar(ct: Context):ArrayList<Pregunta>{
             var preguntas:ArrayList<Pregunta> = ArrayList()
             try {
                 val db = NutriQuestDB(ct).readableDatabase
@@ -102,21 +104,21 @@ class NutriQuestExecuter{
                 Log.d("GetQuestionException", e.message)
             }
             return preguntas
-        }
+        }*/
 
-        fun numeroPreguntaActual(ct: Context):Int{
-            var idPregunta:Int = 0
+        fun numeroPreguntaSiguiente(ct: Context, idPregunta:Int):Int{
+            var idPregunta2:Int = 0
             try{
                 val db = NutriQuestDB(ct).readableDatabase
-                val sql = "SELECT idPregunta FROM respuestas ORDER BY _id desc LIMIT 1"
+                val sql = "SELECT idSiguientePregunta FROM Preguntas WHERE _id = $idPregunta"
                 val cursor = db.rawQuery(sql, null)
                 if(cursor.moveToFirst()){
-                    idPregunta = cursor.getInt(cursor.getColumnIndex("idPregunta"))
+                    idPregunta2 = cursor.getInt(cursor.getColumnIndex("idSiguientePregunta"))
                 }
                 cursor.close()
                 db.close()
             }catch (e:Exception){Log.d("numeroPreguntasExcepcion", e.message)}
-            return idPregunta
+            return idPregunta2
         }
     }
 }
