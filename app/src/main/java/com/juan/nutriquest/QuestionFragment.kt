@@ -13,8 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.juan.nutriquest.NutriQuestExecuter.Companion.getQuestion
+import com.juan.nutriquest.NQController.Companion.formarPregunta
 import com.juan.nutriquest.NutriQuestExecuter.Companion.guardarRespuesta
+import com.juan.nutriquest.NutriQuestExecuter.Companion.insertRespuestas
 import kotlinx.android.synthetic.main.fragment_question.*
 import org.jetbrains.anko.doAsync
 
@@ -40,49 +41,58 @@ class QuestionFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ct = this.context
         val v = inflater.inflate(R.layout.fragment_question, container, false)
+        val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
+        val idPregunta = arguments!!.getInt("idPreguntaActual")
 
-        val idPregunta = arguments!!.getInt("idPregunta")
-        //Log.d("idPregunta", idPregunta.toString())
-        val pregunta = getQuestion(this.context!!, idPregunta)
-
+        val pregunta = formarPregunta(this.context!!, idPregunta)
+        //printPregunta(pregunta)
         tituloPregunta = v.findViewById(R.id.pregunta)
         tituloPregunta.text = pregunta.pregunta
-
+        var sizeConstestadas = 0
         val respuestas = pregunta.posiblesRespuestas
         listaRespuestas = v.findViewById(R.id.listaRespuestas)
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this.context!!)
         listaRespuestas.layoutManager = layoutManager
-        forwardArrow = v.findViewById(R.id.nextArrow)
-        val respuestasElegidas = ArrayList<String>()
+
         val nQAdapter = NQAdapter(respuestas,object : NQAdapter.NQAdapterListener {
             override fun unCheckClick(position: Int) {
                 val respuesta = respuestas[position]
-                respuestasElegidas.remove(respuesta)
+                respuestas[position].contestado = 0
+                sizeConstestadas --
                 //Toast.makeText(ct, respuesta, Toast.LENGTH_SHORT).show()
             }
 
             override fun checkClick(position: Int) {
                 val respuesta = respuestas[position]
-                respuestasElegidas.add(respuesta)
+                respuestas[position].contestado = 1
+                sizeConstestadas ++
                 //Toast.makeText(ct, respuesta, Toast.LENGTH_SHORT).show()
             }
 
         })
         listaRespuestas.adapter = nQAdapter
 
+        forwardArrow = v.findViewById(R.id.nextArrow)
         forwardArrow.setOnClickListener {
-            if(respuestasElegidas.size > LIMITE_ELEGIDOS || respuestasElegidas.size < MINIMOS_ELEGIDOS){
+            /*if(sizeConstestadas > LIMITE_ELEGIDOS || sizeConstestadas < MINIMOS_ELEGIDOS){
                 Toast.makeText(ct, "no has elegido una cantidad adecuada", Toast.LENGTH_LONG).show()
             }
-            else {
+            else {*/
                 doAsync {
-                    guardarRespuesta(ct!!, idPregunta, respuestasElegidas)
+                    insertRespuestas(ct!!, idPreguntaAnterior,idPregunta, NutriQuestExecuter.numeroPreguntaSiguiente(ct, idPregunta), respuestas = respuestas)
                     (activity as NutriQuestMain).changeFragment(idPregunta)
                 }
-            }
+            //}
         }
 
         return v
+    }
+
+    private fun printPregunta(pregunta: Pregunta) {
+        var i = 0
+        pregunta.posiblesRespuestas.forEach {
+            Log.d("respuesta$i", it.respuesta + " en " + it.visibilidad)
+        }
     }
 
     companion object {
@@ -91,10 +101,10 @@ class QuestionFragment : Fragment() {
 }
 
 class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
-    private val listaRespuestas: List<String>
+    private val listaRespuestas: ArrayList<Respuesta>
     val onClickListener: NQAdapterListener
 
-    constructor(listaRespuestas: List<String>, listener: NQAdapterListener) {
+    constructor(listaRespuestas: ArrayList<Respuesta>, listener: NQAdapterListener) {
         this.listaRespuestas = listaRespuestas
         this.onClickListener = listener
     }
@@ -104,16 +114,18 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
 
 
     override fun onBindViewHolder(holder: NQViewHolder, position: Int) {
-        holder.respuestaPosible.text = listaRespuestas[position]
-        holder.setOnClickListener(View.OnClickListener {
-            holder.check.isChecked = !(holder.check.isChecked)
-            if (holder.check.isChecked) {
-                onClickListener.checkClick(position)
+        if(listaRespuestas[position].visibilidad == 1) {
+            holder.respuestaPosible.text = listaRespuestas[position].respuesta
+            holder.setOnClickListener(View.OnClickListener {
+                holder.check.isChecked = !(holder.check.isChecked)
+                if (holder.check.isChecked) {
+                    onClickListener.checkClick(position)
 
-            } else {
-                onClickListener.unCheckClick(position)
-            }
-        })
+                } else {
+                    onClickListener.unCheckClick(position)
+                }
+            })
+        }
 
     }
 
