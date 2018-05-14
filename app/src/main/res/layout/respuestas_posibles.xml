@@ -15,12 +15,14 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="hola"
+            android:text=""
+            android:visibility="gone"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:layout_height="wrap_content" />
         <CheckBox
             android:id="@+id/checky"
+            android:visibility="gone"
             android:layout_weight="1"
             android:paddingLeft="8dp"
             android:layout_width="0dp"

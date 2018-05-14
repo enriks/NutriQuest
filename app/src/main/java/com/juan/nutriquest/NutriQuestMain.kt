@@ -4,10 +4,15 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
+import android.support.v7.widget.AppCompatImageButton
+import android.widget.Button
 import android.widget.Toast
+import com.juan.nutriquest.NutriQuestExecuter.Companion.deleteAll
 
 class NutriQuestMain : AppCompatActivity() {
 
+    private lateinit var back: AppCompatImageButton
     private val fm = supportFragmentManager
     private val mHandler = Handler()
     private var doubleBackToExitPressedOnce = false
@@ -17,7 +22,11 @@ class NutriQuestMain : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nutri_quest_main)
         nQController = NQController()
-
+        back = findViewById(R.id.backEncuesta)
+        back.setOnClickListener {
+            deleteAll(this)
+            changeFragment(0)
+        }
         changeFragment(0)//nQController.nextQuestion(this, 0))
     }
 
@@ -30,12 +39,16 @@ class NutriQuestMain : AppCompatActivity() {
 
         //place holder de la clase NQcontroller
         val idActual = nQController.nextQuestion(this,idPregunta)
-        bundle.putInt("idPreguntaAnterior", idPregunta)
-        bundle.putInt("idPreguntaActual", idActual)
+        if(idActual != -1){
+            bundle.putInt("idPreguntaAnterior", idPregunta)
+            bundle.putInt("idPreguntaActual", idActual)
 
-        val tempfrag = QuestionFragment.newInstance()
-        tempfrag.arguments = (bundle)
-        openFragment(tempfrag)
+            val tempfrag = QuestionFragment.newInstance()
+            tempfrag.arguments = (bundle)
+            openFragment(tempfrag)
+        }
+        else mensaje("termino el test", "Fin")
+
     }
 
     private fun openFragment(fragment: Fragment) {
@@ -65,5 +78,12 @@ class NutriQuestMain : AppCompatActivity() {
         super.onDestroy()
 
         mHandler.removeCallbacks(mRunnable)
+    }
+
+    private fun mensaje(msg: String= "no especificado", ttl:String="titulo generico" ) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(msg).setTitle(ttl)
+        val dialog = builder.create()
+        dialog.show()
     }
 }

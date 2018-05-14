@@ -16,6 +16,7 @@ import android.widget.*
 import com.juan.nutriquest.NQController.Companion.formarPregunta
 import com.juan.nutriquest.NutriQuestExecuter.Companion.guardarRespuesta
 import com.juan.nutriquest.NutriQuestExecuter.Companion.insertRespuestas
+import com.juan.nutriquest.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
 import kotlinx.android.synthetic.main.fragment_question.*
 import org.jetbrains.anko.doAsync
 
@@ -50,6 +51,7 @@ class QuestionFragment : Fragment() {
         tituloPregunta.text = pregunta.pregunta
         var sizeConstestadas = 0
         val respuestas = pregunta.posiblesRespuestas
+
         listaRespuestas = v.findViewById(R.id.listaRespuestas)
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this.context!!)
         listaRespuestas.layoutManager = layoutManager
@@ -79,7 +81,7 @@ class QuestionFragment : Fragment() {
             }
             else {*/
                 doAsync {
-                    insertRespuestas(ct!!, idPreguntaAnterior,idPregunta, NutriQuestExecuter.numeroPreguntaSiguiente(ct, idPregunta), respuestas = respuestas)
+                    insertRespuestas(ct!!, idPreguntaAnterior,idPregunta, numeroPreguntaSiguiente(ct, idPregunta), respuestas = respuestas)
                     (activity as NutriQuestMain).changeFragment(idPregunta)
                 }
             //}
@@ -101,6 +103,7 @@ class QuestionFragment : Fragment() {
 }
 
 class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
+
     private val listaRespuestas: ArrayList<Respuesta>
     val onClickListener: NQAdapterListener
 
@@ -115,6 +118,8 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
 
     override fun onBindViewHolder(holder: NQViewHolder, position: Int) {
         if(listaRespuestas[position].visibilidad == 1) {
+            holder.respuestaPosible.visibility = View.VISIBLE
+            holder.check.visibility = View.VISIBLE
             holder.respuestaPosible.text = listaRespuestas[position].respuesta
             holder.setOnClickListener(View.OnClickListener {
                 holder.check.isChecked = !(holder.check.isChecked)
@@ -126,11 +131,18 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
                 }
             })
         }
-
     }
 
-    override fun getItemCount() = listaRespuestas.size
-
+    override fun getItemCount():Int{
+        /*var size = 0
+        listaRespuestas.forEach{
+            if(it.visibilidad == 1)
+                size ++
+        }
+        if(size == 1)
+            size = 2*/
+        return listaRespuestas.size
+    }
 
     inner class NQViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
         var check: CheckBox

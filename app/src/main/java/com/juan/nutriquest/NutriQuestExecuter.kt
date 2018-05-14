@@ -46,7 +46,7 @@ class NutriQuestExecuter{
          * devuelve una pregunta con sus limitaciones
          */
         fun getPregunta(ct: Context, idPregunta: Int):SoloPregunta{
-            var pregunta:SoloPregunta = SoloPregunta()
+            var pregunta = SoloPregunta()
             try {
                 val db = NutriQuestDB(ct).readableDatabase
                 val sql = "select pregunta, idCategoria, visibilidad from (select p._id, pregunta from Preguntas p where _id = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 0"
@@ -109,7 +109,7 @@ class NutriQuestExecuter{
             var categoriasUsuario:ArrayList<Int> = ArrayList()
             try{
                 val db = NutriQuestDB(ct).readableDatabase
-                val sql = "SELECT idCategoria FROM Respuestas where contestado = 1"
+                val sql = "SELECT idCategoria FROM Respuestas where contestado = 1 and idCategoria != 0"
                 val cursor = db.rawQuery(sql, null)
                 if(cursor.moveToFirst()){
                     while (!cursor.isAfterLast) {
@@ -227,5 +227,28 @@ class NutriQuestExecuter{
             }catch (e:Exception){Log.d("numeroPreguntasExcepcion", e.message)}
             return idPregunta2
         }
+
+
+        fun ultimaPregunta(ct:Context):Int{
+            var idPreguntaUltima:Int = 0
+            try{
+                val db = NutriQuestDB(ct).readableDatabase
+                val sql = "SELECT _id FROM Preguntas WHERE idSiguientePregunta"
+                val cursor = db.rawQuery(sql, null)
+                if(cursor.moveToFirst()){
+                    idPreguntaUltima = cursor.getInt(cursor.getColumnIndex("idSiguientePregunta"))
+                }
+                cursor.close()
+                db.close()
+            }catch (e:Exception){Log.d("numeroPreguntasExcepcion", e.message)}
+            return idPreguntaUltima
+        }
+
+        fun deleteAll(ct: Context){
+            val db = NutriQuestDB(ct).writableDatabase
+            db.execSQL("DELETE FROM Respuestas")
+            db.close()
+        }
+
     }
 }
