@@ -9,6 +9,7 @@ import android.support.v7.widget.AppCompatImageButton
 import android.widget.Button
 import android.widget.Toast
 import com.juan.nutriquest.NutriQuestExecuter.Companion.deleteAll
+import org.jetbrains.anko.doAsync
 
 class NutriQuestMain : AppCompatActivity() {
 
@@ -22,6 +23,13 @@ class NutriQuestMain : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nutri_quest_main)
         nQController = NQController()
+
+        val envio = findViewById<Button>(R.id.pulsemepelotudo)
+        envio.setOnClickListener {
+            doAsync {
+                sendPostRequest(2, applicationContext)
+            }
+        }
         back = findViewById(R.id.backEncuesta)
         back.setOnClickListener {
             deleteAll(this)
