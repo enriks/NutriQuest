@@ -119,7 +119,7 @@ class NutriQuestExecuter{
                 }
                 cursor.close()
                 db.close()
-            }catch (e:Exception){Log.d("numeroPreguntasExcepcion", e.message)}
+            }catch (e:Exception){Log.d("numeroPregunasExcepcion", e.message)}
             return categoriasUsuario
         }
 
@@ -138,7 +138,7 @@ class NutriQuestExecuter{
                 db.close()
             }
             catch (e:Exception){
-                Log.d("excepcionInsertRespuesta", e.message)
+                Log.d("excepcionInsertespuesta", e.message)
             }
         }
 
@@ -160,7 +160,7 @@ class NutriQuestExecuter{
                 db.close()
             }
             catch (e:Exception){
-                Log.d("excepcionInsertRespuesta", e.message)
+                Log.d("excepcionInsertRespuest", e.message)
             }
         }
 
@@ -175,7 +175,7 @@ class NutriQuestExecuter{
                 }
                 cursor.close()
                 db.close()
-            }catch (e:Exception){Log.d("numeroPreguntasExcepcion", e.message)}
+            }catch (e:Exception){Log.d("numeroPreguntasExcepcio", e.message)}
             return numeroPreguntas
         }
 
@@ -224,7 +224,7 @@ class NutriQuestExecuter{
                 }
                 cursor.close()
                 db.close()
-            }catch (e:Exception){Log.d("numeroPreguntasExcepcion", e.message)}
+            }catch (e:Exception){Log.d("numeroPreguntasExcepcio", e.message)}
             return idPregunta2
         }
 
@@ -240,8 +240,41 @@ class NutriQuestExecuter{
                 }
                 cursor.close()
                 db.close()
-            }catch (e:Exception){Log.d("numeroPreguntasExcepcion", e.message)}
+            }catch (e:Exception){Log.d("numeroPreguntasExcepcin", e.message)}
             return idPreguntaUltima
+        }
+
+        fun getAllRespuestas(ct: Context):ArrayList<RespuestasUsuario>{
+            var respuestasUsuario: ArrayList<RespuestasUsuario> = ArrayList()
+            try {
+                val db = NutriQuestDB(ct).readableDatabase
+                var pregunta:String
+                //val sql1 = "select respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad from (select r._id, respuesta from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1"
+                val sql = "select * from Respuestas ORDER BY idPreguntaPrevia"
+                val cursor = db.rawQuery(sql, null)
+                var respuesta:String
+                var idPregunta:Int
+                var idCategoria: Int
+                var idPreguntaPrevia:Int
+                var idPreguntaPosterior: Int
+                var contestado: Int
+                if(cursor.moveToFirst()){
+                    while (!cursor.isAfterLast) {
+                        respuesta = cursor.getString(cursor.getColumnIndex("respuesta"))
+                        idPregunta = cursor.getInt(cursor.getColumnIndex("idPregunta"))
+                        idCategoria = cursor.getInt(cursor.getColumnIndex("idCategoria"))
+                        idPreguntaPrevia = cursor.getInt(cursor.getColumnIndex("idPreguntaPrevia"))
+                        idPreguntaPosterior = cursor.getInt(cursor.getColumnIndex("idPreguntaPosterior"))
+                        contestado = cursor.getInt(cursor.getColumnIndex("contestado"))
+                        //Log.d("micategoria", respuesta.toString())
+                        respuestasUsuario.add(RespuestasUsuario(respuesta,idPregunta,idCategoria, idPreguntaPrevia,idPreguntaPosterior,contestado))
+                        cursor.moveToNext()
+                    }
+                }
+                cursor.close()
+                db.close()
+            }catch (e:Exception){Log.d("getRespuestaException", e.message)}
+            return respuestasUsuario
         }
 
         fun deleteAll(ct: Context){

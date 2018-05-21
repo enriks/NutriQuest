@@ -2,11 +2,13 @@ package com.juan.nutriquest
 
 import android.content.Context
 import android.util.Log
+import com.juan.nutriquest.NutriQuestExecuter.Companion.getAllRespuestas
 import com.juan.nutriquest.NutriQuestExecuter.Companion.getCategoriasUsuario
 import com.juan.nutriquest.NutriQuestExecuter.Companion.getPregunta
 import com.juan.nutriquest.NutriQuestExecuter.Companion.getRespuestas
 import com.juan.nutriquest.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
 import com.juan.nutriquest.NutriQuestExecuter.Companion.numeroPreguntas
+import org.jetbrains.anko.doAsync
 
 /**
  * 2 opciones
@@ -87,5 +89,11 @@ class NQController{
             return preguntaCompleta
         }
 
+        fun mandarTodasLasRespuestas(ct:Context){
+            doAsync {
+            var respuestas = getAllRespuestas(ct)
+            sendUserResponses(respuestas, ct)
+            }
+        }
     }
 }

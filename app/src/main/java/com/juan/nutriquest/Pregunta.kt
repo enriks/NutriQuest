@@ -47,3 +47,23 @@ class Respuesta(var map:MutableMap<String, Any?>){
         this.contestado = contestado
     }
 }
+
+class RespuestasUsuario(var map:MutableMap<String, Any?>){
+    var _id: Int by map
+    var respuesta: String by map
+    var idPregunta: Int by map
+    var idCategoria: Int by map
+    var idPreguntaPrevia: Int by map
+    var idPreguntaPosterior:Int by map
+    var contestado:Int by map
+
+    constructor( respuesta:String, idPregunta:Int, idCategoria:Int,idPreguntaPrevia: Int,visibilidad:Int = 1, contestado:Int = 0):this(HashMap()){
+        //this._id = _id
+        this.respuesta = respuesta
+        this.idPregunta = idPregunta
+        this.idCategoria =idCategoria
+        this.idPreguntaPrevia = idPreguntaPrevia
+        this.idPreguntaPosterior = visibilidad
+        this.contestado = contestado
+    }
+}

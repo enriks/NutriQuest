@@ -79,3 +79,59 @@ fun sendPostRequest(idPregunta: Int, ct: Context):Int {
 
     return enviado
 }
+
+fun sendUserResponses(a:ArrayList<RespuestasUsuario>,ct: Context):Int {
+    var enviado:Int = 0
+    try {
+        val url = URL("http://172.22.1.3/php/juan/prueba2.php")
+        val conn = url.openConnection() as HttpURLConnection
+        conn.readTimeout = 10000
+        conn.connectTimeout = 15000
+        conn.requestMethod = "POST"
+        //conn.setRequestProperty("Content-Type", "false")
+        conn.setRequestProperty("Accept", "application/json;charset=utf-8")
+        conn.doInput = true
+        conn.doOutput = true
+        conn.connect()
+
+        val jsonA = JSONArray()
+
+        a.forEach {
+            //Log.d("respuestasJson", it.respuesta)
+            val jsonParam = JSONObject()
+            jsonParam.put("respuesta", it.respuesta)
+            jsonParam.put("idPregunta", it.idPregunta)
+            jsonParam.put("idCategoria", it.idCategoria)
+            jsonParam.put("idPreguntaPrevia", it.idPreguntaPrevia)
+            jsonParam.put("idPreguntaPosterior", it.idPreguntaPosterior)
+            jsonParam.put("contestado", it.contestado)
+            jsonA.put(jsonParam)
+        }
+
+        val json = JSONObject()
+        json.put("r", jsonA)
+        Log.d("JsonObject", json.toString())
+        val outputStream = conn.outputStream
+        val outputStreamWriter = OutputStreamWriter(outputStream, "UTF-8")
+        outputStreamWriter.write(json.toString())
+        outputStreamWriter.flush()
+        outputStreamWriter.close()
+        val text:String? = conn.inputStream.use { it.reader().use { reader -> reader.readText() } }
+
+
+        if(text != null) {
+            Log.d("respuestaWS", text)
+
+            val x = JSONArray(text)
+            val jsonObject = x.getJSONObject(0)
+            Log.d("respuestaWS22", x.toString())
+
+            enviado = 1
+        }
+    }
+    catch (e: Exception){
+        Log.d("responseWebservice", e.toString())
+    }
+
+    return enviado
+}

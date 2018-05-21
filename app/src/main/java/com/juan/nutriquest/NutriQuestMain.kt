@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageButton
 import android.widget.Button
 import android.widget.Toast
+import com.juan.nutriquest.NQController.Companion.mandarTodasLasRespuestas
 import com.juan.nutriquest.NutriQuestExecuter.Companion.deleteAll
 import org.jetbrains.anko.doAsync
 
@@ -27,7 +28,8 @@ class NutriQuestMain : AppCompatActivity() {
         val envio = findViewById<Button>(R.id.pulsemepelotudo)
         envio.setOnClickListener {
             doAsync {
-                sendPostRequest(2, applicationContext)
+                //sendPostRequest(2, applicationContext)
+                mandarTodasLasRespuestas(this@NutriQuestMain)
             }
         }
         back = findViewById(R.id.backEncuesta)
@@ -55,15 +57,30 @@ class NutriQuestMain : AppCompatActivity() {
             tempfrag.arguments = (bundle)
             openFragment(tempfrag)
         }
-        else mensaje("termino el test", "Fin")
+        else {
+            mandarTodasLasRespuestas(this)
+            removeFragment();
+            mensaje("termino el test", "Fin")
+
+        }
 
     }
 
     private fun openFragment(fragment: Fragment) {
         fm.beginTransaction()
-                .setCustomAnimations(R.anim.enter_left, R.anim.out_right)
+                .setCustomAnimations(R.anim.enter_right, R.anim.out_left)
                 .replace(R.id.container, fragment)
                 //.add(R.id.container, fragment)
+
+                //.addToBackStack(null)
+                .commit()
+    }
+
+    private fun removeFragment() {
+        fm.beginTransaction()
+                .setCustomAnimations(R.anim.enter_left, R.anim.out_right)
+                .replace(R.id.container, Fragment())
+                //.add(R.id., fragment)
 
                 //.addToBackStack(null)
                 .commit()

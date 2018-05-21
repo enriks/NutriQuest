@@ -76,15 +76,16 @@ class QuestionFragment : Fragment() {
 
         forwardArrow = v.findViewById(R.id.nextArrow)
         forwardArrow.setOnClickListener {
-            /*if(sizeConstestadas > LIMITE_ELEGIDOS || sizeConstestadas < MINIMOS_ELEGIDOS){
+            if(sizeConstestadas > LIMITE_ELEGIDOS){ //|| sizeConstestadas < MINIMOS_ELEGIDOS){
                 Toast.makeText(ct, "no has elegido una cantidad adecuada", Toast.LENGTH_LONG).show()
             }
-            else {*/
+            else {
                 doAsync {
+                    forwardArrow.visibility = View.INVISIBLE
                     insertRespuestas(ct!!, idPreguntaAnterior,idPregunta, numeroPreguntaSiguiente(ct, idPregunta), respuestas = respuestas)
                     (activity as NutriQuestMain).changeFragment(idPregunta)
                 }
-            //}
+            }
         }
 
         return v

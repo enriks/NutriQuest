@@ -46,7 +46,18 @@
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            >
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Gracias por completar \n \n el cuestionario"
+                style="@style/ToolbarFont"
+                android:textColor="@color/colorPrimary"
+                />
+        </FrameLayout>
     </LinearLayout>
 
 </LinearLayout>
