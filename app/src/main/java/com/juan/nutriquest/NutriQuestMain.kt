@@ -29,7 +29,8 @@ class NutriQuestMain : AppCompatActivity() {
         envio.setOnClickListener {
             doAsync {
                 //sendPostRequest(2, applicationContext)
-                mandarTodasLasRespuestas(this@NutriQuestMain)
+                recibirPregunta(4, applicationContext)
+                firstConexion(applicationContext)
             }
         }
         back = findViewById(R.id.backEncuesta)
@@ -37,6 +38,8 @@ class NutriQuestMain : AppCompatActivity() {
             deleteAll(this)
             changeFragment(0)
         }
+        //firstConexion(this)
+
         changeFragment(0)//nQController.nextQuestion(this, 0))
     }
 
@@ -58,7 +61,7 @@ class NutriQuestMain : AppCompatActivity() {
             openFragment(tempfrag)
         }
         else {
-            mandarTodasLasRespuestas(this)
+            //mandarTodasLasRespuestas(this)
             removeFragment();
             mensaje("termino el test", "Fin")
 

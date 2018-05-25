@@ -2,16 +2,17 @@ package com.juan.nutriquest
 
 import android.content.Context
 import android.util.Log
+import com.juan.nutriquest.NutriQuestExecuter.Companion.idUsuario
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
-fun sendPostRequest(idPregunta: Int, ct: Context):Int {
+fun recibirPregunta(idPregunta: Int, ct: Context):Int {
     var enviado:Int = 0
     try {
-        val url = URL("http://172.22.1.3/php/juan/prueba1.php")
+        val url = URL("http://172.22.1.3/php/juan/pregunta.php")
         val conn = url.openConnection() as HttpURLConnection
         conn.readTimeout = 10000
         conn.connectTimeout = 15000
@@ -23,12 +24,7 @@ fun sendPostRequest(idPregunta: Int, ct: Context):Int {
         conn.connect()
 
         val jsonParam = JSONObject()
-        jsonParam.put("intencion", "algo")
         jsonParam.put("idPregunta", idPregunta)
-
-        jsonParam.put("hola", true)
-
-
 
         Log.d("JsonObject", jsonParam.toString())
         val outputStream = conn.outputStream
@@ -83,7 +79,7 @@ fun sendPostRequest(idPregunta: Int, ct: Context):Int {
 fun sendUserResponses(a:ArrayList<RespuestasUsuario>,ct: Context):Int {
     var enviado:Int = 0
     try {
-        val url = URL("http://172.22.1.3/php/juan/prueba2.php")
+        val url = URL("http://172.22.1.3/php/juan/respuesta.php")
         val conn = url.openConnection() as HttpURLConnection
         conn.readTimeout = 10000
         conn.connectTimeout = 15000
@@ -100,6 +96,7 @@ fun sendUserResponses(a:ArrayList<RespuestasUsuario>,ct: Context):Int {
             //Log.d("respuestasJson", it.respuesta)
             val jsonParam = JSONObject()
             jsonParam.put("respuesta", it.respuesta)
+            jsonParam.put("idUsuario", idUsuario(ct))
             jsonParam.put("idPregunta", it.idPregunta)
             jsonParam.put("idCategoria", it.idCategoria)
             jsonParam.put("idPreguntaPrevia", it.idPreguntaPrevia)
@@ -122,9 +119,10 @@ fun sendUserResponses(a:ArrayList<RespuestasUsuario>,ct: Context):Int {
         if(text != null) {
             Log.d("respuestaWS", text)
 
-            val x = JSONArray(text)
-            val jsonObject = x.getJSONObject(0)
-            Log.d("respuestaWS22", x.toString())
+            //val x = JSONArray(text)
+            val jsony = JSONObject(text)
+            //val jsonObject = x.getJSONObject(0)
+            Log.d("respuestaWS22", jsony.toString())
 
             enviado = 1
         }
@@ -134,4 +132,55 @@ fun sendUserResponses(a:ArrayList<RespuestasUsuario>,ct: Context):Int {
     }
 
     return enviado
+}
+
+fun firstConexion(ct:Context){
+    try {
+        val url = URL("http://172.22.1.3/php/juan/primera_conexion.php")
+        val conn = url.openConnection() as HttpURLConnection
+        conn.readTimeout = 10000
+        conn.connectTimeout = 15000
+        conn.requestMethod = "POST"
+        //conn.setRequestProperty("Content-Type", "false")
+        conn.setRequestProperty("Accept", "application/json;charset=utf-8")
+        conn.doInput = true
+        conn.doOutput = true
+        conn.connect()
+
+
+            //Log.d("respuestasJson", it.respuesta)
+        val jsonParam = JSONObject()
+        jsonParam.put("nombre", idUsuario(ct))
+        jsonParam.put("idEncuesta", 1)
+
+
+
+
+        //val json = JSONObject()
+        //json.put("r", jsonParam)
+        Log.d("JsonObject", jsonParam.toString())
+        val outputStream = conn.outputStream
+        val outputStreamWriter = OutputStreamWriter(outputStream, "UTF-8")
+        outputStreamWriter.write(jsonParam.toString())
+        outputStreamWriter.flush()
+        outputStreamWriter.close()
+        val text:String? = conn.inputStream.use { it.reader().use { reader -> reader.readText() } }
+
+
+        if(text != null) {
+            Log.d("respuestaWS", text)
+
+            //val x = JSONArray(text)
+            val jsony = JSONObject(text)
+            //val jsonObject = x.getJSONObject(0)
+            Log.d("respuestaWS22", jsony.toString())
+            Log.d("preguntarespuestaws", jsony["pregunta"].toString())
+            Log.d("respuestarespuestaws", jsony["respuestas"].toString())
+        }
+    }
+    catch (e: Exception){
+        Log.d("responseWebservice", e.toString())
+    }
+
+    //return enviado
 }

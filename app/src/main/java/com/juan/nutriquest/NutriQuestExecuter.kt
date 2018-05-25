@@ -283,5 +283,45 @@ class NutriQuestExecuter{
             db.close()
         }
 
+        fun insertarUsuario(ct: Context, nombre:String){
+
+            try {
+                val db = NutriQuestDB(ct).writableDatabase
+                var sql = "INSERT INTO usuario (nombre) VALUES ('$nombre')"
+                db.execSQL(sql)
+                db.close()
+            }
+            catch (e:Exception){
+                Log.d("excepcionInsertRespuest", e.message)
+            }
+        }
+
+        fun actualizarUsuario(ct: Context, nombre:String){
+
+            try {
+                val db = NutriQuestDB(ct).writableDatabase
+                var sql = "UPDATE usuario SET nombre = '$nombre'"
+                db.execSQL(sql)
+                db.close()
+            }
+            catch (e:Exception){
+                Log.d("excepcionInsertRespuest", e.message)
+            }
+        }
+
+        fun idUsuario(ct: Context):String{
+            var idUsuario:String = ""
+            try{
+                val db = NutriQuestDB(ct).readableDatabase
+                val sql = "SELECT nombre FROM usuario"
+                val cursor = db.rawQuery(sql, null)
+                if(cursor.moveToFirst()){
+                    idUsuario = cursor.getString(cursor.getColumnIndex("nombre"))
+                }
+                cursor.close()
+                db.close()
+            }catch (e:Exception){Log.d("numeroPreguntasExcepcin", e.message)}
+            return idUsuario
+        }
     }
 }

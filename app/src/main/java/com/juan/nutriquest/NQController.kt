@@ -95,5 +95,18 @@ class NQController{
             sendUserResponses(respuestas, ct)
             }
         }
+
+        fun manejarRespuestas(ct: Context,  idPreguntaPrevia:Int,idPregunta:Int, idPreguntaPosterior:Int, respuestas:ArrayList<Respuesta>){
+            val respuesta = ArrayList<RespuestasUsuario>()
+            respuestas.forEach {
+                respuesta.add(RespuestasUsuario(it.respuesta, idPregunta, it.determinaCategoria, idPreguntaPrevia, idPreguntaPosterior, it.contestado))
+            }
+
+            //inserto las respuestas a la pregunta en db movil
+            NutriQuestExecuter.insertRespuestas(ct!!, idPreguntaPrevia, idPregunta, idPreguntaPosterior, respuestas = respuestas)
+
+            //mando la respuesta a una pregunta a el ws
+            sendUserResponses(respuesta, ct)
+        }
     }
 }

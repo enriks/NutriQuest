@@ -14,6 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.juan.nutriquest.NQController.Companion.formarPregunta
+
+import com.juan.nutriquest.NQController.Companion.manejarRespuestas
 import com.juan.nutriquest.NutriQuestExecuter.Companion.guardarRespuesta
 import com.juan.nutriquest.NutriQuestExecuter.Companion.insertRespuestas
 import com.juan.nutriquest.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
@@ -44,7 +46,7 @@ class QuestionFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_question, container, false)
         val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
         val idPregunta = arguments!!.getInt("idPreguntaActual")
-
+        forwardArrow = v.findViewById(R.id.nextArrow)
         val pregunta = formarPregunta(this.context!!, idPregunta)
         //printPregunta(pregunta)
         tituloPregunta = v.findViewById(R.id.pregunta)
@@ -55,12 +57,19 @@ class QuestionFragment : Fragment() {
         listaRespuestas = v.findViewById(R.id.listaRespuestas)
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this.context!!)
         listaRespuestas.layoutManager = layoutManager
-
+        if(sizeConstestadas<MINIMOS_ELEGIDOS){
+            forwardArrow.alpha = 0.0F
+            forwardArrow.isClickable = false
+        }
         val nQAdapter = NQAdapter(respuestas,object : NQAdapter.NQAdapterListener {
             override fun unCheckClick(position: Int) {
                 val respuesta = respuestas[position]
                 respuestas[position].contestado = 0
                 sizeConstestadas --
+                if(sizeConstestadas<MINIMOS_ELEGIDOS){
+                    forwardArrow.alpha = 0.0F
+                    forwardArrow.isClickable = false
+                }
                 //Toast.makeText(ct, respuesta, Toast.LENGTH_SHORT).show()
             }
 
@@ -68,21 +77,34 @@ class QuestionFragment : Fragment() {
                 val respuesta = respuestas[position]
                 respuestas[position].contestado = 1
                 sizeConstestadas ++
+                if(sizeConstestadas>=MINIMOS_ELEGIDOS){
+                    forwardArrow.alpha = 1.0F
+                    forwardArrow.isClickable = true
+                }
                 //Toast.makeText(ct, respuesta, Toast.LENGTH_SHORT).show()
             }
 
         })
         listaRespuestas.adapter = nQAdapter
 
-        forwardArrow = v.findViewById(R.id.nextArrow)
+
         forwardArrow.setOnClickListener {
-            if(sizeConstestadas > LIMITE_ELEGIDOS){ //|| sizeConstestadas < MINIMOS_ELEGIDOS){
+
+            //compruebo si puede avanzar con la cantidad de preguntas contestadas
+            if( sizeConstestadas < MINIMOS_ELEGIDOS){ //||sizeConstestadas > LIMITE_ELEGIDOS){
                 Toast.makeText(ct, "no has elegido una cantidad adecuada", Toast.LENGTH_LONG).show()
             }
+
+            //termino la pregunta
             else {
                 doAsync {
+                    //escondo la flecha de avance de pregunta
                     forwardArrow.visibility = View.INVISIBLE
-                    insertRespuestas(ct!!, idPreguntaAnterior,idPregunta, numeroPreguntaSiguiente(ct, idPregunta), respuestas = respuestas)
+
+                    //envio las respuestas
+                    manejarRespuestas(ct!!, idPreguntaAnterior,idPregunta, numeroPreguntaSiguiente(ct, idPregunta), respuestas)
+
+                    //mando cambiar de fragmento
                     (activity as NutriQuestMain).changeFragment(idPregunta)
                 }
             }

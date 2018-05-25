@@ -23,6 +23,13 @@ import android.widget.TextView
 
 import java.util.ArrayList
 import android.Manifest.permission.READ_CONTACTS
+import android.content.Intent
+import android.os.PersistableBundle
+import android.widget.Button
+import android.widget.Toast
+import com.juan.nutriquest.NutriQuestExecuter.Companion.actualizarUsuario
+import com.juan.nutriquest.NutriQuestExecuter.Companion.idUsuario
+import com.juan.nutriquest.NutriQuestExecuter.Companion.insertarUsuario
 
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -33,5 +40,39 @@ class LoginActivity : AppCompatActivity() {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+    private lateinit var texto:TextView
+    private lateinit var boton:Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+        texto = findViewById(R.id.email)
+        boton = findViewById(R.id.sign_in_button)
+        boton.setOnClickListener{
+            if(texto.text.toString() != "") {
+                usuario()
+                startNewActivity()
+            }
+            else
+                Toast.makeText(this, "No puede estar vacio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun usuario() {
+        if(idUsuario(this) != "")
+            insertarUsuario(this, texto.text.toString())
+        else
+            actualizarUsuario(this, texto.text.toString())
+    }
+
+    private fun startNewActivity() {
+        val i = Intent(this, NutriQuestMain::class.java)
+        //i.putExtra("account", acct);
+
+        //Log.d("jsonaccount" ,acct.toJson());
+        //Kill the activity from which you will go to next activity
+        startActivity(i)
+        finish()
+    }
 
 }

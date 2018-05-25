@@ -48,6 +48,26 @@ class Respuesta(var map:MutableMap<String, Any?>){
     }
 }
 
+class RespuestaRespondida(map: MutableMap<String, Any?>) {
+    var _id: Int by map
+    var respuesta: String by map
+    var idPregunta: Int by map
+    var idCategoria: Int by map
+    var idPreguntaPrevia: Int by map
+    var idPreguntaPosterior:Int by map
+    var contestado:Int by map
+
+    constructor(respuesta: String="",idPregunta: Int = 0, idCategoria: Int = 0, idPreguntaPrevia: Int  = 0, idPreguntaPosterior: Int = 0, contestado:Int = 0) : this(HashMap()) {
+        //this._id = id
+        this.respuesta = respuesta
+        this.idPregunta = idPregunta
+        this.idCategoria = idCategoria
+        this.idPreguntaPrevia = idPreguntaPrevia
+        this.idPreguntaPosterior = idPreguntaPosterior
+        this.contestado = contestado
+    }
+}
+
 class RespuestasUsuario(var map:MutableMap<String, Any?>){
     var _id: Int by map
     var respuesta: String by map
