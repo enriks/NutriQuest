@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "190138965687",
+    "firebase_url": "https://encuestas-205806.firebaseio.com",
+    "project_id": "encuestas-205806",
+    "storage_bucket": "encuestas-205806.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190138965687:android:18547a804edd5eda",
+        "android_client_info": {
+          "package_name": "com.uneatlantico.encuestas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190138965687-msdiivo13k0jeq57ho32im98t6mnjn47.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "190138965687-po56jvah4m4jrtjmp038uaf6hgm1lvu9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uneatlantico.encuestas",
+            "certificate_hash": "a19a61cfd48263162610f7c198afa58cf6a401d2"
+          }
+        },
+        {
+          "client_id": "190138965687-msdiivo13k0jeq57ho32im98t6mnjn47.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmma0RaYZqOrmGmAnXJKtbMJEWPV34Uqw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190138965687-msdiivo13k0jeq57ho32im98t6mnjn47.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

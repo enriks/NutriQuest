@@ -1,13 +1,12 @@
-package com.juan.nutriquest
+package com.uneatlantico.encuestas
 
 import android.content.Context
 import android.util.Log
-import com.juan.nutriquest.NutriQuestExecuter.Companion.getAllRespuestas
-import com.juan.nutriquest.NutriQuestExecuter.Companion.getCategoriasUsuario
-import com.juan.nutriquest.NutriQuestExecuter.Companion.getPregunta
-import com.juan.nutriquest.NutriQuestExecuter.Companion.getRespuestas
-import com.juan.nutriquest.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
-import com.juan.nutriquest.NutriQuestExecuter.Companion.numeroPreguntas
+import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.getAllRespuestas
+import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.getCategoriasUsuario
+import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.getPregunta
+import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.getRespuestas
+import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
 import org.jetbrains.anko.doAsync
 
 /**
@@ -18,6 +17,11 @@ class NQController{
     //TODO array con todas las preguntas
     val idPreguntas:ArrayList<Int> = ArrayList()
 
+
+    fun inicioEncuesta(ct: Context){
+        firstConexion(ct)
+    }
+
     /**
      * determina cual sera la siguiente pregunta
      */
@@ -26,7 +30,8 @@ class NQController{
         var preguntaSiguiente = idPregunta
         do {
 
-            preguntaSiguiente = numeroPreguntaSiguiente(ct, preguntaSiguiente)
+            preguntaSiguiente = preguntaSiguiente(ct, preguntaSiguiente)
+            //Log.d("preguntaSIguiente", preguntaSiguiente.toString())
             if(preguntaSiguiente == 0){
                 preguntaSiguiente = -1
                 break
@@ -91,22 +96,33 @@ class NQController{
 
         fun mandarTodasLasRespuestas(ct:Context){
             doAsync {
-            var respuestas = getAllRespuestas(ct)
-            sendUserResponses(respuestas, ct)
+                var respuestas = getAllRespuestas(ct)
+                sendUserResponses(respuestas, ct)
             }
         }
 
-        fun manejarRespuestas(ct: Context,  idPreguntaPrevia:Int,idPregunta:Int, idPreguntaPosterior:Int, respuestas:ArrayList<Respuesta>){
+        fun manejarRespuestas(ct: Context,  idPreguntaPrevia:Int,idPregunta:Int, respuestas:ArrayList<Respuesta>){
             val respuesta = ArrayList<RespuestasUsuario>()
             respuestas.forEach {
-                respuesta.add(RespuestasUsuario(it.respuesta, idPregunta, it.determinaCategoria, idPreguntaPrevia, idPreguntaPosterior, it.contestado))
+                respuesta.add(RespuestasUsuario(it.respuesta, idPregunta, it.determinaCategoria, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
             }
 
             //inserto las respuestas a la pregunta en db movil
-            NutriQuestExecuter.insertRespuestas(ct!!, idPreguntaPrevia, idPregunta, idPreguntaPosterior, respuestas = respuestas)
+            NutriQuestExecuter.insertRespuestas(ct, idPreguntaPrevia, idPregunta, respuestas = respuestas)
 
             //mando la respuesta a una pregunta a el ws
             sendUserResponses(respuesta, ct)
+        }
+
+        fun preguntaSiguiente(ct: Context, idPregunta: Int):Int{
+            return numeroPreguntaSiguiente(ct, idPregunta)
+        }
+
+        fun guardarUsuario(ct: Context, usuario:List<String>){
+            doAsync {
+                NutriQuestExecuter.insertarUsuario(ct, usuario)
+                enviarUsuario(ct, usuario)
+            }
         }
     }
 }

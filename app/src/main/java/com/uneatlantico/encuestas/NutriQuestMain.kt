@@ -1,15 +1,18 @@
-package com.juan.nutriquest
+package com.uneatlantico.encuestas
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Parcelable
 import android.support.v4.app.Fragment
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageButton
+import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
-import com.juan.nutriquest.NQController.Companion.mandarTodasLasRespuestas
-import com.juan.nutriquest.NutriQuestExecuter.Companion.deleteAll
+import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.deleteAll
 import org.jetbrains.anko.doAsync
 
 class NutriQuestMain : AppCompatActivity() {
@@ -19,28 +22,33 @@ class NutriQuestMain : AppCompatActivity() {
     private val mHandler = Handler()
     private var doubleBackToExitPressedOnce = false
     private lateinit var nQController:NQController
+    private lateinit var mensajeDespedida:TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nutri_quest_main)
         nQController = NQController()
-
+        mensajeDespedida = findViewById(R.id.mensajeDespedida)
         val envio = findViewById<Button>(R.id.pulsemepelotudo)
-        envio.setOnClickListener {
+        envio.alpha = 0.0F
+        /*envio.setOnClickListener {
             doAsync {
                 //sendPostRequest(2, applicationContext)
-                recibirPregunta(4, applicationContext)
-                firstConexion(applicationContext)
+                //recibirPregunta(4, applicationContext)
+                nQController.inicioEncuesta(applicationContext)
             }
-        }
+        }*/
         back = findViewById(R.id.backEncuesta)
+        //back.alpha = 0.0F
         back.setOnClickListener {
             deleteAll(this)
             changeFragment(0)
         }
-        //firstConexion(this)
-
-        changeFragment(0)//nQController.nextQuestion(this, 0))
+        val idPregunta = intent.extras.getInt("idPregunta")
+        //val idPregunta = data.describeContents()
+        Log.d("idPregunta", idPregunta.toString())
+        mensajeDespedida.alpha = 0.0F
+        inicioPregunta(idPregunta)//nQController.nextQuestion(this, 0))
     }
 
     /*fun loadNextPregunta(){
@@ -64,8 +72,21 @@ class NutriQuestMain : AppCompatActivity() {
             //mandarTodasLasRespuestas(this)
             removeFragment();
             mensaje("termino el test", "Fin")
+            mensajeDespedida.alpha = 1.0F
 
         }
+
+    }
+
+    fun inicioPregunta(idPregunta: Int){
+
+        val bundle = Bundle()
+        bundle.putInt("idPreguntaAnterior", 0)
+        bundle.putInt("idPreguntaActual", idPregunta)
+
+        val tempfrag = QuestionFragment.newInstance()
+        tempfrag.arguments = (bundle)
+        openFragment(tempfrag)
 
     }
 

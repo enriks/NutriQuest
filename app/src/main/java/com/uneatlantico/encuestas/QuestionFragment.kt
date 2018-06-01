@@ -1,4 +1,4 @@
-package com.juan.nutriquest
+package com.uneatlantico.encuestas
 
 import android.content.ClipData
 import android.content.Context
@@ -13,12 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.juan.nutriquest.NQController.Companion.formarPregunta
-
-import com.juan.nutriquest.NQController.Companion.manejarRespuestas
-import com.juan.nutriquest.NutriQuestExecuter.Companion.guardarRespuesta
-import com.juan.nutriquest.NutriQuestExecuter.Companion.insertRespuestas
-import com.juan.nutriquest.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
+import com.uneatlantico.encuestas.NQController.Companion.formarPregunta
+import com.uneatlantico.encuestas.NQController.Companion.manejarRespuestas
+import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
 import kotlinx.android.synthetic.main.fragment_question.*
 import org.jetbrains.anko.doAsync
 
@@ -46,6 +43,7 @@ class QuestionFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_question, container, false)
         val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
         val idPregunta = arguments!!.getInt("idPreguntaActual")
+        //Log.d("idPreguntajk", idPregunta.toString())
         forwardArrow = v.findViewById(R.id.nextArrow)
         val pregunta = formarPregunta(this.context!!, idPregunta)
         //printPregunta(pregunta)
@@ -99,10 +97,12 @@ class QuestionFragment : Fragment() {
             else {
                 doAsync {
                     //escondo la flecha de avance de pregunta
-                    forwardArrow.visibility = View.INVISIBLE
+                    //forwardArrow.visibility = View.INVISIBLE
+                    forwardArrow.alpha = 0.0F
+                    forwardArrow.isClickable = false
 
                     //envio las respuestas
-                    manejarRespuestas(ct!!, idPreguntaAnterior,idPregunta, numeroPreguntaSiguiente(ct, idPregunta), respuestas)
+                    manejarRespuestas(ct!!, idPreguntaAnterior,idPregunta, respuestas)
 
                     //mando cambiar de fragmento
                     (activity as NutriQuestMain).changeFragment(idPregunta)

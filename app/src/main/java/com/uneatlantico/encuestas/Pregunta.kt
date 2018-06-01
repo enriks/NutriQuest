@@ -1,4 +1,4 @@
-package com.juan.nutriquest
+package com.uneatlantico.encuestas
 
 import java.util.HashMap
 
@@ -37,14 +37,16 @@ class Respuesta(var map:MutableMap<String, Any?>){
     var categoriaVisibilidad: Int by map
     var visibilidad: Int by map
     var contestado:Int by map
+    var idPreguntaSiguiente:Int by map
 
-    constructor(_id:Int = 0, respuesta:String, categoriaVisibilidad:Int, determinaCategoria: Int,visibilidad:Int = 1, contestado:Int = 0):this(HashMap()){
+    constructor(_id:Int = 0, respuesta:String, categoriaVisibilidad:Int, determinaCategoria: Int,visibilidad:Int = 1, contestado:Int = 0, idPreguntaSiguiente:Int = 0):this(HashMap()){
         this._id = _id
         this.respuesta = respuesta
         this.determinaCategoria = determinaCategoria
         this.categoriaVisibilidad = categoriaVisibilidad
         this.visibilidad = visibilidad
         this.contestado = contestado
+        this.idPreguntaSiguiente = idPreguntaSiguiente
     }
 }
 
