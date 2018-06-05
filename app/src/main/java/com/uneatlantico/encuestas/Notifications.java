@@ -72,7 +72,7 @@ public class Notifications extends FirebaseMessagingService {
      */
     private void sendNotification(Map<String, String> messageBody) {
         Intent intent = new Intent(this, NutriQuestMain.class);
-        intent.putExtra("idPregunta", 6);
+        intent.putExtra("idPregunta", 35);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);

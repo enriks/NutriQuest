@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageButton
 import android.util.Log
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.deleteAll
@@ -23,12 +24,14 @@ class NutriQuestMain : AppCompatActivity() {
     private var doubleBackToExitPressedOnce = false
     private lateinit var nQController:NQController
     private lateinit var mensajeDespedida:TextView
+    private lateinit var container:FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nutri_quest_main)
         nQController = NQController()
         mensajeDespedida = findViewById(R.id.mensajeDespedida)
+        container = findViewById(R.id.container)
         val envio = findViewById<Button>(R.id.pulsemepelotudo)
         envio.alpha = 0.0F
         /*envio.setOnClickListener {
@@ -70,7 +73,8 @@ class NutriQuestMain : AppCompatActivity() {
         }
         else {
             //mandarTodasLasRespuestas(this)
-            removeFragment();
+            removeFragment()
+            container.alpha = 0.0F
             mensaje("termino el test", "Fin")
             mensajeDespedida.alpha = 1.0F
 

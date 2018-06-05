@@ -19,14 +19,11 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResultCallback
 import com.google.android.gms.common.api.Status
-import com.google.firebase.iid.FirebaseInstanceIdService
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.actualizarUsuario
 import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.idUsuario
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.insertarUsuario
 import java.util.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.uneatlantico.encuestas.NQController.Companion.guardarUsuario
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.guardarRespuesta
+
 
 
 /**
@@ -37,7 +34,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
     private val RC_SIGN_IN = 9001
     internal lateinit var mGoogleApiClient: GoogleApiClient
     internal lateinit var signInButton: SignInButton
-    internal lateinit var signOutButton: Button
+//    internal lateinit var signOutButton: Button
+    internal lateinit var texto:TextView
+    internal lateinit var boton:Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +61,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
             signInButton.setSize(1)
             signInButton.setOnClickListener(this)
 
-            signOutButton = findViewById(R.id.sign_in_button)
-            signOutButton.setOnClickListener(this)
+            boton = findViewById(R.id.sign_in_button)
+//            signOutButton.setOnClickListener(this)
+
+            texto = findViewById(R.id.email)
+            boton.setOnClickListener(this)
         }
     }
 
@@ -81,10 +83,22 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
 
     }
 
+    private fun signInNoGoogle(){
+
+        Log.d("textView", texto.text.toString())
+        if(texto.text.toString() != "") {
+            saveUser(texto.text.toString())
+            startNewActivity()
+        }
+        else
+            Toast.makeText(this, "No puede estar vacio", Toast.LENGTH_SHORT).show()
+
+    }
+
     override fun onClick(v: View) {
         when (v.id) {
             R.id.sign_in_button2 -> signIn()
-            R.id.sign_in_button -> signOut()
+            R.id.sign_in_button -> signInNoGoogle()
         }
     }
 
@@ -125,7 +139,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
             val idDispositivo = FirebaseInstanceId.getInstance().token
             Log.d("idUsuario", idDispositivo)
             val nombre = acct.displayName
-
             val email = acct.email
             val idPersona = email!!.split("@".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
             val photoUrl = acct.photoUrl.toString()
@@ -139,10 +152,28 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
 
     }
 
+    private fun saveUser(usuario:String){
+        try {
+            val idDispositivo = FirebaseInstanceId.getInstance().token
+            Log.d("idUsuario", idDispositivo)
+            val nombre = usuario
+
+            val email = ""
+            val idPersona = usuario
+            val photoUrl = ""
+            val listaTemp = Arrays.asList<String>(idPersona, nombre, email, photoUrl, idDispositivo)
+
+            guardarUsuario(this, listaTemp)
+
+        } catch (e: Exception) {
+            Log.d("noInsertadoLogin", e.message)
+        }
+    }
+
     private fun startNewActivity() {
         val i = Intent(this, NutriQuestMain::class.java)
         //i.putExtra("account", acct);
-        i.putExtra("idPregunta", 0)
+        i.putExtra("idPregunta", 1)
         //Log.d("jsonaccount" ,acct.toJson());
         //Kill the activity from which you will go to next activity
         startActivity(i)

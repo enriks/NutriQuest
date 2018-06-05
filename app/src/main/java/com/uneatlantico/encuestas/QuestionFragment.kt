@@ -61,7 +61,7 @@ class QuestionFragment : Fragment() {
         }
         val nQAdapter = NQAdapter(respuestas,object : NQAdapter.NQAdapterListener {
             override fun unCheckClick(position: Int) {
-                val respuesta = respuestas[position]
+
                 respuestas[position].contestado = 0
                 sizeConstestadas --
                 if(sizeConstestadas<MINIMOS_ELEGIDOS){
@@ -72,7 +72,7 @@ class QuestionFragment : Fragment() {
             }
 
             override fun checkClick(position: Int) {
-                val respuesta = respuestas[position]
+
                 respuestas[position].contestado = 1
                 sizeConstestadas ++
                 if(sizeConstestadas>=MINIMOS_ELEGIDOS){
@@ -143,6 +143,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
         if(listaRespuestas[position].visibilidad == 1) {
             holder.respuestaPosible.visibility = View.VISIBLE
             holder.check.visibility = View.VISIBLE
+            //if(listaRespuestas[position].contestado == 1) holder.check.isChecked = true
             holder.respuestaPosible.text = listaRespuestas[position].respuesta
             holder.setOnClickListener(View.OnClickListener {
                 holder.check.isChecked = !(holder.check.isChecked)
