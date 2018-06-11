@@ -2,6 +2,7 @@ package com.uneatlantico.encuestas
 
 import android.content.ClipData
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -143,13 +144,20 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
         if(listaRespuestas[position].visibilidad == 1) {
             holder.respuestaPosible.visibility = View.VISIBLE
             holder.check.visibility = View.VISIBLE
-            //if(listaRespuestas[position].contestado == 1) holder.check.isChecked = true
             holder.respuestaPosible.text = listaRespuestas[position].respuesta
+
+            /**
+             * feedback al usuario sobre respuesta ya respondida anteriormente
+             */
+            if(listaRespuestas[position].contestado == 1) {
+                holder.respuestaPosible.setTextColor(Color.BLUE)
+            }
+
+
             holder.setOnClickListener(View.OnClickListener {
                 holder.check.isChecked = !(holder.check.isChecked)
                 if (holder.check.isChecked) {
                     onClickListener.checkClick(position)
-
                 } else {
                     onClickListener.unCheckClick(position)
                 }
