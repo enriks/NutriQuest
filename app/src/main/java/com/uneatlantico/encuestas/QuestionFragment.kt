@@ -35,31 +35,29 @@ class QuestionFragment : Fragment() {
     private lateinit var listaRespuestas:RecyclerView
     private lateinit var tituloPregunta:TextView
     private lateinit var forwardArrow:ImageView
+    private var sizeConstestadas = 0
 
     private val LIMITE_ELEGIDOS: Byte = 3
     private val MINIMOS_ELEGIDOS: Byte = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val ct = this.context
         val v = inflater.inflate(R.layout.fragment_question, container, false)
+
+        val ct = this.context
+
         val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
         val idPregunta = arguments!!.getInt("idPreguntaActual")
-        //Log.d("idPreguntajk", idPregunta.toString())
-        forwardArrow = v.findViewById(R.id.nextArrow)
+
         val pregunta = formarPregunta(this.context!!, idPregunta)
-        //printPregunta(pregunta)
+        val respuestas = pregunta.posiblesRespuestas
+
         tituloPregunta = v.findViewById(R.id.pregunta)
         tituloPregunta.text = pregunta.pregunta
-        var sizeConstestadas = 0
-        val respuestas = pregunta.posiblesRespuestas
 
         listaRespuestas = v.findViewById(R.id.listaRespuestas)
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this.context!!)
         listaRespuestas.layoutManager = layoutManager
-        if(sizeConstestadas<MINIMOS_ELEGIDOS){
-            forwardArrow.alpha = 0.0F
-            forwardArrow.isClickable = false
-        }
+
         val nQAdapter = NQAdapter(respuestas,object : NQAdapter.NQAdapterListener {
             override fun unCheckClick(position: Int) {
 
@@ -86,12 +84,12 @@ class QuestionFragment : Fragment() {
         })
         listaRespuestas.adapter = nQAdapter
 
-
+        forwardArrow = v.findViewById(R.id.nextArrow)
         forwardArrow.setOnClickListener {
 
             //compruebo si puede avanzar con la cantidad de preguntas contestadas
             if( sizeConstestadas < MINIMOS_ELEGIDOS){ //||sizeConstestadas > LIMITE_ELEGIDOS){
-                Toast.makeText(ct, "no has elegido una cantidad adecuada", Toast.LENGTH_LONG).show()
+                Toast.makeText(this.context, "no has elegido una cantidad adecuada", Toast.LENGTH_LONG).show()
             }
 
             //termino la pregunta
@@ -109,6 +107,11 @@ class QuestionFragment : Fragment() {
                     (activity as NutriQuestMain).changeFragment(idPregunta)
                 }
             }
+        }
+
+        if(sizeConstestadas<MINIMOS_ELEGIDOS){
+            forwardArrow.alpha = 0.0F
+            forwardArrow.isClickable = false
         }
 
         return v
