@@ -49,18 +49,22 @@ class NutriQuestExecuter{
             var pregunta = SoloPregunta()
             try {
                 val db = NutriQuestDB(ct).readableDatabase
-                val sql = "select pregunta, idCategoria, visibilidad from (select p._id, pregunta from Preguntas p where _id = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 0"
+                val sql = "select pregunta, idCategoria, visibilidad, minRespuestas, maxRespuestas from (select p._id, pregunta, minRespuestas, maxRespuestas from Preguntas p where _id = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 0"
                 val cursor = db.rawQuery(sql, null)
                 var respuesta:String
                 var idCategoria:Int
                 var visibilidad:Int
+                var minRespuestas:Int
+                var maxRespuestas:Int
                 //Log.d("sqlyes", sql)
                 if(cursor.moveToFirst()){
                     while (!cursor.isAfterLast) {
                         respuesta = cursor.getString(cursor.getColumnIndex("pregunta"))
                         idCategoria = cursor.getInt(cursor.getColumnIndex("idCategoria"))
                         visibilidad = cursor.getInt(cursor.getColumnIndex("visibilidad"))
-                        pregunta = SoloPregunta(_id = idPregunta, pregunta = respuesta, idCategoria = idCategoria, visibilidad = visibilidad)
+                        minRespuestas =  cursor.getInt(cursor.getColumnIndex("minRespuestas"))
+                        maxRespuestas =  cursor.getInt(cursor.getColumnIndex("maxRespuestas"))
+                        pregunta = SoloPregunta(_id = idPregunta, pregunta = respuesta, idCategoria = idCategoria, visibilidad = visibilidad, minRespuestas = minRespuestas, maxRespuestas = maxRespuestas)
                         cursor.moveToNext()
                     }
                 }
@@ -79,7 +83,7 @@ class NutriQuestExecuter{
             try {
                 val db = NutriQuestDB(ct).readableDatabase
                 var pregunta:String
-                val sql1 = "select t._id, t.respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente,contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1 left join Respuestas re on re.idRespuesta = t._id"
+                val sql1 = "select distinct t._id, t.respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente,contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1 left join (SELECT idRespuesta ,contestado from Respuestas) re on re.idRespuesta = t._id"//"select t._id, t.respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente,contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1 left join (SELECT idRespuesta ,contestado from Respuestas) re on re.idRespuesta = t._id"
                 //val sql = "select respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente, contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1"
                 val cursor = db.rawQuery(sql1, null)
                 var _id:Int
@@ -99,7 +103,7 @@ class NutriQuestExecuter{
                         idPreguntaSiguiente = cursor.getInt(cursor.getColumnIndex("idPreguntaSiguiente"))
                         contestado = cursor.getInt(cursor.getColumnIndex("contestado"))
                         //Log.d("micategoria", determinaCategoria.toString())
-                        respuestasPosibles.add(Respuesta(_id= _id,respuesta = respuesta, categoriaVisibilidad= categoriaVisibilidad,determinaCategoria = determinaCategoria, visibilidad = visibilidad, idPreguntaSiguiente = idPreguntaSiguiente, contestado = contestado))
+                        respuestasPosibles.add(Respuesta(_id= _id,respuesta = respuesta, categoriaVisibilidad= categoriaVisibilidad,determinaCategoria = determinaCategoria, visibilidad = visibilidad, idPreguntaSiguiente = idPreguntaSiguiente, contestadoAnterior = contestado))
                         cursor.moveToNext()
                     }
                 }
@@ -187,21 +191,22 @@ class NutriQuestExecuter{
             return numeroPreguntas
         }
 
-        fun numeroPreguntaSiguiente(ct: Context, idPregunta:Int):Int{
-            var idPregunta:Int = 0
+        fun numeroPreguntaSiguiente(ct: Context, idPregunta:Int): IntArray{
+            var idPreguntasPosteriores = IntArray(2)
             try{
                 val db = NutriQuestDB(ct).readableDatabase
-                val sql = "SELECT idPreguntaPosterior FROM respuestas where idPregunta = (SELECT idPregunta from respuestas ORDER BY _id desc limit 1) and contestado = 1 order by _id desc limit 1"
+                val sql = "SELECT idPreguntaSiguiente ip, idPreguntaPosterior ir FROM (SELECT _id,idPreguntaSiguiente from Preguntas where _id = $idPregunta) p left join (SELECT idPreguntaPosterior, idPregunta from Respuestas where idPregunta = $idPregunta and contestado = 1) r on r.idPregunta = p._id"//"SELECT idPreguntaPosterior, idPreguntaSiguiente FROM Respuestas r, Preguntas p where idPregunta = (SELECT idPregunta from respuestas ORDER BY _id desc limit 1) and contestado = 1 and p._id = idPregunta order by r._id desc limit 1"
                 val cursor = db.rawQuery(sql, null)
 
                 if(cursor.moveToFirst()){
-                    idPregunta = cursor.getInt(cursor.getColumnIndex("idPreguntaPosterior"))
+                    idPreguntasPosteriores[0] = cursor.getInt(cursor.getColumnIndex("ip"))
+                    idPreguntasPosteriores[1] = cursor.getInt(cursor.getColumnIndex("ir"))
                     Log.d("nextQ", idPregunta.toString())
                 }
                 cursor.close()
                 db.close()
             }catch (e:Exception){Log.d("numeroPreguntasExcepcio", e.message)}
-            return idPregunta
+            return idPreguntasPosteriores
         }
 
         fun ultimaPregunta(ct:Context):Int{

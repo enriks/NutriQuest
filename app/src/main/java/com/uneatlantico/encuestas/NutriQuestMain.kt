@@ -75,7 +75,8 @@ class NutriQuestMain : AppCompatActivity() {
             //mandarTodasLasRespuestas(this)
             removeFragment()
             container.alpha = 0.0F
-            mensaje("termino el test", "Fin")
+
+            //doAsync {  mensaje("termino el test", "Fin")}
             mensajeDespedida.alpha = 1.0F
 
         }

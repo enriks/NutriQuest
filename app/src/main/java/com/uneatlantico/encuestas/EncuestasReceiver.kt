@@ -113,7 +113,8 @@ fun firstConexion(ct:Context) {
     }
 }
 
-fun enviarUsuario(ct: Context, usuario: List<String>) {
+fun enviarUsuario(ct: Context, usuario: List<String>):Int {
+    var enviado = 0
     try {
         val url = URL("http://172.22.1.3/php/encuestas/registrar.php")
         val conn = connectWS(url)
@@ -128,8 +129,9 @@ fun enviarUsuario(ct: Context, usuario: List<String>) {
         val text: String? = enviarWS(conn, jsonParam)
 
         if (text != null) {
-            Log.d("enviarUsuario", text)
 
+            Log.d("enviarUsuario", text)
+            enviado = 1
             //val x = JSONArray(text)
             val jsony = JSONObject(text)
             //val jsonObject = x.getJSONObject(0)
@@ -139,6 +141,7 @@ fun enviarUsuario(ct: Context, usuario: List<String>) {
     } catch (e: Exception) {
         Log.d("responseWebservice", e.toString())
     }
+    return enviado
 }
 
 fun enviarWS(conn: HttpURLConnection, jsonParam: JSONObject):String{
@@ -152,8 +155,8 @@ fun enviarWS(conn: HttpURLConnection, jsonParam: JSONObject):String{
 
 fun connectWS(url:URL):HttpURLConnection{
     val conn = url.openConnection() as HttpURLConnection
-    conn.readTimeout = 1000
-    conn.connectTimeout = 1500
+    conn.readTimeout = 2000
+    conn.connectTimeout = 2500
     conn.requestMethod = "POST"
     //conn.setRequestProperty("Content-Type", "false")
     conn.setRequestProperty("Accept", "application/json;charset=utf-8")

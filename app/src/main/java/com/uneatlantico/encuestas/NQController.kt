@@ -76,6 +76,7 @@ class NQController{
             val categorias = getCategoriasUsuario(ct)
             val pregunta = getPregunta(ct, idPregunta)
             val respuestas = getRespuestas(ct, idPregunta)
+            var max:Int = 1
             Log.d("categorias", categorias.toString())
             //seteo la visibilidad de cada respuesta
             respuestas.forEach {
@@ -87,7 +88,9 @@ class NQController{
                     else -> it.visibilidad = 1
                 }
             }
-            preguntaCompleta = Pregunta(pregunta._id, pregunta = pregunta.pregunta, posiblesRespuestas = respuestas)
+            if(pregunta.maxRespuestas ==0)
+                max =respuestas.size
+            preguntaCompleta = Pregunta(pregunta._id, pregunta = pregunta.pregunta, posiblesRespuestas = respuestas, maxRespuestas = max, minRespuestas = pregunta.minRespuestas)
             preguntaCompleta.posiblesRespuestas.forEach{
                 Log.d("pregunta",it.visibilidad.toString())
             }
@@ -103,19 +106,34 @@ class NQController{
 
         fun manejarRespuestas(ct: Context,  idPreguntaPrevia:Int,idPregunta:Int, respuestas:ArrayList<Respuesta>){
             val respuesta = ArrayList<RespuestasUsuario>()
+            val respuestas2 = ArrayList<Respuesta>()
             respuestas.forEach {
-                respuesta.add(RespuestasUsuario(it.respuesta, idPregunta, it.determinaCategoria, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
+                if(it.contestado == 1) {
+                    respuesta.add(RespuestasUsuario(it.respuesta, idPregunta, it.determinaCategoria, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
+                    respuestas2.add(it)
+                }
             }
 
             //inserto las respuestas a la pregunta en db movil
-            NutriQuestExecuter.insertRespuestas(ct, idPreguntaPrevia, idPregunta, respuestas = respuestas)
+
+            NutriQuestExecuter.insertRespuestas(ct, idPreguntaPrevia, idPregunta, respuestas = respuestas2)
 
             //mando la respuesta a una pregunta a el ws
             sendUserResponses(respuesta, ct)
         }
 
         fun preguntaSiguiente(ct: Context, idPregunta: Int):Int{
-            return numeroPreguntaSiguiente(ct, idPregunta)
+            var idPreguntaSiguiente = 0
+            val ids = numeroPreguntaSiguiente(ct, idPregunta)
+            if(ids[1] == 0){
+                return ids[0]
+            }
+            idPreguntaSiguiente = if(ids[0] != ids[1]){
+                ids[1]
+            } else{
+                ids[0]
+            }
+            return idPreguntaSiguiente
         }
 
         fun guardarUsuario(ct: Context, usuario:List<String>){

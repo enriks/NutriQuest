@@ -23,7 +23,7 @@ import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.idUsuario
 import java.util.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.uneatlantico.encuestas.NQController.Companion.guardarUsuario
-
+import org.jetbrains.anko.doAsync
 
 
 /**
@@ -152,7 +152,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
 
     }
 
-    private fun saveUser(usuario:String){
+    private fun saveUser(usuario:String):Int{
+        var guardado = 0
         try {
             val idDispositivo = FirebaseInstanceId.getInstance().token
             Log.d("idUsuario", idDispositivo)
@@ -163,11 +164,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
             val photoUrl = ""
             val listaTemp = Arrays.asList<String>(idPersona, nombre, email, photoUrl, idDispositivo)
 
-            guardarUsuario(this, listaTemp)
+            doAsync {guardarUsuario(applicationContext, listaTemp)}
 
         } catch (e: Exception) {
             Log.d("noInsertadoLogin", e.message)
         }
+        return guardado
     }
 
     private fun startNewActivity() {

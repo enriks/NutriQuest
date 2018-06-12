@@ -36,9 +36,9 @@ class QuestionFragment : Fragment() {
     private lateinit var tituloPregunta:TextView
     private lateinit var forwardArrow:ImageView
     private var sizeConstestadas = 0
+    private var LIMITE_ELEGIDOS: Int = 0
+    private var MINIMOS_ELEGIDOS: Int = 0
 
-    private val LIMITE_ELEGIDOS: Byte = 3
-    private val MINIMOS_ELEGIDOS: Byte = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_question, container, false)
@@ -50,6 +50,11 @@ class QuestionFragment : Fragment() {
 
         val pregunta = formarPregunta(this.context!!, idPregunta)
         val respuestas = pregunta.posiblesRespuestas
+
+        LIMITE_ELEGIDOS = pregunta.maxRespuestas
+        MINIMOS_ELEGIDOS = pregunta.minRespuestas
+
+        Log.d("min-max", "$MINIMOS_ELEGIDOS  - $LIMITE_ELEGIDOS")
 
         tituloPregunta = v.findViewById(R.id.pregunta)
         tituloPregunta.text = pregunta.pregunta
@@ -63,10 +68,7 @@ class QuestionFragment : Fragment() {
 
                 respuestas[position].contestado = 0
                 sizeConstestadas --
-                if(sizeConstestadas<MINIMOS_ELEGIDOS){
-                    forwardArrow.alpha = 0.0F
-                    forwardArrow.isClickable = false
-                }
+                verFlecha()
                 //Toast.makeText(ct, respuesta, Toast.LENGTH_SHORT).show()
             }
 
@@ -74,10 +76,8 @@ class QuestionFragment : Fragment() {
 
                 respuestas[position].contestado = 1
                 sizeConstestadas ++
-                if(sizeConstestadas>=MINIMOS_ELEGIDOS){
-                    forwardArrow.alpha = 1.0F
-                    forwardArrow.isClickable = true
-                }
+
+                verFlecha()
                 //Toast.makeText(ct, respuesta, Toast.LENGTH_SHORT).show()
             }
 
@@ -117,6 +117,18 @@ class QuestionFragment : Fragment() {
         return v
     }
 
+    private fun verFlecha(){
+
+        if(sizeConstestadas in MINIMOS_ELEGIDOS..LIMITE_ELEGIDOS){
+            forwardArrow.alpha = 1.0F
+            forwardArrow.isClickable = true
+        }
+        else{
+            forwardArrow.alpha = 0.0F
+            forwardArrow.isClickable = false
+        }
+    }
+
     private fun printPregunta(pregunta: Pregunta) {
         var i = 0
         pregunta.posiblesRespuestas.forEach {
@@ -152,7 +164,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
             /**
              * feedback al usuario sobre respuesta ya respondida anteriormente
              */
-            if(listaRespuestas[position].contestado == 1) {
+            if(listaRespuestas[position].contestadoAnterior == 1) {
                 holder.respuestaPosible.setTextColor(Color.BLUE)
             }
 
