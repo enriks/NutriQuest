@@ -1,9 +1,6 @@
 package com.uneatlantico.encuestas
 
-import android.content.ClipData
-import android.content.Context
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.AppCompatTextView
@@ -16,9 +13,8 @@ import android.view.ViewGroup
 import android.widget.*
 import com.uneatlantico.encuestas.NQController.Companion.formarPregunta
 import com.uneatlantico.encuestas.NQController.Companion.manejarRespuestas
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
-import kotlinx.android.synthetic.main.fragment_question.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.find
 
 
 /**
@@ -35,7 +31,7 @@ class QuestionFragment : Fragment() {
     private lateinit var listaRespuestas:RecyclerView
     private lateinit var tituloPregunta:TextView
     private lateinit var forwardArrow:ImageView
-    private var sizeConstestadas = 0
+    private val posicionClick = ArrayList<Int>()
     private var LIMITE_ELEGIDOS: Int = 0
     private var MINIMOS_ELEGIDOS: Int = 0
 
@@ -51,6 +47,8 @@ class QuestionFragment : Fragment() {
         val pregunta = formarPregunta(this.context!!, idPregunta)
         val respuestas = pregunta.posiblesRespuestas
 
+
+
         LIMITE_ELEGIDOS = pregunta.maxRespuestas
         MINIMOS_ELEGIDOS = pregunta.minRespuestas
 
@@ -65,20 +63,26 @@ class QuestionFragment : Fragment() {
 
         val nQAdapter = NQAdapter(respuestas,object : NQAdapter.NQAdapterListener {
             override fun unCheckClick(position: Int) {
-
                 respuestas[position].contestado = 0
-                sizeConstestadas --
+                posicionClick.remove(position)
                 verFlecha()
-                //Toast.makeText(ct, respuesta, Toast.LENGTH_SHORT).show()
+
             }
 
-            override fun checkClick(position: Int) {
+            override fun checkClick(position: Int, holder: NQAdapter.NQViewHolder) {
+                //if(!posicionClick.contains(position))
+                posicionClick.add(position)
+                Log.d("elementos",posicionClick.toString())
+                if(posicionClick.size > LIMITE_ELEGIDOS) {
+                    var algo = posicionClick[0]
+                    respuestas[algo].contestado = 0
+                    listaRespuestas.adapter.notifyItemChanged(algo)//notifyDataSetChanged()
+                    posicionClick.removeAt(0)
+                }
 
                 respuestas[position].contestado = 1
-                sizeConstestadas ++
 
                 verFlecha()
-                //Toast.makeText(ct, respuesta, Toast.LENGTH_SHORT).show()
             }
 
         })
@@ -88,7 +92,7 @@ class QuestionFragment : Fragment() {
         forwardArrow.setOnClickListener {
 
             //compruebo si puede avanzar con la cantidad de preguntas contestadas
-            if( sizeConstestadas < MINIMOS_ELEGIDOS){ //||sizeConstestadas > LIMITE_ELEGIDOS){
+            if( posicionClick.size < MINIMOS_ELEGIDOS){ //||sizeConstestadas > LIMITE_ELEGIDOS){
                 Toast.makeText(this.context, "no has elegido una cantidad adecuada", Toast.LENGTH_LONG).show()
             }
 
@@ -104,12 +108,13 @@ class QuestionFragment : Fragment() {
                     manejarRespuestas(ct!!, idPreguntaAnterior,idPregunta, respuestas)
 
                     //mando cambiar de fragmento
-                    (activity as NutriQuestMain).changeFragment(idPregunta)
+
                 }
+                (activity as NutriQuestMain).changeFragment(idPregunta)
             }
         }
 
-        if(sizeConstestadas<MINIMOS_ELEGIDOS){
+        if(posicionClick.size<MINIMOS_ELEGIDOS){
             forwardArrow.alpha = 0.0F
             forwardArrow.isClickable = false
         }
@@ -119,7 +124,7 @@ class QuestionFragment : Fragment() {
 
     private fun verFlecha(){
 
-        if(sizeConstestadas in MINIMOS_ELEGIDOS..LIMITE_ELEGIDOS){
+        if( posicionClick.size in MINIMOS_ELEGIDOS..LIMITE_ELEGIDOS){
             forwardArrow.alpha = 1.0F
             forwardArrow.isClickable = true
         }
@@ -157,8 +162,8 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
 
     override fun onBindViewHolder(holder: NQViewHolder, position: Int) {
         if(listaRespuestas[position].visibilidad == 1) {
-            holder.respuestaPosible.visibility = View.VISIBLE
-            holder.check.visibility = View.VISIBLE
+            holder.bloque.visibility = View.VISIBLE
+            Log.d("hola", listaRespuestas[position].respuesta)
             holder.respuestaPosible.text = listaRespuestas[position].respuesta
 
             /**
@@ -168,11 +173,15 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
                 holder.respuestaPosible.setTextColor(Color.BLUE)
             }
 
+            holder.check.isChecked = (listaRespuestas[position].contestado == 1)
 
+            /**
+             * click del check
+             */
             holder.setOnClickListener(View.OnClickListener {
                 holder.check.isChecked = !(holder.check.isChecked)
                 if (holder.check.isChecked) {
-                    onClickListener.checkClick(position)
+                    onClickListener.checkClick(position, holder)
                 } else {
                     onClickListener.unCheckClick(position)
                 }
@@ -192,12 +201,16 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
     }
 
     inner class NQViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
-        var check: CheckBox
+        val check: CheckBox
         val respuestaPosible: AppCompatTextView
+        val separador:ImageView
+        val bloque:LinearLayout
 
         init {
+            bloque = itemView.findViewById(R.id.bloque) as LinearLayout
             check = itemView.findViewById(R.id.checky) as CheckBox
             respuestaPosible = itemView.findViewById(R.id.respuestaPosible) as AppCompatTextView
+            separador = itemView.findViewById(R.id.separador)
             check.isClickable = false
         }
 
@@ -208,7 +221,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
     }
 
     interface NQAdapterListener {
-        fun checkClick(position: Int)
+        fun checkClick(position: Int, check: NQViewHolder)
         fun unCheckClick(position: Int)
         //fun viewMore(v:View, position: Int)
     }

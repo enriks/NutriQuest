@@ -29,14 +29,12 @@ class NQController{
 
         var preguntaSiguiente = idPregunta
         do {
-
             preguntaSiguiente = preguntaSiguiente(ct, preguntaSiguiente)
-            //Log.d("preguntaSIguiente", preguntaSiguiente.toString())
             if(preguntaSiguiente == 0){
                 preguntaSiguiente = -1
                 break
             }
-            idPreguntas.add(preguntaSiguiente)
+            //idPreguntas.add(preguntaSiguiente)
         } while (seguir(ct, preguntaSiguiente))
 
         return preguntaSiguiente
@@ -67,6 +65,9 @@ class NQController{
     companion object {
 
         /**
+         *
+         * Creo la pregunta juntando preguntas, respuestas, y el numero de respuestas posibles a responder
+         *
          * visibilidad 1 es que es visible
          * visibilidad 2 es que no lo es
          * visibilidad 0 es que no tiene un valor definido
@@ -78,6 +79,7 @@ class NQController{
             val respuestas = getRespuestas(ct, idPregunta)
             var max:Int = 1
             Log.d("categorias", categorias.toString())
+
             //seteo la visibilidad de cada respuesta
             respuestas.forEach {
                 when(it.visibilidad){
@@ -88,11 +90,13 @@ class NQController{
                     else -> it.visibilidad = 1
                 }
             }
+
+            //seteo la maxima cantidad de respuestas
             if(pregunta.maxRespuestas ==0)
                 max =respuestas.size
             preguntaCompleta = Pregunta(pregunta._id, pregunta = pregunta.pregunta, posiblesRespuestas = respuestas, maxRespuestas = max, minRespuestas = pregunta.minRespuestas)
             preguntaCompleta.posiblesRespuestas.forEach{
-                Log.d("pregunta",it.visibilidad.toString())
+                //Log.d("pregunta",it.visibilidad.toString())
             }
             return preguntaCompleta
         }
@@ -104,6 +108,9 @@ class NQController{
             }
         }
 
+        /**
+         * Una vez que el usuario avance de pregunta guarda y envia las respuestas
+         */
         fun manejarRespuestas(ct: Context,  idPreguntaPrevia:Int,idPregunta:Int, respuestas:ArrayList<Respuesta>){
             val respuesta = ArrayList<RespuestasUsuario>()
             val respuestas2 = ArrayList<Respuesta>()
@@ -115,13 +122,15 @@ class NQController{
             }
 
             //inserto las respuestas a la pregunta en db movil
-
             NutriQuestExecuter.insertRespuestas(ct, idPreguntaPrevia, idPregunta, respuestas = respuestas2)
 
             //mando la respuesta a una pregunta a el ws
             sendUserResponses(respuesta, ct)
         }
 
+        /**
+         * consigo el id de pregunta siguiente
+         */
         fun preguntaSiguiente(ct: Context, idPregunta: Int):Int{
             var idPreguntaSiguiente = 0
             val ids = numeroPreguntaSiguiente(ct, idPregunta)
@@ -136,6 +145,9 @@ class NQController{
             return idPreguntaSiguiente
         }
 
+        /**
+         * guardo el usuario logueado en DB y en la web
+         */
         fun guardarUsuario(ct: Context, usuario:List<String>){
             doAsync {
                 NutriQuestExecuter.insertarUsuario(ct, usuario)

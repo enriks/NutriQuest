@@ -40,8 +40,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d("hola", "hola")
+        //Si ya hay un usuario logueado, pasar a la siguiente pantalla sin pasar por esta
         if (checkUsuario())
             startNewActivity()
+
+        //inicializo esta pantalla
         else {
             setTheme(R.style.AppTheme)
 
@@ -57,7 +62,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                     .build()
 
-            signInButton = findViewById(R.id.sign_in_button2)
+            signInButton = findViewById(R.id.sign_in_button_google)
             signInButton.setSize(1)
             signInButton.setOnClickListener(this)
 
@@ -69,6 +74,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
         }
     }
 
+    /**
+     * Compruebo si el usuario se logueo anteriormente Chequeando si existe algún registro el la tabla usuario
+     */
     private fun checkUsuario(): Boolean {
         var check: Boolean? = false
         try {
@@ -87,7 +95,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
 
         Log.d("textView", texto.text.toString())
         if(texto.text.toString() != "") {
-            saveUser(texto.text.toString())
+            usuarioLocal(texto.text.toString())
             startNewActivity()
         }
         else
@@ -97,20 +105,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.sign_in_button2 -> signIn()
+            R.id.sign_in_button_google -> signInGoogle()
             R.id.sign_in_button -> signInNoGoogle()
         }
     }
 
-    private fun mensaje(msg: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage(msg).setTitle("Advertencia Debug")
-        val dialog = builder.create()
-        dialog.show()
-    }
-
-
-    private fun signIn() {
+    private fun signInGoogle() {
         val signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
@@ -127,14 +127,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
         }
     }
 
+    /**
+     * tramito un login de google exitoso
+     */
     private fun handleSignInResult(result: GoogleSignInResult) {
         if (result.isSuccess) {
-            insertUsuarioDB(result.signInAccount!!)
+            usuarioGoogle(result.signInAccount!!)
             startNewActivity()
         }
     }
 
-    private fun insertUsuarioDB(acct: GoogleSignInAccount) {
+    /**
+     * Separo el usuario GOOGLE
+     */
+    private fun usuarioGoogle(acct: GoogleSignInAccount) {
         try {
             val idDispositivo = FirebaseInstanceId.getInstance().token
             Log.d("idUsuario", idDispositivo)
@@ -152,7 +158,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
 
     }
 
-    private fun saveUser(usuario:String):Int{
+    /**
+     * Separo el usuario insertado en el textBox y relleno los campos para mandarlos a NQController que lo administre
+     */
+    private fun usuarioLocal(usuario:String):Int{
         var guardado = 0
         try {
             val idDispositivo = FirebaseInstanceId.getInstance().token
@@ -194,47 +203,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
         })
     }
 
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    /*private lateinit var texto:TextView
-    private lateinit var boton:Button
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-        texto = findViewById(R.id.email)
-        boton = findViewById(R.id.sign_in_button)
-        boton.setOnClickListener{
-            Log.d("textView", texto.text.toString())
-            if(texto.text.toString() != "") {
-                usuario()
-                startNewActivity()
-            }
-            else
-                Toast.makeText(this, "No puede estar vacio", Toast.LENGTH_SHORT).show()
-        }
+    private fun mensaje(msg: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(msg).setTitle("Advertencia Debug")
+        val dialog = builder.create()
+        dialog.show()
     }
-
-    private fun usuario() {
-        Log.d("idUsuarioDb", "casi"+idUsuario(this))
-        var insertar = false
-        if(idUsuario(this) == "")
-            insertar = true
-        if(insertar)
-            insertarUsuario(this, texto.text.toString())
-        else
-            actualizarUsuario(this, texto.text.toString())
-    }
-
-    private fun startNewActivity() {
-        val i = Intent(this, NutriQuestMain::class.java)
-        //i.putExtra("account", acct);
-
-        //Log.d("jsonaccount" ,acct.toJson());
-        //Kill the activity from which you will go to next activity
-        startActivity(i)
-        finish()
-    }*/
 
 }
