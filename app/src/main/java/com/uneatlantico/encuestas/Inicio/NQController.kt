@@ -1,12 +1,17 @@
-package com.uneatlantico.encuestas
+package com.uneatlantico.encuestas.Inicio
 
 import android.content.Context
 import android.util.Log
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.getAllRespuestas
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.getCategoriasUsuario
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.getPregunta
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.getRespuestas
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
+import com.uneatlantico.encuestas.*
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.getAllRespuestas
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.getCategoriasUsuario
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.getPregunta
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.getRespuestas
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.numeroPreguntaSiguiente
+import com.uneatlantico.encuestas.DB.Pregunta
+import com.uneatlantico.encuestas.DB.Respuesta
+import com.uneatlantico.encuestas.DB.RespuestasUsuario
 import org.jetbrains.anko.doAsync
 
 /**
@@ -30,8 +35,7 @@ class NQController{
         var preguntaSiguiente = idPregunta
         do {
             preguntaSiguiente = preguntaSiguiente(ct, preguntaSiguiente)
-            if(preguntaSiguiente == 0){
-                preguntaSiguiente = -1
+            if(preguntaSiguiente == -1){
                 break
             }
             //idPreguntas.add(preguntaSiguiente)
@@ -72,8 +76,8 @@ class NQController{
          * visibilidad 2 es que no lo es
          * visibilidad 0 es que no tiene un valor definido
          */
-        fun formarPregunta(ct:Context, idPregunta: Int):Pregunta{
-            var preguntaCompleta:Pregunta
+        fun formarPregunta(ct:Context, idPregunta: Int): Pregunta {
+            var preguntaCompleta: Pregunta
             val categorias = getCategoriasUsuario(ct)
             val pregunta = getPregunta(ct, idPregunta)
             val respuestas = getRespuestas(ct, idPregunta)

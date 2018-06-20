@@ -26,9 +26,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NutriQuestMain"
+            android:name=".Inicio.NutriQuestMain"
             android:label="@string/title_activity_login"/>
-        <service android:name=".Notifications">
+        <service android:name=".notificaciones.Notifications">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

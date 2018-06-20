@@ -1,20 +1,15 @@
-package com.uneatlantico.encuestas
+package com.uneatlantico.encuestas.Inicio
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.Parcelable
 import android.support.v4.app.Fragment
-import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageButton
-import android.util.Log
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.deleteAll
-import org.jetbrains.anko.doAsync
+import com.uneatlantico.encuestas.R
 
 class NutriQuestMain : AppCompatActivity() {
 
@@ -22,7 +17,7 @@ class NutriQuestMain : AppCompatActivity() {
     private val fm = supportFragmentManager
     private val mHandler = Handler()
     private var doubleBackToExitPressedOnce = false //boolean para controlar doble click
-    private lateinit var nQController:NQController
+    private lateinit var nQController: NQController
     private lateinit var mensajeDespedida:TextView
     private lateinit var container:FrameLayout
 

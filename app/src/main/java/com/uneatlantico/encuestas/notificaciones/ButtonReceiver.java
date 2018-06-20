@@ -1,4 +1,4 @@
-package com.uneatlantico.encuestas;
+package com.uneatlantico.encuestas.notificaciones;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;

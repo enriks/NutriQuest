@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".QuestionFragment"
+    tools:context=".Inicio.QuestionFragment"
     android:gravity="center_horizontal"
 
     >
@@ -12,7 +12,6 @@
     <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.CardView
         android:background="@android:color/white"
-        android:elevation="2dp"
         app:cardCornerRadius="5dp"
         app:cardElevation="2dp"
         android:layout_width="match_parent"
@@ -55,7 +54,6 @@
         android:focusable="true"
         android:layout_width="80dp"
         android:layout_height="56dp"
-        android:elevation="16dp"
         android:src = "@drawable/baseline_arrow_right_alt_black_48"/>
 
 </RelativeLayout>

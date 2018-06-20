@@ -1,4 +1,4 @@
-package com.uneatlantico.encuestas
+package com.uneatlantico.encuestas.DB
 
 import java.util.HashMap
 
@@ -17,7 +17,7 @@ class Pregunta(map: MutableMap<String, Any?>) {
     var minRespuestas:Int by map
     var maxRespuestas:Int by map
 
-    constructor(id:Int = 1, pregunta:String="", fecha:String="",posiblesRespuestas:ArrayList<Respuesta> = ArrayList(), minRespuestas:Int, maxRespuestas:Int):this(HashMap()) {
+    constructor(id:Int = 1, pregunta:String="", fecha:String="", posiblesRespuestas:ArrayList<Respuesta> = ArrayList(), minRespuestas:Int, maxRespuestas:Int):this(HashMap()) {
         this._id = id
         this.pregunta = pregunta
         this.fecha = fecha

@@ -1,4 +1,4 @@
-package com.uneatlantico.encuestas
+package com.uneatlantico.encuestas.DB
 
 import android.content.Context
 import android.util.Log
@@ -45,7 +45,7 @@ class NutriQuestExecuter{
         /**
          * devuelve una pregunta con sus limitaciones
          */
-        fun getPregunta(ct: Context, idPregunta: Int):SoloPregunta{
+        fun getPregunta(ct: Context, idPregunta: Int): SoloPregunta {
             var pregunta = SoloPregunta()
             try {
                 val db = NutriQuestDB(ct).readableDatabase
@@ -82,8 +82,9 @@ class NutriQuestExecuter{
             var respuestasPosibles: ArrayList<Respuesta> = ArrayList()
             try {
                 val db = NutriQuestDB(ct).readableDatabase
-                var pregunta:String
-                val sql1 = "select distinct t._id, t.respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente,contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1 left join (SELECT idRespuesta ,contestado from Respuestas) re on re.idRespuesta = t._id"//"select t._id, t.respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente,contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1 left join (SELECT idRespuesta ,contestado from Respuestas) re on re.idRespuesta = t._id"
+                //var pregunta:String
+                val sql1 = "select distinct t._id _id, t.respuesta respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente,contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1 left join (SELECT idRespuesta ,contestado from Respuestas) re on re.idRespuesta = t._id"
+                //"select t._id, t.respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente,contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1 left join (SELECT idRespuesta ,contestado from Respuestas) re on re.idRespuesta = t._id"
                 //val sql = "select respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad, idPreguntaSiguiente, contestado from (select r._id, respuesta, idCategoria, idPreguntaSiguiente from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1"
                 val cursor = db.rawQuery(sql1, null)
                 var _id:Int
@@ -103,13 +104,13 @@ class NutriQuestExecuter{
                         idPreguntaSiguiente = cursor.getInt(cursor.getColumnIndex("idPreguntaSiguiente"))
                         contestado = cursor.getInt(cursor.getColumnIndex("contestado"))
                         //Log.d("micategoria", determinaCategoria.toString())
-                        respuestasPosibles.add(Respuesta(_id= _id,respuesta = respuesta, categoriaVisibilidad= categoriaVisibilidad,determinaCategoria = determinaCategoria, visibilidad = visibilidad, idPreguntaSiguiente = idPreguntaSiguiente, contestadoAnterior = contestado))
+                        respuestasPosibles.add(Respuesta(_id = _id, respuesta = respuesta, categoriaVisibilidad = categoriaVisibilidad, determinaCategoria = determinaCategoria, visibilidad = visibilidad, idPreguntaSiguiente = idPreguntaSiguiente, contestadoAnterior = contestado))
                         cursor.moveToNext()
                     }
                 }
                 cursor.close()
                 db.close()
-            }catch (e:Exception){Log.d("getRespuestaException", e.message)}
+            }catch (e:Exception){Log.d("getRespuestaException", e.toString())}
             return respuestasPosibles
         }
 
@@ -247,7 +248,7 @@ class NutriQuestExecuter{
                         idPreguntaPosterior = cursor.getInt(cursor.getColumnIndex("idPreguntaPosterior"))
                         contestado = cursor.getInt(cursor.getColumnIndex("contestado"))
                         //Log.d("micategoria", respuesta.toString())
-                        respuestasUsuario.add(RespuestasUsuario(respuesta,idPregunta,idCategoria, idPreguntaPrevia,idPreguntaPosterior,contestado))
+                        respuestasUsuario.add(RespuestasUsuario(respuesta, idPregunta, idCategoria, idPreguntaPrevia, idPreguntaPosterior, contestado))
                         cursor.moveToNext()
                     }
                 }

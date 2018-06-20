@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.content.Intent
-import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
@@ -19,10 +18,11 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResultCallback
 import com.google.android.gms.common.api.Status
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.idUsuario
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
 import java.util.*
 import com.google.firebase.iid.FirebaseInstanceId
-import com.uneatlantico.encuestas.NQController.Companion.guardarUsuario
+import com.uneatlantico.encuestas.Inicio.NutriQuestMain
+import com.uneatlantico.encuestas.Inicio.NQController.Companion.guardarUsuario
 import org.jetbrains.anko.doAsync
 
 

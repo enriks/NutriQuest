@@ -1,4 +1,4 @@
-package com.uneatlantico.encuestas
+package com.uneatlantico.encuestas.DB
 
 import android.content.Context
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper

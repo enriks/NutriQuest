@@ -2,7 +2,8 @@ package com.uneatlantico.encuestas
 
 import android.content.Context
 import android.util.Log
-import com.uneatlantico.encuestas.NutriQuestExecuter.Companion.idUsuario
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
+import com.uneatlantico.encuestas.DB.RespuestasUsuario
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.OutputStreamWriter
@@ -38,7 +39,7 @@ fun recibirPregunta(idPregunta: Int, ct: Context):Int {
     return enviado
 }
 
-fun sendUserResponses(a:ArrayList<RespuestasUsuario>,ct: Context):Int {
+fun sendUserResponses(a:ArrayList<RespuestasUsuario>, ct: Context):Int {
     var enviado:Int = 0
     try {
         val url = URL("http://172.22.1.3/php/encuestas/respuesta.php")
