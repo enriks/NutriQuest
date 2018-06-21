@@ -6,6 +6,8 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageButton
+import android.support.v7.widget.CardView
+import android.util.Log
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -17,17 +19,24 @@ class NutriQuestMain : AppCompatActivity() {
     private val fm = supportFragmentManager
     private val mHandler = Handler()
     private var doubleBackToExitPressedOnce = false //boolean para controlar doble click
-    private lateinit var nQController: NQController
+    lateinit var nQController: NQController
     private lateinit var mensajeDespedida:TextView
     private lateinit var container:FrameLayout
+    private lateinit var progress_bar: CardView
+    private lateinit var bar: CardView
+    private var questionNumber = 0
+    //private var fragmentTag:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nutri_quest_main)
-        nQController = NQController()
+        nQController = NQController(this.applicationContext)
         mensajeDespedida = findViewById(R.id.mensajeDespedida)
         mensajeDespedida.alpha = 0.0F
         container = findViewById(R.id.container)
+        progress_bar = findViewById(R.id.progress_bar)
+        bar = findViewById(R.id.perma_bar)
+        questionNumber = nQController.inicioEncuesta()
         /*val envio = findViewById<Button>(R.id.pulsemepelotudo)
         envio.alpha = 0.0F
         /*envio.setOnClickListener {
@@ -47,7 +56,6 @@ class NutriQuestMain : AppCompatActivity() {
         //Cojo el id de Pregunta que me trae la primera vez
         val idPregunta = intent.extras.getInt("idPregunta")
 
-
         inicioPregunta(idPregunta)//nQController.nextQuestion(this, 0))
     }
 
@@ -58,7 +66,7 @@ class NutriQuestMain : AppCompatActivity() {
         val bundle = Bundle()
 
         //place holder de la clase NQcontroller
-        val idActual = nQController.nextQuestion(this,idPregunta)
+        val idActual = nQController.nextQuestion(idPregunta)
 
         //abrir el fragmento con la siguiente pregunta
         if(idActual != -1){
@@ -68,6 +76,8 @@ class NutriQuestMain : AppCompatActivity() {
             val tempfrag = QuestionFragment.newInstance()
             tempfrag.arguments = (bundle)
             openFragment(tempfrag)
+
+            percentajeLeft(idActual)
         }
 
         //No quedan mas preguntas, se acabo la encuesta
@@ -77,7 +87,7 @@ class NutriQuestMain : AppCompatActivity() {
             container.alpha = 0.0F
             container.removeAllViews()
             mensajeDespedida.alpha = 1.0F
-
+            percentajeLeft(questionNumber)
         }
 
     }
@@ -99,7 +109,7 @@ class NutriQuestMain : AppCompatActivity() {
 
     private fun openFragment(fragment: Fragment) {
         fm.beginTransaction()
-                .setCustomAnimations(R.anim.enter_right, R.anim.out_left)
+                .setCustomAnimations(R.anim.enter_right, R.anim.out_left, R.anim.enter_left,R.anim.out_right)
                 .replace(R.id.container, fragment)
 
                 .addToBackStack(null)
@@ -110,9 +120,10 @@ class NutriQuestMain : AppCompatActivity() {
         fm.beginTransaction()
                 .setCustomAnimations(R.anim.enter_left, R.anim.out_right)
                 .replace(R.id.container, Fragment())
-                .addToBackStack(null)
+                //.addToBackStack(null)
                 .commit()
     }
+
 
     /**
      * Pulsar el boton de atras
@@ -148,5 +159,15 @@ class NutriQuestMain : AppCompatActivity() {
         builder.setMessage(msg).setTitle(ttl)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    private fun percentajeLeft(idPregunta: Int){
+        if(idPregunta == questionNumber)
+            progress_bar.layoutParams.width = bar.width
+        else {
+            val anchMax = bar.width
+            val avance = anchMax / questionNumber
+            progress_bar.layoutParams.width = idPregunta * avance
+        }
     }
 }

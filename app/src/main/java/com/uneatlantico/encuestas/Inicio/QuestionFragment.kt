@@ -11,8 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.uneatlantico.encuestas.Inicio.NQController.Companion.formarPregunta
-import com.uneatlantico.encuestas.Inicio.NQController.Companion.manejarRespuestas
 import com.uneatlantico.encuestas.DB.Pregunta
 import com.uneatlantico.encuestas.DB.Respuesta
 import com.uneatlantico.encuestas.R
@@ -36,17 +34,18 @@ class QuestionFragment : Fragment() {
     private val posicionClick = ArrayList<Int>()
     private var LIMITE_ELEGIDOS: Int = 0
     private var MINIMOS_ELEGIDOS: Int = 0
-
+    private lateinit var cnt: NQController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
         val ct = this.context
+        cnt = NQController(ct!!)
 
         val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
         val idPregunta = arguments!!.getInt("idPreguntaActual")
 
-        val pregunta = formarPregunta(this.context!!, idPregunta)
+        val pregunta = cnt.formarPregunta(idPregunta)
         val respuestas = pregunta.posiblesRespuestas
 
         LIMITE_ELEGIDOS = pregunta.maxRespuestas
@@ -89,6 +88,7 @@ class QuestionFragment : Fragment() {
         listaRespuestas.adapter = nQAdapter
 
         forwardArrow = v.findViewById(R.id.nextArrow)
+        //forwardArrow.setImageResource(R.drawable.baseline_arrow_forward_black_24dp)
         forwardArrow.setOnClickListener {
 
             //compruebo si puede avanzar con la cantidad de preguntas contestadas
@@ -107,7 +107,7 @@ class QuestionFragment : Fragment() {
                     }catch (excp:Exception){}
 
                     //envio las respuestas
-                    manejarRespuestas(ct!!, idPreguntaAnterior, idPregunta, respuestas)
+                    cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas)
 
                     //mando cambiar de fragmento
 
@@ -126,7 +126,7 @@ class QuestionFragment : Fragment() {
 
     private fun verFlecha(){
 
-        if( posicionClick.size in MINIMOS_ELEGIDOS..LIMITE_ELEGIDOS){
+       if( posicionClick.size in MINIMOS_ELEGIDOS..LIMITE_ELEGIDOS){
             forwardArrow.alpha = 1.0F
             forwardArrow.isClickable = true
         }
@@ -212,7 +212,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
         val bloque:LinearLayout
 
         init {
-            bloque = itemView.findViewById(R.id.bloque) as LinearLayout
+            bloque = itemView.findViewById(R.id.bloque)
             check = itemView.findViewById(R.id.checky) as CheckBox
             respuestaPosible = itemView.findViewById(R.id.respuestaPosible) as AppCompatTextView
             separador = itemView.findViewById(R.id.separador)

@@ -18,9 +18,9 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResultCallback
 import com.google.android.gms.common.api.Status
-import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
 import java.util.*
 import com.google.firebase.iid.FirebaseInstanceId
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
 import com.uneatlantico.encuestas.Inicio.NutriQuestMain
 import com.uneatlantico.encuestas.Inicio.NQController.Companion.guardarUsuario
 import org.jetbrains.anko.doAsync

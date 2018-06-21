@@ -6,14 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Inicio.QuestionFragment"
     android:gravity="center_horizontal"
-
     >
 
     <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.CardView
-        android:background="@android:color/white"
+       app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="5dp"
-        app:cardElevation="2dp"
+        app:cardElevation="0dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal">
@@ -41,19 +40,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            <ImageView
+                android:id="@+id/nextArrow"
+                android:layout_gravity="end"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:layout_width="80dp"
+                android:layout_height="56dp"
+                android:src="@drawable/baseline_arrow_forward_black_48dp"
+
+                />
         </RelativeLayout>
 
+
     </android.support.v7.widget.CardView>
-    <ImageView
-        android:id="@+id/nextArrow"
-        android:layout_gravity="end"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:padding="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_width="80dp"
-        android:layout_height="56dp"
-        android:src = "@drawable/baseline_arrow_right_alt_black_48"/>
+
+
+
 
 </RelativeLayout>

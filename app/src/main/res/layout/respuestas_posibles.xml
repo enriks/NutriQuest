@@ -1,47 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bloque"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:visibility="gone"
+
     android:orientation="vertical">
-
-    <RelativeLayout
-
-        android:background="@android:color/white"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:id="@+id/bloque"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <RelativeLayout
 
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="start"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
-        <CheckBox
-            android:id="@+id/checky"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/respuestaPosible"
-            android:layout_width="wrap_content"
-
-            android:layout_toEndOf="@id/checky"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:gravity="start"
-            android:text=""
-            android:paddingTop="6dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+            <CheckBox
+                android:id="@+id/checky"
 
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:layout_height="wrap_content" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-    </RelativeLayout>
-    <ImageView
-        android:id="@+id/separador"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryDark" />
+            <TextView
+                android:id="@+id/respuestaPosible"
+                android:layout_width="wrap_content"
+
+                android:layout_toEndOf="@id/checky"
+                android:gravity="start"
+                android:text=""
+                android:paddingTop="6dp"
+
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/separador"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimaryDark" />
+    </LinearLayout>
 </LinearLayout>
