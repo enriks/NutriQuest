@@ -19,9 +19,7 @@ import org.jetbrains.anko.doAsync
  */
 class NQController{
 
-    //TODO array con todas las preguntas
     val idPreguntas:ArrayList<Int> = ArrayList()
-
 
     fun inicioEncuesta(ct: Context){
         firstConexion(ct)
@@ -45,7 +43,7 @@ class NQController{
     }
 
     /**
-     * Une las preguntas con las respuestas validas
+     * Comprueba si se debe mostrar una pregunta por id al Usuario
      */
     private fun seguir(ct: Context, idPregunta: Int):Boolean{
         var seguir = false
@@ -77,14 +75,16 @@ class NQController{
          * visibilidad 0 es que no tiene un valor definido
          */
         fun formarPregunta(ct:Context, idPregunta: Int): Pregunta {
+
             var preguntaCompleta: Pregunta
-            val categorias = getCategoriasUsuario(ct)
+
             val pregunta = getPregunta(ct, idPregunta)
             val respuestas = getRespuestas(ct, idPregunta)
-            var max:Int = 1
-            Log.d("categorias", categorias.toString())
+
+            //Log.d("categorias", categorias.toString())
 
             //seteo la visibilidad de cada respuesta
+            val categorias = getCategoriasUsuario(ct)
             respuestas.forEach {
                 when(it.visibilidad){
                     1 -> if(!categorias.contains(it.categoriaVisibilidad)) it.visibilidad = 2
@@ -96,15 +96,21 @@ class NQController{
             }
 
             //seteo la maxima cantidad de respuestas
+            var max:Int = 1
             if(pregunta.maxRespuestas ==0)
                 max =respuestas.size
+
+            //lleno la pregunta
             preguntaCompleta = Pregunta(pregunta._id, pregunta = pregunta.pregunta, posiblesRespuestas = respuestas, maxRespuestas = max, minRespuestas = pregunta.minRespuestas)
-            preguntaCompleta.posiblesRespuestas.forEach{
+            /*preguntaCompleta.posiblesRespuestas.forEach{
                 //Log.d("pregunta",it.visibilidad.toString())
-            }
+            }*/
             return preguntaCompleta
         }
 
+        /**
+         * envia todas las respuestas al server
+         */
         fun mandarTodasLasRespuestas(ct:Context){
             doAsync {
                 var respuestas = getAllRespuestas(ct)
@@ -115,21 +121,21 @@ class NQController{
         /**
          * Una vez que el usuario avance de pregunta guarda y envia las respuestas
          */
-        fun manejarRespuestas(ct: Context,  idPreguntaPrevia:Int,idPregunta:Int, respuestas:ArrayList<Respuesta>){
-            val respuesta = ArrayList<RespuestasUsuario>()
-            val respuestas2 = ArrayList<Respuesta>()
+        fun manejarRespuestas(ct: Context,  idPreguntaPrevia:Int, idPregunta:Int, respuestas:ArrayList<Respuesta>){
+            val respuestasWS = ArrayList<RespuestasUsuario>()
+            val respuestasDB = ArrayList<Respuesta>()
             respuestas.forEach {
                 if(it.contestado == 1) {
-                    respuesta.add(RespuestasUsuario(it.respuesta, idPregunta, it.determinaCategoria, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
-                    respuestas2.add(it)
+                    respuestasWS.add(RespuestasUsuario(it.respuesta, idPregunta, it.determinaCategoria, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
+                    respuestasDB.add(it)
                 }
             }
 
             //inserto las respuestas a la pregunta en db movil
-            NutriQuestExecuter.insertRespuestas(ct, idPreguntaPrevia, idPregunta, respuestas = respuestas2)
+            NutriQuestExecuter.insertRespuestas(ct, idPreguntaPrevia, idPregunta, respuestas = respuestasDB)
 
             //mando la respuesta a una pregunta a el ws
-            sendUserResponses(respuesta, ct)
+            sendUserResponses(respuestasWS, ct)
         }
 
         /**
@@ -137,15 +143,14 @@ class NQController{
          */
         fun preguntaSiguiente(ct: Context, idPregunta: Int):Int{
             var idPreguntaSiguiente = 0
+
+            //ids[0] puntero de pregunta
+            //ids[1] puntero de respuesta
             val ids = numeroPreguntaSiguiente(ct, idPregunta)
             if(ids[1] == 0){
                 return ids[0]
             }
-            idPreguntaSiguiente = if(ids[0] != ids[1]){
-                ids[1]
-            } else{
-                ids[0]
-            }
+            idPreguntaSiguiente = if(ids[0] != ids[1]) ids[1] else ids[0]
             return idPreguntaSiguiente
         }
 
