@@ -26,7 +26,8 @@
             <TextView
                 android:id="@+id/pregunta"
                 android:layout_width="match_parent"
-                style="@style/PreguntaFont"
+                android:fontFamily="@font/googlesans_bold"
+                android:textSize="30sp"
                 android:gravity="center"
                 android:padding="16dp"
                 android:layout_marginStart="16dp"
@@ -34,6 +35,7 @@
                 android:layout_height="wrap_content"
                 />
             <android.support.v7.widget.RecyclerView
+                android:layout_marginTop="16dp"
                 android:layout_below="@id/pregunta"
                 android:id="@+id/listaRespuestas"
                 android:padding="16dp"
