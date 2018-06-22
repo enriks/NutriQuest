@@ -6,6 +6,7 @@ import com.uneatlantico.encuestas.DB.Pregunta
 import com.uneatlantico.encuestas.DB.Respuesta
 import com.uneatlantico.encuestas.DB.RespuestasUsuario
 import com.uneatlantico.encuestas.WSReceiver.enviarUsuario
+import com.uneatlantico.encuestas.WSReceiver.firstConexion
 import com.uneatlantico.encuestas.WSReceiver.sendUserResponses
 import org.jetbrains.anko.doAsync
 
@@ -18,10 +19,10 @@ class NQController{
 
     val idPreguntas:ArrayList<Int> = ArrayList()
 
-    fun inicioEncuesta():Int{
-        /*val numeroPreguntas = firstConexion(ct)
-        val idPrimeraPregunta */
-        return 35
+    fun primeraConexion(idPregunta: Int):Pregunta{
+        val datos = firstConexion(ct)
+        //val idPrimeraPregunta
+        return Pregunta()
     }
 
     val ct:Context

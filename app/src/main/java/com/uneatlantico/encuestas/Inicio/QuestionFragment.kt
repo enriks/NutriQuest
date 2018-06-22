@@ -39,13 +39,17 @@ class QuestionFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
+        var pregunta = Pregunta()
         val ct = this.context
         cnt = NQController(ct!!)
 
         val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
         val idPregunta = arguments!!.getInt("idPreguntaActual")
 
-        val pregunta = cnt.formarPregunta(idPregunta)
+        if(idPreguntaAnterior != 0)
+            pregunta = cnt.formarPregunta(idPregunta)
+        else
+            pregunta = cnt.primeraConexion(idPregunta)
         val respuestas = pregunta.posiblesRespuestas
 
         LIMITE_ELEGIDOS = pregunta.maxRespuestas
@@ -165,7 +169,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
         if(listaRespuestas[position].visibilidad == 1) {
 
             holder.bloque.visibility = View.VISIBLE
-            Log.d("hola", listaRespuestas[position].respuesta)
+            //Log.d("hola", listaRespuestas[position].respuesta)
             holder.respuestaPosible.text = listaRespuestas[position].respuesta
 
             /**

@@ -13,33 +13,34 @@ import java.net.URL
 /**
  * json = {"pregunta":{"_id"...}, "respuestas":{1:{}, 2:{}, ...}, "categorias":{1:{}, 2:{},...}, "visibilidad":{}}
  */
-fun recibirPregunta(idPregunta: Int, ct: Context):Int {
-    var enviado:Int = 0
+fun recibirPregunta(idPregunta: Int, ct: Context):String {
+    var text:String = ""
     try {
-        val url = URL("http://172.22.1.3/php/encuestas/pregunta.php")
+        //val url = URL("http://172.22.1.3/php/encuestas/preguntaMaestra.php")
+        val url = URL("http://10.0.2.2/ws/encuestasWebService/preguntaMaestra.php")
         val conn = connectWS(url)
 
         val jsonParam = JSONObject()
         jsonParam.put("idPregunta", idPregunta)
 
         Log.d("JsonObject", jsonParam.toString())
-        val text:String? = enviarWS(conn, jsonParam)
+        text = enviarWS(conn, jsonParam)
 
-        if(text != null) {
+        /*if(text != "") {
             //Log.d("respuestaWS", text)
 
             val x = JSONArray(text)
             val jsonObject = x.getJSONObject(0)
             Log.d("respuestaWS", x.toString())
 
-            enviado = 1
-        }
+
+        }*/
     }
     catch (e: Exception){
         Log.d("responseWebservice", e.toString())
     }
 
-    return enviado
+    return text
 }
 
 fun sendUserResponses(a:ArrayList<RespuestasUsuario>, ct: Context):Int {

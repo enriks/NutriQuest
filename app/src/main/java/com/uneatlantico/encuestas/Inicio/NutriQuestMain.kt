@@ -12,6 +12,7 @@ import android.widget.*
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.deleteAll
 import com.uneatlantico.encuestas.R
 import com.uneatlantico.encuestas.WSReceiver.EncuestaBuilder
+import com.uneatlantico.encuestas.WSReceiver.firstConexion
 import org.jetbrains.anko.doAsync
 
 class NutriQuestMain : AppCompatActivity() {
@@ -63,11 +64,10 @@ class NutriQuestMain : AppCompatActivity() {
         }
 
         //Cojo el id de Pregunta que me trae la primera vez
-
-
         inicioPregunta(idPregunta)//nQController.nextQuestion(this, 0))
 
         doAsync {
+            //Log.d("hola", "adios")
             EncuestaBuilder(applicationContext, idPregunta)
         }
     }
@@ -113,6 +113,7 @@ class NutriQuestMain : AppCompatActivity() {
         val bundle = Bundle()
         bundle.putInt("idPreguntaAnterior", 0)
         bundle.putInt("idPreguntaActual", idPregunta)
+        firstConexion(this)
 
         val tempfrag = QuestionFragment.newInstance()
         tempfrag.arguments = (bundle)

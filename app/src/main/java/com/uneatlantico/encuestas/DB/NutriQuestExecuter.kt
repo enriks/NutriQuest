@@ -167,8 +167,7 @@ class NutriQuestExecuter{
     }
 
     fun setPregunta(pregunta:PreguntaRaw){
-        val sql = "INSERT INTO Preguntas (_id, pregunta, idPreguntaSiguiente, minRespuestas, maxRespuestas) VALUES " +
-                "(${pregunta._id}, '${pregunta.pregunta}', ${pregunta.idPreguntaSiguiente}, ${pregunta.minRespuestas}, ${pregunta.maxRespuestas});"
+        val sql = "INSERT INTO Preguntas (_id, pregunta, idPreguntaSiguiente, minRespuestas, maxRespuestas) VALUES (${pregunta._id}, '${pregunta.pregunta}', ${pregunta.idPreguntaSiguiente}, ${pregunta.minRespuestas}, ${pregunta.maxRespuestas});"
 
         wDB.execSQL(sql)
     }
@@ -319,6 +318,17 @@ class NutriQuestExecuter{
             //db.close()
         }catch (e:Exception){Log.d("getRespuestaException", e.message)}
         return respuestasUsuario
+    }
+
+    fun existePregunta(id:Int):Boolean{
+        var existe = false
+        val sql = "Select _id from preguntas where _id = $id;"
+        val cursor = rDB.rawQuery(sql, null)
+        if(cursor.moveToFirst()){
+            if(id == cursor.getInt(cursor.getColumnIndex("_id")))
+                existe = true
+        }
+        return existe
     }
 
     companion object {
