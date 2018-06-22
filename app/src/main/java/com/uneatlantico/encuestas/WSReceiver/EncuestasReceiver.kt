@@ -1,4 +1,4 @@
-package com.uneatlantico.encuestas
+package com.uneatlantico.encuestas.WSReceiver
 
 import android.content.Context
 import android.util.Log
@@ -10,6 +10,9 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
+/**
+ * json = {"pregunta":{"_id"...}, "respuestas":{1:{}, 2:{}, ...}, "categorias":{1:{}, 2:{},...}, "visibilidad":{}}
+ */
 fun recibirPregunta(idPregunta: Int, ct: Context):Int {
     var enviado:Int = 0
     try {

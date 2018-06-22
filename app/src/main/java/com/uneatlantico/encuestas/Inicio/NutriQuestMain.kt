@@ -8,10 +8,11 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.CardView
 import android.util.Log
-import android.widget.FrameLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.deleteAll
 import com.uneatlantico.encuestas.R
+import com.uneatlantico.encuestas.WSReceiver.EncuestaBuilder
+import org.jetbrains.anko.doAsync
 
 class NutriQuestMain : AppCompatActivity() {
 
@@ -26,6 +27,7 @@ class NutriQuestMain : AppCompatActivity() {
     private lateinit var bar: CardView
     private var questionNumber = 0
     //private var fragmentTag:Int = 0
+    private lateinit var reiniciar: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,26 +39,37 @@ class NutriQuestMain : AppCompatActivity() {
         progress_bar = findViewById(R.id.progress_bar)
         bar = findViewById(R.id.perma_bar)
         questionNumber = nQController.inicioEncuesta()
+
+
         /*val envio = findViewById<Button>(R.id.pulsemepelotudo)
         envio.alpha = 0.0F
-        /*envio.setOnClickListener {
+        envio.setOnClickListener {
             doAsync {
                 //sendPostRequest(2, applicationContext)
                 //recibirPregunta(4, applicationContext)
                 nQController.inicioEncuesta(applicationContext)
             }
         }*/
-        back = findViewById(R.id.backEncuesta)
-        //back.alpha = 0.0F
-        back.setOnClickListener {
-            deleteAll(this)
-            changeFragment(0)
-        }*/
 
-        //Cojo el id de Pregunta que me trae la primera vez
         val idPregunta = intent.extras.getInt("idPregunta")
 
+        //TODO esconder boton de reiniciar si no tiene sentido
+        //TODO calcular cual es la primera pregunta de la encuesta y volver ahi en lugar de 1
+        reiniciar = findViewById(R.id.backEncuesta)
+        //back.alpha = 0.0F
+        reiniciar.setOnClickListener {
+            deleteAll(this)
+            inicioPregunta(1)
+        }
+
+        //Cojo el id de Pregunta que me trae la primera vez
+
+
         inicioPregunta(idPregunta)//nQController.nextQuestion(this, 0))
+
+        doAsync {
+            EncuestaBuilder(applicationContext, idPregunta)
+        }
     }
 
     /**
@@ -103,7 +116,7 @@ class NutriQuestMain : AppCompatActivity() {
 
         val tempfrag = QuestionFragment.newInstance()
         tempfrag.arguments = (bundle)
-        openFragment(tempfrag)
+        resetFragment(tempfrag)
 
     }
 
@@ -114,6 +127,16 @@ class NutriQuestMain : AppCompatActivity() {
 
                 .addToBackStack(null)
                 .commit()
+    }
+
+    private fun resetFragment(fragment: Fragment) {
+        fm.beginTransaction()
+                .setCustomAnimations(0, 0, R.anim.enter_left,R.anim.out_right)
+                .replace(R.id.container, fragment)
+
+                .addToBackStack(null)
+                .commit()
+
     }
 
     private fun removeFragment() {

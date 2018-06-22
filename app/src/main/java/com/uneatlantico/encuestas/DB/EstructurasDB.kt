@@ -95,3 +95,11 @@ class RespuestasUsuario(var map:MutableMap<String, Any?>){
         this.contestado = contestado
     }
 }
+
+data class PreguntaRaw(var _id: Int, var pregunta: String, var idPreguntaSiguiente: Int, var minRespuestas:Int, var maxRespuestas:Int)
+
+data class RespuestaPosibleRaw(var respuesta:String, var idPregunta:Int, var idCategoria:Int, var idPreguntaSiguiente: Int, var visibilidad:Int = 1, var contestado:Int = 0)
+
+data class CategoriaRaw(var _id: Int, var categoria:String)
+
+data class VisibilidadRaw(var idElemento: Int, var tipoElemento:Int, var idCategoria: Int, var visibilidad: Int)

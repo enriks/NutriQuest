@@ -98,19 +98,16 @@ class QuestionFragment : Fragment() {
 
             //termino la pregunta
             else {
+
+                try {
+                    forwardArrow.alpha = 0.0F
+                    forwardArrow.isClickable = false
+                } catch (excp:Exception){}
+
                 doAsync {
-                    //escondo la flecha de avance de pregunta
-                    //forwardArrow.visibility = View.INVISIBLE
-                    try {
-                        forwardArrow.alpha = 0.0F
-                        forwardArrow.isClickable = false
-                    }catch (excp:Exception){}
 
                     //envio las respuestas
                     cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas)
-
-                    //mando cambiar de fragmento
-
                 }
                 (activity as NutriQuestMain).changeFragment(idPregunta)
             }

@@ -1,12 +1,12 @@
 package com.uneatlantico.encuestas.Inicio
 
 import android.content.Context
-import android.util.Log
-import com.uneatlantico.encuestas.*
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter
 import com.uneatlantico.encuestas.DB.Pregunta
 import com.uneatlantico.encuestas.DB.Respuesta
 import com.uneatlantico.encuestas.DB.RespuestasUsuario
+import com.uneatlantico.encuestas.WSReceiver.enviarUsuario
+import com.uneatlantico.encuestas.WSReceiver.sendUserResponses
 import org.jetbrains.anko.doAsync
 
 /**
@@ -104,7 +104,7 @@ class NQController{
         exq.openWDB()
 
         val pregunta = exq.getPregunta(ct, idPregunta)
-        val respuestas = exq.getRespuestas(ct, idPregunta)
+        val respuestas = exq.getRespuestas(idPregunta)
         val categorias = exq.getCategoriasUsuario(ct)
 
         exq.closeDB()
@@ -159,7 +159,7 @@ class NQController{
         }
 
         //inserto las respuestas a la pregunta en db movil
-        exq.insertRespuestas(ct, idPreguntaPrevia, idPregunta, respuestas = respuestasDB)
+        exq.insertRespuestas(idPreguntaPrevia, idPregunta, respuestas = respuestasDB)
 
         exq.closeDB()
         //mando la respuesta a una pregunta a el ws

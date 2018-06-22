@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.Status
 import java.util.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.ultimaPregunta
 import com.uneatlantico.encuestas.Inicio.NutriQuestMain
 import com.uneatlantico.encuestas.Inicio.NQController.Companion.guardarUsuario
 import org.jetbrains.anko.doAsync
@@ -184,7 +185,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
     private fun startNewActivity() {
         val i = Intent(this, NutriQuestMain::class.java)
         //i.putExtra("account", acct);
-        i.putExtra("idPregunta", 1)
+        var idPregunta = ultimaPregunta(this)
+        if(idPregunta == 0)
+            idPregunta = 1
+        i.putExtra("idPregunta", idPregunta)
         //Log.d("jsonaccount" ,acct.toJson());
         //Kill the activity from which you will go to next activity
         startActivity(i)
