@@ -91,31 +91,26 @@ fun sendUserResponses(a:ArrayList<RespuestasUsuario>, ct: Context):Int {
 /**
  * starts a conexion for the first time with web service via Username
  */
-fun firstConexion(ct:Context) {
+fun firstConexion(ct:Context, idEncuesta:Int):String {
+
+    var text = ""
     try {
-        val url = URL("http://172.22.1.3/php/encuestas/primera_conexion.php")
+        val url = URL("http://10.0.2.2/ws/encuestasWebService/primera_conexion.php")
+        //val url = URL("http://172.22.1.3/php/encuestas/primera_conexion.php")
         val conn = connectWS(url)
 
         val jsonParam = JSONObject()
         jsonParam.put("nombre", idUsuario(ct))
-        jsonParam.put("idEncuesta", 1)
+        jsonParam.put("idEncuesta", idEncuesta)
 
         Log.d("JsonObject", jsonParam.toString())
 
-        val text: String? = enviarWS(conn, jsonParam)
+        text = enviarWS(conn, jsonParam)
 
-
-        if (text != null) {
-            Log.d("respuestaWS", text)
-
-            val jsony = JSONObject(text)
-            Log.d("respuestaWS22", jsony.toString())
-            Log.d("preguntarespuestaws", jsony["pregunta"].toString())
-            Log.d("respuestarespuestaws", jsony["respuestas"].toString())
-        }
     } catch (e: Exception) {
-        Log.d("responseWebservice", e.toString())
+        Log.d("firstConexionExcp", e.toString())
     }
+    return text
 }
 
 fun enviarUsuario(ct: Context, usuario: List<String>):Int {

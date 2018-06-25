@@ -17,8 +17,10 @@ class EncuestaBuilder {
     val ct:Context
     val exq: NutriQuestExecuter
     var idPregunta:Int
-    constructor(ct:Context, idPregunta:Int){
+    val numeroPreguntas :Int
+    constructor(ct:Context, idPregunta:Int, numeroPreguntas:Int){
         this.ct = ct
+        this.numeroPreguntas = numeroPreguntas
         this.exq = NutriQuestExecuter(ct)
         this.idPregunta = idPregunta
         guardarEncuesta()
@@ -27,7 +29,7 @@ class EncuestaBuilder {
     private fun guardarEncuesta() {
         try {
             exq.openWDB()
-            while (idPregunta<34) {
+            while (idPregunta<numeroPreguntas-1) {
                 guardarPreguntaCompleta()
             }
             exq.closeDB()

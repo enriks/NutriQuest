@@ -10,6 +10,7 @@ import android.support.v7.widget.CardView
 import android.util.Log
 import android.widget.*
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.deleteAll
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.ultimaPregunta
 import com.uneatlantico.encuestas.R
 import com.uneatlantico.encuestas.WSReceiver.EncuestaBuilder
 import com.uneatlantico.encuestas.WSReceiver.firstConexion
@@ -39,7 +40,7 @@ class NutriQuestMain : AppCompatActivity() {
         container = findViewById(R.id.container)
         progress_bar = findViewById(R.id.progress_bar)
         bar = findViewById(R.id.perma_bar)
-        questionNumber = nQController.inicioEncuesta()
+        //questionNumber = nQController.inicioEncuesta()
 
 
         /*val envio = findViewById<Button>(R.id.pulsemepelotudo)
@@ -51,8 +52,11 @@ class NutriQuestMain : AppCompatActivity() {
                 nQController.inicioEncuesta(applicationContext)
             }
         }*/
+        var idPregunta1 = intent.extras.getInt("idPregunta")
+        var idPregunta2 = ultimaPregunta(this)
+        val idPregunta = if( idPregunta1 != idPregunta2 && idPregunta2 != 0) idPregunta2 else idPregunta1
 
-        val idPregunta = intent.extras.getInt("idPregunta")
+        Log.d("idPreguntaActual", idPregunta.toString())
 
         //TODO esconder boton de reiniciar si no tiene sentido
         //TODO calcular cual es la primera pregunta de la encuesta y volver ahi en lugar de 1
@@ -66,10 +70,10 @@ class NutriQuestMain : AppCompatActivity() {
         //Cojo el id de Pregunta que me trae la primera vez
         inicioPregunta(idPregunta)//nQController.nextQuestion(this, 0))
 
-        doAsync {
+        /*doAsync {
             //Log.d("hola", "adios")
             EncuestaBuilder(applicationContext, idPregunta)
-        }
+        }*/
     }
 
     /**
@@ -113,11 +117,14 @@ class NutriQuestMain : AppCompatActivity() {
         val bundle = Bundle()
         bundle.putInt("idPreguntaAnterior", 0)
         bundle.putInt("idPreguntaActual", idPregunta)
-        firstConexion(this)
 
-        val tempfrag = QuestionFragment.newInstance()
-        tempfrag.arguments = (bundle)
-        resetFragment(tempfrag)
+        doAsync {
+            nQController.inicioEncuesta(idPregunta)
+            questionNumber = nQController.numeroPreguntas
+            val tempfrag = QuestionFragment.newInstance()
+            tempfrag.arguments = (bundle)
+            resetFragment(tempfrag)
+        }
 
     }
 

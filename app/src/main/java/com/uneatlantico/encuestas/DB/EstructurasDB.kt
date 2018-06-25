@@ -103,3 +103,5 @@ data class RespuestaPosibleRaw(var respuesta:String, var idPregunta:Int, var idC
 data class CategoriaRaw(var _id: Int, var categoria:String)
 
 data class VisibilidadRaw(var idElemento: Int, var tipoElemento:Int, var idCategoria: Int, var visibilidad: Int)
+
+data class EncuestaRaw(var idEncuesta:Int, var idPrimeraPregunta:Int, var numeroPreguntas:Int)

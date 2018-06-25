@@ -46,10 +46,9 @@ class QuestionFragment : Fragment() {
         val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
         val idPregunta = arguments!!.getInt("idPreguntaActual")
 
-        if(idPreguntaAnterior != 0)
+        //if(idPreguntaAnterior != 0)
             pregunta = cnt.formarPregunta(idPregunta)
-        else
-            pregunta = cnt.primeraConexion(idPregunta)
+        //else pregunta = cnt.primeraConexion(idPregunta)
         val respuestas = pregunta.posiblesRespuestas
 
         LIMITE_ELEGIDOS = pregunta.maxRespuestas

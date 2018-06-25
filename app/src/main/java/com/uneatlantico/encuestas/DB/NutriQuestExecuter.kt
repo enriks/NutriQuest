@@ -166,6 +166,21 @@ class NutriQuestExecuter{
         return categoriasUsuario
     }
 
+    fun getEncuesta(idEncuesta:Int):EncuestaRaw{
+        val sql = "SELECT * FROM encuestas WHERE idEncuesta = $idEncuesta"
+        val cursor = rDB.rawQuery(sql, null)
+        var idEncuesta = 0
+        var numeroPreguntas = 0
+        var idPrimeraPregunta:Int =0
+        if(cursor.moveToFirst()) {
+            idEncuesta = cursor.getInt(cursor.getColumnIndex("idEncuesta"))
+            numeroPreguntas = cursor.getInt(cursor.getColumnIndex("numeroPreguntas"))
+            idPrimeraPregunta = cursor.getInt(cursor.getColumnIndex("idPrimeraPregunta"))
+        }
+
+        return EncuestaRaw(idEncuesta, numeroPreguntas, idPrimeraPregunta)
+    }
+
     fun setPregunta(pregunta:PreguntaRaw){
         val sql = "INSERT INTO Preguntas (_id, pregunta, idPreguntaSiguiente, minRespuestas, maxRespuestas) VALUES (${pregunta._id}, '${pregunta.pregunta}', ${pregunta.idPreguntaSiguiente}, ${pregunta.minRespuestas}, ${pregunta.maxRespuestas});"
 
@@ -186,7 +201,7 @@ class NutriQuestExecuter{
     }
 
     fun setCategorias(categorias: List<CategoriaRaw>){
-        var sql = "INSERT INTO RespuestasPosibles (_id, categoria) VALUES "
+        var sql = "INSERT INTO Categorias (_id, categoria) VALUES "
         var posicion = 0
         categorias.forEach{
 
@@ -199,7 +214,7 @@ class NutriQuestExecuter{
     }
 
     fun setVisibilidad(visibilidad:List<VisibilidadRaw>){
-        var sql = "INSERT INTO RespuestasPosibles (idElemento, tipoElemento, idCategoria, visibilidad) VALUES "
+        var sql = "INSERT INTO Visibilidad (idElemento, tipoElemento, idCategoria, visibilidad) VALUES "
         var posicion = 0
         visibilidad.forEach{
 
@@ -208,6 +223,11 @@ class NutriQuestExecuter{
             sql += if(posicion+1 < visibilidad.size) "," else ";"
             posicion ++
         }
+        wDB.execSQL(sql)
+    }
+
+    fun setEncuesta(encuesta:EncuestaRaw){
+        var sql = "INSERT INTO encuestas (idEncuesta, idPrimeraPregunta, numeroPreguntas) VALUES ('${encuesta.idEncuesta}', '${encuesta.idPrimeraPregunta}', '${encuesta.numeroPreguntas}')"
         wDB.execSQL(sql)
     }
 

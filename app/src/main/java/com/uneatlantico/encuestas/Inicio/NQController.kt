@@ -1,14 +1,15 @@
 package com.uneatlantico.encuestas.Inicio
 
 import android.content.Context
-import com.uneatlantico.encuestas.DB.NutriQuestExecuter
-import com.uneatlantico.encuestas.DB.Pregunta
-import com.uneatlantico.encuestas.DB.Respuesta
-import com.uneatlantico.encuestas.DB.RespuestasUsuario
+import android.util.Log
+import com.google.gson.Gson
+import com.uneatlantico.encuestas.DB.*
+import com.uneatlantico.encuestas.WSReceiver.EncuestaBuilder
 import com.uneatlantico.encuestas.WSReceiver.enviarUsuario
 import com.uneatlantico.encuestas.WSReceiver.firstConexion
 import com.uneatlantico.encuestas.WSReceiver.sendUserResponses
 import org.jetbrains.anko.doAsync
+import org.json.JSONObject
 
 /**
  * 2 opciones
@@ -18,11 +19,57 @@ class NQController{
     val exq:NutriQuestExecuter
 
     val idPreguntas:ArrayList<Int> = ArrayList()
+    var numeroPreguntas = 0
 
-    fun primeraConexion(idPregunta: Int):Pregunta{
-        val datos = firstConexion(ct)
-        //val idPrimeraPregunta
-        return Pregunta()
+    fun inicioEncuesta(idEncuesta: Int){
+        if(exq.getEncuesta(idEncuesta).numeroPreguntas == 0)
+              comenzarEncuesta(idEncuesta)
+
+    }
+
+    private fun comenzarEncuesta(idEncuesta: Int){
+        val datos = firstConexion(ct, idEncuesta)
+
+        Log.d("todo",  datos)
+        val json = JSONObject(datos)
+        val preguntaTotal = json.getJSONObject("pregunta")
+        val preguntaRaw = preguntaTotal.getJSONObject("pregunta")
+        val respuestasRaw = preguntaTotal.getJSONArray("respuestas")
+//        val visibilidadesRaw = preguntaTotal.getJSONArray("visibilidades")
+        val categoriasRaw = preguntaTotal.getJSONArray("categorias")
+        val gson = Gson()
+
+        val pregunta = gson.fromJson<PreguntaRaw>(preguntaRaw.toString(), PreguntaRaw::class.java)
+        val respuestas = ArrayList<RespuestaPosibleRaw>()
+        for (i in 0 until respuestasRaw.length()) {
+            respuestas.add(gson.fromJson<RespuestaPosibleRaw>(respuestasRaw[i].toString(), RespuestaPosibleRaw::class.java))
+        }
+
+        /*val visibilidades = ArrayList<VisibilidadRaw>()
+        for (i in 0 until visibilidadesRaw.length()) {
+            visibilidades.add(gson.fromJson<VisibilidadRaw>(respuestasRaw[i].toString(), VisibilidadRaw::class.java))
+        }*/
+
+        val categorias = ArrayList<CategoriaRaw>()
+        for (i in 0 until categoriasRaw.length()) {
+
+            categorias.add(gson.fromJson<CategoriaRaw>(categoriasRaw[i].toString(), CategoriaRaw::class.java))
+            //Log.d("categoria", categorias.get(i).toString())
+        }
+
+        exq.setPregunta(pregunta)
+        exq.setRespuesta(respuestas)
+        //exq.setVisibilidad(visibilidades)
+        exq.setCategorias(categorias)
+        val idPregunta = pregunta._id
+        var idPreguntaSig = json.getString("idPreguntaSiguiente").toInt()
+        val numeroPreguntas = json.getJSONObject("numeroPreguntas").getString("numeroPreguntas").toInt()
+        this.numeroPreguntas = numeroPreguntas
+        exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas))
+        //Log.d("numeroZ", numeroPreguntas.toString())
+        doAsync {
+            val encuestaBuilder = EncuestaBuilder(ct, idPreguntaSig, numeroPreguntas)
+        }
     }
 
     val ct:Context
@@ -31,6 +78,8 @@ class NQController{
         this.ct = ct
         exq = NutriQuestExecuter(ct)
     }
+
+
 
     /**
      * determina cual sera la siguiente pregunta
