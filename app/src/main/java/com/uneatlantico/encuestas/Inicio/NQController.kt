@@ -4,10 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.uneatlantico.encuestas.DB.*
-import com.uneatlantico.encuestas.WSReceiver.EncuestaBuilder
-import com.uneatlantico.encuestas.WSReceiver.enviarUsuario
-import com.uneatlantico.encuestas.WSReceiver.firstConexion
-import com.uneatlantico.encuestas.WSReceiver.sendUserResponses
+import com.uneatlantico.encuestas.WSReceiver.*
 import org.jetbrains.anko.doAsync
 import org.json.JSONObject
 
@@ -19,11 +16,17 @@ class NQController{
     val exq:NutriQuestExecuter
 
     val idPreguntas:ArrayList<Int> = ArrayList()
+    val preguntas = ArrayList<Pregunta>()
     var numeroPreguntas = 0
+    var numeroPregunta = 0
+    var idEncuesta = 1
 
     fun inicioEncuesta(idEncuesta: Int){
+        //this.idEncuesta = idEncuesta
         if(exq.getEncuesta(idEncuesta).numeroPreguntas == 0)
               comenzarEncuesta(idEncuesta)
+        else
+            numeroPreguntas = exq.numeroPreguntas()
 
     }
 
@@ -65,18 +68,35 @@ class NQController{
         var idPreguntaSig = json.getString("idPreguntaSiguiente").toInt()
         val numeroPreguntas = json.getJSONObject("numeroPreguntas").getString("numeroPreguntas").toInt()
         this.numeroPreguntas = numeroPreguntas
-        exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas))
+        exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta))
         //Log.d("numeroZ", numeroPreguntas.toString())
         doAsync {
             val encuestaBuilder = EncuestaBuilder(ct, idPreguntaSig, numeroPreguntas)
         }
     }
 
+    fun recibirPreguntaX(idPregunta: Int){
+        val preguntaTemp = recibirPregunta(idPregunta, ct)
+        val gson = Gson()
+        val preguntaTotal = JSONObject(preguntaTemp)
+        val preguntaJson = preguntaTotal.getJSONArray("pregunta")
+
+        val respuestasJson = preguntaTotal.getJSONArray("respuestas")
+        val respuestas = ArrayList<Respuesta>()
+        for(i in 0 until respuestasJson.length()){
+            respuestas.add(gson.fromJson<Respuesta>(respuestasJson[i].toString(), Respuesta::class.java))
+        }
+        preguntaJson.put(respuestas)
+        Log.d("jsonPregunta", preguntaJson.toString())
+        gson.fromJson<Pregunta>(preguntaJson.toString(), Pregunta::class.java)
+    }
+
     val ct:Context
 
-    constructor(ct: Context){
+    constructor(ct: Context, idEncuesta: Int){
         this.ct = ct
         exq = NutriQuestExecuter(ct)
+        this.idEncuesta = idEncuesta
     }
 
 
@@ -89,6 +109,7 @@ class NQController{
         var preguntaSiguiente = idPregunta
         do {
             preguntaSiguiente = preguntaSiguiente(preguntaSiguiente)
+            numeroPregunta++
             if(preguntaSiguiente == -1){
                 break
             }
@@ -199,22 +220,26 @@ class NQController{
      */
     fun manejarRespuestas(idPreguntaPrevia:Int, idPregunta:Int, respuestas:ArrayList<Respuesta>){
         exq.openWDB()
-        val respuestasWS = ArrayList<RespuestasUsuario>()
-        val respuestasDB = ArrayList<Respuesta>()
+        val respuestasX = ArrayList<RespuestaRaw>()
         respuestas.forEach {
             if(it.contestado == 1) {
-                respuestasWS.add(RespuestasUsuario(it.respuesta, idPregunta, it.determinaCategoria, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
-                respuestasDB.add(it)
+                //respuestas[i]._id}, $idPregunta, ${respuestas[i].determinaCategoria}, $idPreguntaPrevia, ${respuestas[i].idPreguntaSiguiente}, ${respuestas[i].contestado}
+                respuestasX.add(RespuestaRaw(it._id, idPregunta, it.determinaCategoria, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
             }
         }
 
         //inserto las respuestas a la pregunta en db movil
-        exq.insertRespuestas(idPreguntaPrevia, idPregunta, respuestas = respuestasDB)
-
+        exq.insertRespuestas(respuestasX)
+        exq.updateRespuestaEncuesta(idPregunta, idEncuesta)
         exq.closeDB()
         //mando la respuesta a una pregunta a el ws
-        sendUserResponses(respuestasWS, ct)
+        sendUserResponses(respuestasX, ct)
 
+    }
+
+    fun ultimaPregunta():Int{
+        val idPregunta = exq.getProgreso(idEncuesta)
+        return idPregunta
     }
 
     companion object {

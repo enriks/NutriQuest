@@ -50,6 +50,7 @@ public class Notifications extends FirebaseMessagingService {
      */
     private void sendNotification(Map<String, String> messageBody) {
 
+
         PendingIntent encuestaIntent = encuestaIntent(Integer.getInteger(messageBody.get("idPregunta")));
 
         String channelId = "nose";//getString(R.string.default_notification_channel_id);

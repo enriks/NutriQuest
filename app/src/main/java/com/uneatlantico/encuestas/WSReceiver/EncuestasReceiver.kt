@@ -3,7 +3,7 @@ package com.uneatlantico.encuestas.WSReceiver
 import android.content.Context
 import android.util.Log
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
-import com.uneatlantico.encuestas.DB.RespuestasUsuario
+import com.uneatlantico.encuestas.DB.RespuestaRaw
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.OutputStreamWriter
@@ -26,15 +26,6 @@ fun recibirPregunta(idPregunta: Int, ct: Context):String {
         Log.d("JsonObject", jsonParam.toString())
         text = enviarWS(conn, jsonParam)
 
-        /*if(text != "") {
-            //Log.d("respuestaWS", text)
-
-            val x = JSONArray(text)
-            val jsonObject = x.getJSONObject(0)
-            Log.d("respuestaWS", x.toString())
-
-
-        }*/
     }
     catch (e: Exception){
         Log.d("responseWebservice", e.toString())
@@ -43,10 +34,11 @@ fun recibirPregunta(idPregunta: Int, ct: Context):String {
     return text
 }
 
-fun sendUserResponses(a:ArrayList<RespuestasUsuario>, ct: Context):Int {
+fun sendUserResponses(a: ArrayList<RespuestaRaw>, ct: Context):Int {
     var enviado:Int = 0
     try {
-        val url = URL("http://172.22.1.3/php/encuestas/respuesta.php")
+        val url = URL("http://10.0.2.2/ws/encuestasWebService/respuesta.php")
+        //val url = URL("http://172.22.1.3/php/encuestas/respuesta.php")
         val conn = connectWS(url)
 
         val jsonA = JSONArray()
@@ -54,7 +46,7 @@ fun sendUserResponses(a:ArrayList<RespuestasUsuario>, ct: Context):Int {
         a.forEach {
             //Log.d("respuestasJson", it.respuesta)
             val jsonParam = JSONObject()
-            jsonParam.put("respuesta", it.respuesta)
+            jsonParam.put("idRespuesta", it.idRespuesta)
             jsonParam.put("idUsuario", idUsuario(ct))
             jsonParam.put("idPregunta", it.idPregunta)
             jsonParam.put("idCategoria", it.idCategoria)
@@ -66,23 +58,13 @@ fun sendUserResponses(a:ArrayList<RespuestasUsuario>, ct: Context):Int {
 
         val json = JSONObject()
         json.put("r", jsonA)
-        Log.d("JsonObject", json.toString())
+        Log.d("JsonEnviarResp", json.toString())
 
         val text: String? = enviarWS(conn, json)
-
-        if(text != null) {
-            Log.d("respuestaWS", text)
-
-            //val x = JSONArray(text)
-            val jsony = JSONObject(text)
-            //val jsonObject = x.getJSONObject(0)
-            Log.d("respuestaWS22", jsony.toString())
-
-            enviado = 1
-        }
+        Log.d("RespEnviarResp", text)
     }
     catch (e: Exception){
-        Log.d("responseWebservice", e.toString())
+        Log.d("respsNoEnv", e.toString())
     }
 
     return enviado
@@ -103,7 +85,7 @@ fun firstConexion(ct:Context, idEncuesta:Int):String {
         jsonParam.put("nombre", idUsuario(ct))
         jsonParam.put("idEncuesta", idEncuesta)
 
-        Log.d("JsonObject", jsonParam.toString())
+        Log.d("jsonPrimeraConn", jsonParam.toString())
 
         text = enviarWS(conn, jsonParam)
 
@@ -125,19 +107,10 @@ fun enviarUsuario(ct: Context, usuario: List<String>):Int {
         jsonParam.put("email", usuario[2])
         jsonParam.put("idAndroid", usuario[4])
 
-        Log.d("JsonObject", jsonParam.toString())
+        Log.d("JsonEnviarUsr", jsonParam.toString())
         val text: String? = enviarWS(conn, jsonParam)
+        Log.d("respuestaEnviarUsr", text)
 
-        if (text != null) {
-
-            Log.d("enviarUsuario", text)
-            enviado = 1
-            //val x = JSONArray(text)
-            val jsony = JSONObject(text)
-            //val jsonObject = x.getJSONObject(0)
-            Log.d("respuestaWS22", jsony.toString())
-
-        }
     } catch (e: Exception) {
         Log.d("responseWebservice", e.toString())
     }
@@ -166,30 +139,3 @@ fun connectWS(url:URL):HttpURLConnection{
 
     return conn
 }
-
-//list.add(jsonObject.getString("valid"))
-/*if(jsonObject.getString("valid") != null) {
-
-    try {
-        val horasArray1 = jsonObject.get("horasAlumno") as JSONArray
-        horasAlumno = (horasArray1.getJSONObject(0).getDouble("horas")).toFloat()
-    }
-    catch (e:Exception){}
-    try {
-        if(postList[1].toInt() == 220 || postList[1].toInt() == 221)
-            horasTotales = 20.0F
-        else {
-            horasTotales = 60.0F
-            /*val horasArray2 = jsonObject.get("horasTotales") as JSONArray
-            horasTotales = (horasArray2.getJSONObject(0).getDouble("horas")).toFloat()*/
-        }
-    }
-    catch (e:Exception){}
-
-    val progreso = Progreso(idEvento = postList[1].toInt(), horasAlumno = horasAlumno, horasEventoTotales = horasTotales)
-
-    //Log.d("listaJson", horasAlumno= progreso.horasAlumno.toString() + " " +  progreso.horasEventoTotales.toString())
-
-    insertarResponse(ct, progreso)
-}*/
-    //return enviado

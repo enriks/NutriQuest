@@ -18,19 +18,35 @@ class EncuestaBuilder {
     val exq: NutriQuestExecuter
     var idPregunta:Int
     val numeroPreguntas :Int
+    val idsPregunta = ArrayList<Int>()
     constructor(ct:Context, idPregunta:Int, numeroPreguntas:Int){
         this.ct = ct
         this.numeroPreguntas = numeroPreguntas
         this.exq = NutriQuestExecuter(ct)
         this.idPregunta = idPregunta
+        recogerTodo()
         guardarEncuesta()
+    }
+
+    fun recogerTodo(){
+        for(i in 2..44){
+            if(i == 4 || i == 43){
+
+            }
+            else{
+                Log.d("guardoPregunta", i.toString())
+                idsPregunta.add(i)
+            }
+        }
     }
 
     private fun guardarEncuesta() {
         try {
             exq.openWDB()
-            while (idPregunta<numeroPreguntas-1) {
+            idPregunta = 0
+            while (idPregunta<idsPregunta.size){
                 guardarPreguntaCompleta()
+                idPregunta ++
             }
             exq.closeDB()
         } catch (e:Exception){
@@ -38,7 +54,7 @@ class EncuestaBuilder {
     }
 
     fun guardarPreguntaCompleta(){
-        val preguntaTemp = recibirPregunta( idPregunta, ct )
+        val preguntaTemp = recibirPregunta( idsPregunta.get(idPregunta), ct )
         guardarPregunta(preguntaTemp)
     }
 
@@ -53,9 +69,9 @@ class EncuestaBuilder {
         val preguntaS = gson.fromJson<PreguntaRaw>(preguntasTemp[0].toString(), PreguntaRaw::class.java)
         Log.d("pregunta", preguntaS.toString())
 
-        if(exq.existePregunta(idPregunta))
+        /*if(exq.existePregunta(idsPregunta.get(idPregunta)))
             Log.d("idPregunta", idPregunta.toString())
-        else {
+        else {*/
             doAsync {
                 guardarPregunta(preguntaS)
             }
@@ -95,8 +111,8 @@ class EncuestaBuilder {
                 } catch (e: Exception) {
                 }
             }
-        }
-        idPregunta = preguntaS.idPreguntaSiguiente
+        //}
+        //idPregunta = preguntaS.idPreguntaSiguiente
     }
 
     /**

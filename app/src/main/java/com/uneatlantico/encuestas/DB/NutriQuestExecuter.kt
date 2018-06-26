@@ -172,13 +172,15 @@ class NutriQuestExecuter{
         var idEncuesta = 0
         var numeroPreguntas = 0
         var idPrimeraPregunta:Int =0
+        var preguntaFinal:Int = 0
         if(cursor.moveToFirst()) {
             idEncuesta = cursor.getInt(cursor.getColumnIndex("idEncuesta"))
             numeroPreguntas = cursor.getInt(cursor.getColumnIndex("numeroPreguntas"))
             idPrimeraPregunta = cursor.getInt(cursor.getColumnIndex("idPrimeraPregunta"))
+            preguntaFinal = cursor.getInt(cursor.getColumnIndex("preguntaFinal"))
         }
 
-        return EncuestaRaw(idEncuesta, numeroPreguntas, idPrimeraPregunta)
+        return EncuestaRaw(idEncuesta, numeroPreguntas, idPrimeraPregunta, preguntaFinal)
     }
 
     fun setPregunta(pregunta:PreguntaRaw){
@@ -188,11 +190,11 @@ class NutriQuestExecuter{
     }
 
     fun setRespuesta(respuestas:List<RespuestaPosibleRaw>){
-        var sql = "INSERT INTO RespuestasPosibles (respuesta, idPregunta, idCategoria, idPreguntaSiguiente) VALUES "
+        var sql = "INSERT INTO RespuestasPosibles (_id, respuesta, idPregunta, idCategoria, idPreguntaSiguiente) VALUES "
         var posicion = 0
         respuestas.forEach{
 
-            val valuestemp = "('${it.respuesta}', '${it.idPregunta}', ${it.idCategoria}, ${it.idPreguntaSiguiente})"
+            val valuestemp = "(${it._id}, '${it.respuesta}', '${it.idPregunta}', ${it.idCategoria}, ${it.idPreguntaSiguiente})"
             sql += valuestemp
             sql += if(posicion+1 < respuestas.size) "," else ";"
             posicion ++
@@ -214,11 +216,11 @@ class NutriQuestExecuter{
     }
 
     fun setVisibilidad(visibilidad:List<VisibilidadRaw>){
-        var sql = "INSERT INTO Visibilidad (idElemento, tipoElemento, idCategoria, visibilidad) VALUES "
+        var sql = "INSERT INTO Visibilidad (_id, idElemento, tipoElemento, idCategoria, visibilidad) VALUES "
         var posicion = 0
         visibilidad.forEach{
 
-            val valuestemp = "(${it.idElemento}, '${it.tipoElemento}', ${it.idCategoria}, ${it.visibilidad})"
+            val valuestemp = "(${it._id},${it.idElemento}, '${it.tipoElemento}', ${it.idCategoria}, ${it.visibilidad})"
             sql += valuestemp
             sql += if(posicion+1 < visibilidad.size) "," else ";"
             posicion ++
@@ -227,8 +229,10 @@ class NutriQuestExecuter{
     }
 
     fun setEncuesta(encuesta:EncuestaRaw){
-        var sql = "INSERT INTO encuestas (idEncuesta, idPrimeraPregunta, numeroPreguntas) VALUES ('${encuesta.idEncuesta}', '${encuesta.idPrimeraPregunta}', '${encuesta.numeroPreguntas}')"
-        wDB.execSQL(sql)
+        try {
+            var sql = "INSERT INTO encuestas (idEncuesta, idPrimeraPregunta, numeroPreguntas, preguntaFinal) VALUES (${encuesta.idEncuesta}, ${encuesta.idPrimeraPregunta}, ${encuesta.numeroPreguntas}, ${encuesta.preguntaFinal})"
+            wDB.execSQL(sql)
+        } catch (efg:Exception){Log.d("setEncuestaExcp", efg.message)}
     }
 
     fun guardarRespuesta(ct: Context, idPregunta: Int, respuestas:List<String>){
@@ -250,22 +254,41 @@ class NutriQuestExecuter{
         }
     }
 
-    fun insertRespuestas( idPreguntaPrevia: Int, idPregunta: Int, respuestas:ArrayList<Respuesta>){
-        val respuestass = respuestas as List<Respuesta>
+    fun updateRespuestaEncuesta(idPregunta: Int, idEncuesta: Int){
+        try{
+            val sql = "UPDATE encuestas SET preguntaFinal = $idPregunta where _id = $idEncuesta"
+            Log.d("updateProgreso", sql)
+            wDB.execSQL(sql)
+        }catch (e:Exception){Log.d("updateProgresoExcp", e.message)}
+    }
+
+    fun getProgreso(idEncuesta: Int):Int{
+        var idPregunta = 0
+        val sql = "SELECT preguntaFinal p FROM encuestas WHERE _id = $idEncuesta"
+
+        val cursor = rDB.rawQuery(sql, null)
+        if(cursor.moveToFirst()){
+            idPregunta = cursor.getInt(cursor.getColumnIndex("p"))
+        }
+
+        return idPregunta
+    }
+
+    fun insertRespuestas(respuestas: ArrayList<RespuestaRaw>){
         try {
-            val db = NutriQuestDB(ct).writableDatabase
+            //val db = NutriQuestDB(ct).writableDatabase
             var sql = "INSERT INTO Respuestas (idRespuesta, idPregunta, idCategoria, idPreguntaPrevia, idPreguntaPosterior, contestado) VALUES "
             for(i in 0 until respuestas.size){
 
-                val valuestemp = "(${respuestas[i]._id}, $idPregunta, ${respuestas[i].determinaCategoria}, $idPreguntaPrevia, ${respuestas[i].idPreguntaSiguiente}, ${respuestas[i].contestado})"
+                val valuestemp = "(${respuestas[i].idRespuesta}, ${respuestas[i].idPregunta}, ${respuestas[i].idCategoria}, ${respuestas[i].idPreguntaPrevia}, ${respuestas[i].idPreguntaPosterior}, ${respuestas[i].contestado})"
                 sql += valuestemp
                 if (i + 1 < respuestas.size)
                     sql += ","
 
             }
             Log.d("insertstatement", sql)
-            db.execSQL(sql)
-            db.close()
+            wDB.execSQL(sql)
+            //db.close()
         }
         catch (e:Exception){
             Log.d("excepcionInsertRespuest", e.message)

@@ -185,10 +185,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
     private fun startNewActivity() {
         val i = Intent(this, NutriQuestMain::class.java)
         //i.putExtra("account", acct);
-        var idPregunta = ultimaPregunta(this)
+        var idEncuesta = 1
+        /*var idPregunta = ultimaPregunta(this)
         if(idPregunta == 0)
-            idPregunta = 1
-        i.putExtra("idPregunta", idPregunta)
+            idPregunta = 1*/
+        i.putExtra("idEncuesta", idEncuesta)
         //Log.d("jsonaccount" ,acct.toJson());
         //Kill the activity from which you will go to next activity
         startActivity(i)

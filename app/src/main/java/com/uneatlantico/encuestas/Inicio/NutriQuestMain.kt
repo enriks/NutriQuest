@@ -28,35 +28,34 @@ class NutriQuestMain : AppCompatActivity() {
     private lateinit var progress_bar: CardView
     private lateinit var bar: CardView
     private var questionNumber = 0
+    private var numeroPregunta: Int = 0
+    private var idEncuesta:Int = 1
     //private var fragmentTag:Int = 0
     private lateinit var reiniciar: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nutri_quest_main)
-        nQController = NQController(this.applicationContext)
+        idEncuesta = intent.extras.getInt("idEncuesta")
+        nQController = NQController(this.applicationContext, idEncuesta)
         mensajeDespedida = findViewById(R.id.mensajeDespedida)
         mensajeDespedida.alpha = 0.0F
         container = findViewById(R.id.container)
         progress_bar = findViewById(R.id.progress_bar)
         bar = findViewById(R.id.perma_bar)
-        //questionNumber = nQController.inicioEncuesta()
 
 
-        /*val envio = findViewById<Button>(R.id.pulsemepelotudo)
-        envio.alpha = 0.0F
-        envio.setOnClickListener {
-            doAsync {
-                //sendPostRequest(2, applicationContext)
-                //recibirPregunta(4, applicationContext)
-                nQController.inicioEncuesta(applicationContext)
-            }
-        }*/
-        var idPregunta1 = intent.extras.getInt("idPregunta")
-        var idPregunta2 = ultimaPregunta(this)
-        val idPregunta = if( idPregunta1 != idPregunta2 && idPregunta2 != 0) idPregunta2 else idPregunta1
+        var idPreguntaInicio = 0
+        try {
+            idPreguntaInicio= nQController.ultimaPregunta()
+        }catch (e:Exception){ Log.d("progresoExp", e.message) }
 
-        Log.d("idPreguntaActual", idPregunta.toString())
+        if(idPreguntaInicio != 0){
+            changeFragment(idPreguntaInicio)
+        }
+        else
+            inicioEncuesta(idEncuesta)
+
 
         //TODO esconder boton de reiniciar si no tiene sentido
         //TODO calcular cual es la primera pregunta de la encuesta y volver ahi en lugar de 1
@@ -64,17 +63,12 @@ class NutriQuestMain : AppCompatActivity() {
         //back.alpha = 0.0F
         reiniciar.setOnClickListener {
             deleteAll(this)
-            inicioPregunta(1)
+            inicioEncuesta(1)
         }
 
-        //Cojo el id de Pregunta que me trae la primera vez
-        inicioPregunta(idPregunta)//nQController.nextQuestion(this, 0))
-
-        /*doAsync {
-            //Log.d("hola", "adios")
-            EncuestaBuilder(applicationContext, idPregunta)
-        }*/
     }
+
+
 
     /**
      *
@@ -84,12 +78,12 @@ class NutriQuestMain : AppCompatActivity() {
 
         //place holder de la clase NQcontroller
         val idActual = nQController.nextQuestion(idPregunta)
-
+        numeroPregunta = nQController.numeroPregunta
         //abrir el fragmento con la siguiente pregunta
         if(idActual != -1){
             bundle.putInt("idPreguntaAnterior", idPregunta)
             bundle.putInt("idPreguntaActual", idActual)
-
+            bundle.putInt("idEncuesta", idEncuesta)
             val tempfrag = QuestionFragment.newInstance()
             tempfrag.arguments = (bundle)
             openFragment(tempfrag)
@@ -112,11 +106,12 @@ class NutriQuestMain : AppCompatActivity() {
     /**
      * Aqui empieza la encuesta
      */
-    fun inicioPregunta(idPregunta: Int){
+    fun inicioEncuesta(idPregunta: Int){
 
         val bundle = Bundle()
         bundle.putInt("idPreguntaAnterior", 0)
         bundle.putInt("idPreguntaActual", idPregunta)
+        bundle.putInt("idEncuesta", idEncuesta)
 
         doAsync {
             nQController.inicioEncuesta(idPregunta)
@@ -193,12 +188,14 @@ class NutriQuestMain : AppCompatActivity() {
     }
 
     private fun percentajeLeft(idPregunta: Int){
-        if(idPregunta == questionNumber)
+        val anchMax = bar.width
+        Log.d("max/actual", "$anchMax / $questionNumber")
+
+        if(idPregunta == questionNumber || questionNumber == 0)
             progress_bar.layoutParams.width = bar.width
         else {
-            val anchMax = bar.width
             val avance = anchMax / questionNumber
-            progress_bar.layoutParams.width = idPregunta * avance
+            progress_bar.layoutParams.width = numeroPregunta * avance
         }
     }
 }
