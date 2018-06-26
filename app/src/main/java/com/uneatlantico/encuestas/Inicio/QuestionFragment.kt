@@ -1,6 +1,7 @@
 package com.uneatlantico.encuestas.Inicio
 
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.AppCompatTextView
@@ -41,7 +42,6 @@ class QuestionFragment : Fragment() {
 
         val idEncuesta = arguments!!.getInt("idEncuesta")
         Log.d("idEncuestaFrag", idEncuesta.toString())
-        var pregunta = Pregunta()
         val ct = this.context
         cnt = NQController(ct!!, idEncuesta)
 
@@ -49,7 +49,7 @@ class QuestionFragment : Fragment() {
         val idPregunta = arguments!!.getInt("idPreguntaActual")
 
         //if(idPreguntaAnterior != 0)
-        pregunta = cnt.formarPregunta(idPregunta)
+        var pregunta = cnt.formarPregunta(idPregunta)
         //else pregunta = cnt.primeraConexion(idPregunta)
         val respuestas = pregunta.posiblesRespuestas
 
@@ -177,7 +177,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
              * feedback al usuario sobre respuesta ya respondida anteriormente
              */
             if(listaRespuestas[position].contestadoAnterior == 1) {
-                holder.respuestaPosible.setTextColor(Color.BLUE)
+                holder.respuestaPosible.setTypeface(holder.respuestaPosible.typeface, Typeface.BOLD)//setTextColor(Color.BLUE)
             }
 
             holder.check.isChecked = (listaRespuestas[position].contestado == 1)

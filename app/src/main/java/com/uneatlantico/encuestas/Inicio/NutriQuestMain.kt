@@ -44,6 +44,16 @@ class NutriQuestMain : AppCompatActivity() {
         progress_bar = findViewById(R.id.progress_bar)
         bar = findViewById(R.id.perma_bar)
 
+        //TODO esconder boton de reiniciar si no tiene sentido
+        //TODO calcular cual es la primera pregunta de la encuesta y volver ahi en lugar de 1
+        reiniciar = findViewById(R.id.backEncuesta)
+        reiniciar.alpha = 0.0F
+        reiniciar.setOnClickListener {
+            deleteAll(this)
+
+            //TODO arreglar el puntero de cambiar de fragmento
+            changeFragment(1)
+        }
 
         var idPreguntaInicio = 0
         try {
@@ -55,17 +65,6 @@ class NutriQuestMain : AppCompatActivity() {
         }
         else
             inicioEncuesta(idEncuesta)
-
-
-        //TODO esconder boton de reiniciar si no tiene sentido
-        //TODO calcular cual es la primera pregunta de la encuesta y volver ahi en lugar de 1
-        reiniciar = findViewById(R.id.backEncuesta)
-        //back.alpha = 0.0F
-        reiniciar.setOnClickListener {
-            deleteAll(this)
-            inicioEncuesta(1)
-        }
-
     }
 
 
@@ -84,10 +83,11 @@ class NutriQuestMain : AppCompatActivity() {
             bundle.putInt("idPreguntaAnterior", idPregunta)
             bundle.putInt("idPreguntaActual", idActual)
             bundle.putInt("idEncuesta", idEncuesta)
+
             val tempfrag = QuestionFragment.newInstance()
             tempfrag.arguments = (bundle)
             openFragment(tempfrag)
-
+            reiniciar.alpha = 1.0F
             percentajeLeft(idActual)
         }
 
@@ -119,6 +119,7 @@ class NutriQuestMain : AppCompatActivity() {
             val tempfrag = QuestionFragment.newInstance()
             tempfrag.arguments = (bundle)
             resetFragment(tempfrag)
+            reiniciar.alpha = 1.0F
         }
 
     }
