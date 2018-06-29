@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.content.Intent
+import android.os.Looper
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
@@ -96,8 +97,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
 
         Log.d("textView", texto.text.toString())
         if(texto.text.toString() != "") {
-            usuarioLocal(texto.text.toString())
-            startNewActivity()
+            doAsync {
+                usuarioLocal(texto.text.toString())
+            }
         }
         else
             Toast.makeText(this, "No puede estar vacio", Toast.LENGTH_SHORT).show()
@@ -150,8 +152,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
             val idPersona = email!!.split("@".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
             val photoUrl = acct.photoUrl.toString()
             val listaTemp = Arrays.asList<String>(idPersona[0], nombre, email, photoUrl, idDispositivo)
-
-            guardarUsuario(this, listaTemp)
+            doAsync {
+                if (guardarUsuario(applicationContext, listaTemp) == 1)
+                    startNewActivity()
+                else Toast.makeText(applicationContext, "no tiene conexión a internet", Toast.LENGTH_LONG).show()
+            }
 
         } catch (e: Exception) {
             Log.d("noInsertadoLogin", e.message)
@@ -174,7 +179,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
             val photoUrl = ""
             val listaTemp = Arrays.asList<String>(idPersona, nombre, email, photoUrl, idDispositivo)
 
-            doAsync {guardarUsuario(applicationContext, listaTemp)}
+           doAsync {
+               val result = guardarUsuario(applicationContext, listaTemp)
+               Log.d("resultado", result.toString())
+               if(result == 1)
+                   startNewActivity()
+               else {
+                   //Looper.prepare()
+                   //Toast.makeText(applicationContext, "no tiene conexión a internet", Toast.LENGTH_LONG).show()
+               }
+           }
 
         } catch (e: Exception) {
             Log.d("noInsertadoLogin", e.message)

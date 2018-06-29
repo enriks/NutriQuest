@@ -40,7 +40,8 @@
                 android:id="@+id/listaRespuestas"
                 android:padding="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_above="@id/nextArrow"/>
 
             <ImageView
                 android:id="@+id/nextArrow"

@@ -36,23 +36,27 @@ class QuestionFragment : Fragment() {
     private var LIMITE_ELEGIDOS: Int = 0
     private var MINIMOS_ELEGIDOS: Int = 0
     private lateinit var cnt: NQController
+    private lateinit var pregunta:Pregunta
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
         val idEncuesta = arguments!!.getInt("idEncuesta")
-        Log.d("idEncuestaFrag", idEncuesta.toString())
+        //Log.d("idEncuestaFrag", idEncuesta.toString())
         val ct = this.context
-        cnt = NQController(ct!!, idEncuesta)
+        //cnt = NQController(ct!!, idEncuesta)
 
         val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
-        val idPregunta = arguments!!.getInt("idPreguntaActual")
+        //val idPregunta = arguments!!.getInt("idPreguntaActual")
 
         //if(idPreguntaAnterior != 0)
-        var pregunta = cnt.formarPregunta(idPregunta)
-        //else pregunta = cnt.primeraConexion(idPregunta)
+            pregunta = cnt.preguntas[cnt.posicionPregunta] as Pregunta//cnt.formarPregunta(idPregunta)
+        //else
+            //doAsync { if(idPreguntaAnterior == 0) cnt.primeraConexion(idEncuesta) else cnt.recibirPreguntaX(idPregunta)}
+        val idPregunta = pregunta._id
+        //printPregunta(pregunta)
         val respuestas = pregunta.posiblesRespuestas
-
+        //doAsync { cnt.formarPregunta2(idPregunta)}
         LIMITE_ELEGIDOS = pregunta.maxRespuestas
         MINIMOS_ELEGIDOS = pregunta.minRespuestas
 
@@ -112,9 +116,10 @@ class QuestionFragment : Fragment() {
                 doAsync {
 
                     //envio las respuestas
-                    cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas)
+                    if(cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas) == 1)
+                        Log.d("avanzar", "avanzo")
+                        (activity as NutriQuestMain).changeFragment(idPregunta)
                 }
-                (activity as NutriQuestMain).changeFragment(idPregunta)
             }
         }
 
@@ -126,8 +131,10 @@ class QuestionFragment : Fragment() {
         return v
     }
 
-    private fun verFlecha(){
+    fun setController(nqController: NQController){cnt = nqController}
 
+    private fun verFlecha(){
+        //Log.d("flechaAvvanze", "minimo $MINIMOS_ELEGIDOS - maximo $LIMITE_ELEGIDOS")
        if( posicionClick.size in MINIMOS_ELEGIDOS..LIMITE_ELEGIDOS){
             forwardArrow.alpha = 1.0F
             forwardArrow.isClickable = true
@@ -166,7 +173,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
 
 
     override fun onBindViewHolder(holder: NQViewHolder, position: Int) {
-
+        //Log.d("visibilidad",listaRespuestas[position].visibilidad.toString())
         if(listaRespuestas[position].visibilidad == 1) {
 
             holder.bloque.visibility = View.VISIBLE

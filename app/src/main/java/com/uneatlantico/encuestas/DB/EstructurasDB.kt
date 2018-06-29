@@ -9,7 +9,7 @@ import java.util.HashMap
 /**
  *
  */
-class Pregunta(map: MutableMap<String, Any?>) {
+/*class Pregunta(map: MutableMap<String, Any?>) {
     var _id: Int by map
     var pregunta: String by map
     var fecha: String by map
@@ -25,7 +25,9 @@ class Pregunta(map: MutableMap<String, Any?>) {
         this.minRespuestas = minRespuestas
         this.maxRespuestas = maxRespuestas
     }
-}
+}*/
+
+data class Pregunta(var _id:Int = 1, var pregunta:String="", var fecha:String="", var posiblesRespuestas:ArrayList<Respuesta> = ArrayList(), var minRespuestas:Int = 1, var maxRespuestas:Int = 1)
 
 /**
  * Pregunta con su visibilidad para el Fragmento
@@ -51,7 +53,7 @@ class SoloPregunta(map: MutableMap<String, Any?>) {
 /**
  * Respuesta para el fragmento
  */
-class Respuesta(var map:MutableMap<String, Any?>){
+/*class Respuesta(var map:MutableMap<String, Any?>){
     var _id: Int by map
     var respuesta: String by map
     var determinaCategoria: Int by map
@@ -61,7 +63,7 @@ class Respuesta(var map:MutableMap<String, Any?>){
     var contestado:Int by map
     var idPreguntaSiguiente:Int by map
 
-    constructor(_id:Int = 0, respuesta:String, categoriaVisibilidad:Int, determinaCategoria: Int,visibilidad:Int = 1, contestado:Int = 0, contestadoAnterior:Int = 0,idPreguntaSiguiente:Int = 0):this(HashMap()){
+    constructor(_id:Int = 0, respuesta:String, categoriaVisibilidad:Int = -1, determinaCategoria: Int,visibilidad:Int = 1, contestado:Int = 0, contestadoAnterior:Int = 0,idPreguntaSiguiente:Int = 0):this(HashMap()){
         this._id = _id
         this.respuesta = respuesta
         this.determinaCategoria = determinaCategoria
@@ -71,7 +73,9 @@ class Respuesta(var map:MutableMap<String, Any?>){
         this.contestado = contestado
         this.idPreguntaSiguiente = idPreguntaSiguiente
     }
-}
+}*/
+
+data class Respuesta(var _id:Int = 0, var respuesta:String,var categoriaVisibilidad:Int? = -1,var determinaCategoria: Int?,var visibilidad:Int? = 1,var  contestado:Int = 0, var contestadoAnterior:Int? = 0,var idPreguntaSiguiente:Int = 0)
 
 /**
  *
@@ -104,6 +108,6 @@ data class CategoriaRaw(var _id: Int, var categoria:String)
 
 data class VisibilidadRaw(var _id:Int, var idElemento: Int, var tipoElemento:Int, var idCategoria: Int, var visibilidad: Int)
 
-data class EncuestaRaw(var idEncuesta:Int, var idPrimeraPregunta:Int, var numeroPreguntas:Int, var preguntaFinal:Int)
+data class EncuestaRaw(var idEncuesta:Int, var idPrimeraPregunta:Int, var numeroPreguntas:Int, var preguntaFinal:Int, var clave:String)
 
 data class RespuestaRaw(var idRespuesta:Int ,var idPregunta:Int, var idCategoria:Int, var idPreguntaPrevia: Int, var idPreguntaPosterior: Int, var contestado:Int = 0)

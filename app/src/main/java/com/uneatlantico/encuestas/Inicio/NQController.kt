@@ -17,17 +17,68 @@ class NQController{
 
     val idPreguntas:ArrayList<Int> = ArrayList()
     val preguntas = ArrayList<Pregunta>()
+    //val preguntas = hashMapOf<Int, Pregunta>()
     var numeroPreguntas = 0
+    var posicionPregunta = -1
     var numeroPregunta = 0
     var idEncuesta = 1
+    val ct:Context
+    val idUsuario:String
+
+    constructor(ct: Context, idEncuesta: Int){
+        this.ct = ct
+        exq = NutriQuestExecuter(ct)
+        idUsuario = NutriQuestExecuter.idUsuario(ct)
+        this.idEncuesta = idEncuesta
+    }
 
     fun inicioEncuesta(idEncuesta: Int){
         //this.idEncuesta = idEncuesta
-        if(exq.getEncuesta(idEncuesta).numeroPreguntas == 0)
-              comenzarEncuesta(idEncuesta)
-        else
-            numeroPreguntas = exq.numeroPreguntas()
+        //if(exq.getEncuesta(idEncuesta).numeroPreguntas == 0)
+              primeraConexion(idEncuesta)//comenzarEncuesta(idEncuesta)
+        /*else
+            numeroPreguntas = exq.numeroPreguntas()*/
 
+    }
+
+    fun primeraConexion(idEncuesta: Int):Int{
+        val datos = firstConexion2(ct, idEncuesta)
+        if(datos == "-1")
+            return -1
+        val gson = Gson()
+        Log.d("todo",  datos)
+        val json = JSONObject(datos)
+        val preguntaTotal = json.getJSONObject("pregunta")
+        val preguntaRaw = preguntaTotal.getJSONObject("pregunta")
+        val respuestasRaw = preguntaTotal.getJSONArray("respuestas")
+        val clave = json.getString("clave")
+        Log.d("clave", clave)
+        val respuestas = ArrayList<Respuesta>()
+        for (i in 0 until respuestasRaw.length()) {
+            val respuesta = gson.fromJson<Respuesta>(respuestasRaw[i].toString(), Respuesta::class.java)
+            respuesta.visibilidad = 1
+            respuestas.add(respuesta)
+        }
+        numeroPreguntas = json.getString("numeroPreguntas").toInt()
+        //preguntaRaw.put("respuestas", respuestas)
+        //Log.d("preguntitatita", preguntaRaw.toString())
+        val pregunta = gson.fromJson<Pregunta>(preguntaRaw.toString(), Pregunta::class.java)
+        pregunta.posiblesRespuestas = respuestas
+        if(pregunta.maxRespuestas == 0) {
+            pregunta.maxRespuestas = respuestas.size
+        }
+        val idPregunta = pregunta._id
+        preguntas.add(pregunta)
+        posicionPregunta = 0
+        idPreguntas.add(idPregunta)
+
+        exq.openRDB()
+        if(exq.getClave(idEncuesta) == "") {
+            exq.openWDB()
+            exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta, clave))
+        }
+        exq.closeDB()
+        return 0
     }
 
     private fun comenzarEncuesta(idEncuesta: Int){
@@ -68,38 +119,56 @@ class NQController{
         var idPreguntaSig = json.getString("idPreguntaSiguiente").toInt()
         val numeroPreguntas = json.getJSONObject("numeroPreguntas").getString("numeroPreguntas").toInt()
         this.numeroPreguntas = numeroPreguntas
-        exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta))
+
+        exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta, ""))
         //Log.d("numeroZ", numeroPreguntas.toString())
         doAsync {
             val encuestaBuilder = EncuestaBuilder(ct, idPreguntaSig, numeroPreguntas)
         }
     }
 
-    fun recibirPreguntaX(idPregunta: Int){
-        val preguntaTemp = recibirPregunta(idPregunta, ct)
+    fun recibirPreguntaX(idPregunta: Int):Int{
+        exq.openRDB()
+        val preguntaTemp = getPregunta( idEncuesta, idPregunta, exq.getClave(idEncuesta))
+        exq.closeDB()
+        if(preguntaTemp == "-1")
+            return -1
         val gson = Gson()
+
         val preguntaTotal = JSONObject(preguntaTemp)
-        val preguntaJson = preguntaTotal.getJSONArray("pregunta")
+        val preguntaJson = preguntaTotal.getJSONObject("pregunta")
 
         val respuestasJson = preguntaTotal.getJSONArray("respuestas")
         val respuestas = ArrayList<Respuesta>()
         for(i in 0 until respuestasJson.length()){
-            respuestas.add(gson.fromJson<Respuesta>(respuestasJson[i].toString(), Respuesta::class.java))
+            val respuesta = gson.fromJson<Respuesta>(respuestasJson[i].toString(), Respuesta::class.java)
+            if(respuesta.visibilidad == null)
+                respuesta.visibilidad = 1
+            if(respuesta.categoriaVisibilidad == null)
+                respuesta.categoriaVisibilidad = 1
+            if(respuesta.contestadoAnterior == null)
+                respuesta.contestadoAnterior = 0
+            if(respuesta.determinaCategoria == null)
+                respuesta.determinaCategoria = 0
+            //Log.d("determinoCategoria", respuesta.determinaCategoria.toString())
+            respuestas.add(respuesta)
+
         }
-        preguntaJson.put(respuestas)
+        //preguntaJson.(respuestas)
         Log.d("jsonPregunta", preguntaJson.toString())
-        gson.fromJson<Pregunta>(preguntaJson.toString(), Pregunta::class.java)
+        val pregunta = gson.fromJson<Pregunta>(preguntaJson.toString(), Pregunta::class.java)
+        pregunta.posiblesRespuestas = respuestas
+        if(pregunta.maxRespuestas == 0) {
+            pregunta.maxRespuestas = respuestas.size
+        }
+        //Log.d("pregunta", )
+        Log.d("idPreguntax", pregunta._id.toString())
+        posicionPregunta ++
+        preguntas.add(posicionPregunta, pregunta)//gson.fromJson<Pregunta>(preguntaJson.toString(), Pregunta::class.java))
+        Log.d("siguientePregunta", preguntas[posicionPregunta].pregunta)
+
+        return 0
     }
-
-    val ct:Context
-
-    constructor(ct: Context, idEncuesta: Int){
-        this.ct = ct
-        exq = NutriQuestExecuter(ct)
-        this.idEncuesta = idEncuesta
-    }
-
-
 
     /**
      * determina cual sera la siguiente pregunta
@@ -218,23 +287,25 @@ class NQController{
     /**
      * Una vez que el usuario avance de pregunta guarda y envia las respuestas
      */
-    fun manejarRespuestas(idPreguntaPrevia:Int, idPregunta:Int, respuestas:ArrayList<Respuesta>){
+    fun manejarRespuestas(idPreguntaPrevia:Int, idPregunta:Int, respuestas:ArrayList<Respuesta>):Int{
         exq.openWDB()
         val respuestasX = ArrayList<RespuestaRaw>()
         respuestas.forEach {
+            Log.d("respuestasEnvIdPre", idPregunta.toString())
             if(it.contestado == 1) {
                 //respuestas[i]._id}, $idPregunta, ${respuestas[i].determinaCategoria}, $idPreguntaPrevia, ${respuestas[i].idPreguntaSiguiente}, ${respuestas[i].contestado}
-                respuestasX.add(RespuestaRaw(it._id, idPregunta, it.determinaCategoria, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
+                val dC = if(it.determinaCategoria == null) 0 else it.determinaCategoria
+                respuestasX.add(RespuestaRaw(it._id, idPregunta, dC!!, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
             }
         }
 
         //inserto las respuestas a la pregunta en db movil
-        exq.insertRespuestas(respuestasX)
+        /*exq.insertRespuestas(respuestasX)
         exq.updateRespuestaEncuesta(idPregunta, idEncuesta)
-        exq.closeDB()
+        exq.closeDB()*/
         //mando la respuesta a una pregunta a el ws
-        sendUserResponses(respuestasX, ct)
-
+        val respuesta = if(sendUserResponses(respuestasX, idUsuario) == "1") 1 else 0
+        return respuesta
     }
 
     fun ultimaPregunta():Int{
@@ -246,11 +317,13 @@ class NQController{
         /**
          * guardo el usuario logueado en DB y en la web
          */
-        fun guardarUsuario(ct: Context, usuario:List<String>){
-            doAsync {
-                NutriQuestExecuter.insertarUsuario(ct, usuario)
-                enviarUsuario(ct, usuario)
-            }
+        fun guardarUsuario(ct: Context, usuario:List<String>):Int{
+            var enviado = 0
+                if(enviarUsuario(usuario) == "1") {
+                    NutriQuestExecuter.insertarUsuario(ct, usuario)
+                    enviado = 1
+                }
+            return enviado
         }
     }
 }

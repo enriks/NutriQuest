@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
 import com.uneatlantico.encuestas.DB.RespuestaRaw
+import com.uneatlantico.encuestas.DB.RespuestasUsuario
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.OutputStreamWriter
@@ -16,8 +17,8 @@ import java.net.URL
 fun recibirPregunta(idPregunta: Int, ct: Context):String {
     var text:String = ""
     try {
-        //val url = URL("http://172.22.1.3/php/encuestas/preguntaMaestra.php")
-        val url = URL("http://10.0.2.2/ws/encuestasWebService/preguntaMaestra.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/preguntaMaestra.php")
+        //val url = URL("http://10.0.2.2/ws/encuestasWebService/preguntaMaestra.php")
         val conn = connectWS(url)
 
         val jsonParam = JSONObject()
@@ -34,11 +35,11 @@ fun recibirPregunta(idPregunta: Int, ct: Context):String {
     return text
 }
 
-fun sendUserResponses(a: ArrayList<RespuestaRaw>, ct: Context):Int {
-    var enviado:Int = 0
+fun sendUserResponses(a: ArrayList<RespuestaRaw>, idUsuario: String):String {
+    var text = ""
     try {
-        val url = URL("http://10.0.2.2/ws/encuestasWebService/respuesta.php")
-        //val url = URL("http://172.22.1.3/php/encuestas/respuesta.php")
+        //val url = URL("http://10.0.2.2/ws/encuestasWebService/respuesta.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/respuesta.php")
         val conn = connectWS(url)
 
         val jsonA = JSONArray()
@@ -47,7 +48,7 @@ fun sendUserResponses(a: ArrayList<RespuestaRaw>, ct: Context):Int {
             //Log.d("respuestasJson", it.respuesta)
             val jsonParam = JSONObject()
             jsonParam.put("idRespuesta", it.idRespuesta)
-            jsonParam.put("idUsuario", idUsuario(ct))
+            jsonParam.put("idUsuario", idUsuario)
             jsonParam.put("idPregunta", it.idPregunta)
             jsonParam.put("idCategoria", it.idCategoria)
             jsonParam.put("idPreguntaPrevia", it.idPreguntaPrevia)
@@ -60,14 +61,14 @@ fun sendUserResponses(a: ArrayList<RespuestaRaw>, ct: Context):Int {
         json.put("r", jsonA)
         Log.d("JsonEnviarResp", json.toString())
 
-        val text: String? = enviarWS(conn, json)
+        text = enviarWS(conn, json)
         Log.d("RespEnviarResp", text)
     }
     catch (e: Exception){
         Log.d("respsNoEnv", e.toString())
     }
 
-    return enviado
+    return text
 }
 
 /**
@@ -77,8 +78,8 @@ fun firstConexion(ct:Context, idEncuesta:Int):String {
 
     var text = ""
     try {
-        val url = URL("http://10.0.2.2/ws/encuestasWebService/primera_conexion.php")
-        //val url = URL("http://172.22.1.3/php/encuestas/primera_conexion.php")
+        //val url = URL("http://10.0.2.2/ws/encuestasWebService/primera_conexionOG.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/primera_conexionOG.php")
         val conn = connectWS(url)
 
         val jsonParam = JSONObject()
@@ -95,10 +96,33 @@ fun firstConexion(ct:Context, idEncuesta:Int):String {
     return text
 }
 
-fun enviarUsuario(ct: Context, usuario: List<String>):Int {
-    var enviado = 0
+fun firstConexion2(ct:Context, idEncuesta:Int):String {
+
+    var text = ""
     try {
-        val url = URL("http://172.22.1.3/php/encuestas/registrar.php")
+        //val url = URL("http://10.0.2.2/ws/encuestasWebService/primera_conexion.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/primera_conexion.php")
+        val conn = connectWS(url)
+
+        val jsonParam = JSONObject()
+        jsonParam.put("nombre", idUsuario(ct))
+        jsonParam.put("idEncuesta", idEncuesta)
+
+        Log.d("jsonPrimeraConn2", jsonParam.toString())
+
+        text = enviarWS(conn, jsonParam)
+
+        Log.d("textFirstConexion2", text)
+    } catch (e: Exception) {
+        Log.d("firstConexionExcp2", e.toString())
+    }
+    return text
+}
+
+fun enviarUsuario(usuario: List<String>):String {
+    var text =""
+    try {
+        val url = URL("http://172.22.1.3/php/encuestasT/registrar.php")
         val conn = connectWS(url)
 
         val jsonParam = JSONObject()
@@ -108,13 +132,37 @@ fun enviarUsuario(ct: Context, usuario: List<String>):Int {
         jsonParam.put("idAndroid", usuario[4])
 
         Log.d("JsonEnviarUsr", jsonParam.toString())
-        val text: String? = enviarWS(conn, jsonParam)
+        text = enviarWS(conn, jsonParam)
         Log.d("respuestaEnviarUsr", text)
 
     } catch (e: Exception) {
         Log.d("responseWebservice", e.toString())
     }
-    return enviado
+    return text
+}
+
+fun getPregunta(idEncuesta: Int, idPregunta: Int, clave:String):String {
+    var text = ""
+    try {
+
+        val url = URL("http://172.22.1.3/php/encuestasT/givePregunta.php")
+        //val url = URL("http://10.0.2.2/ws/encuestasWebService/givePregunta.php")
+        val conn = connectWS(url)
+
+        val jsonParam = JSONObject()
+        jsonParam.put("clave", clave)
+        //jsonParam.put("idPregunta", idPregunta)
+        jsonParam.put("idEncuesta", idEncuesta)
+
+
+        Log.d("JsonGetPregunta", jsonParam.toString())
+        text = enviarWS(conn, jsonParam)
+        Log.d("respuestagetPr", text)
+
+    } catch (e: Exception) {
+        Log.d("getPreguntaExcp", e.toString())
+    }
+    return text
 }
 
 fun enviarWS(conn: HttpURLConnection, jsonParam: JSONObject):String{

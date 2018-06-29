@@ -173,14 +173,16 @@ class NutriQuestExecuter{
         var numeroPreguntas = 0
         var idPrimeraPregunta:Int =0
         var preguntaFinal:Int = 0
+        var clave = ""
         if(cursor.moveToFirst()) {
             idEncuesta = cursor.getInt(cursor.getColumnIndex("idEncuesta"))
             numeroPreguntas = cursor.getInt(cursor.getColumnIndex("numeroPreguntas"))
             idPrimeraPregunta = cursor.getInt(cursor.getColumnIndex("idPrimeraPregunta"))
             preguntaFinal = cursor.getInt(cursor.getColumnIndex("preguntaFinal"))
+            clave = cursor.getString(cursor.getColumnIndex("clave"))
         }
 
-        return EncuestaRaw(idEncuesta, numeroPreguntas, idPrimeraPregunta, preguntaFinal)
+        return EncuestaRaw(idEncuesta, numeroPreguntas, idPrimeraPregunta, preguntaFinal, clave)
     }
 
     fun setPregunta(pregunta:PreguntaRaw){
@@ -230,7 +232,8 @@ class NutriQuestExecuter{
 
     fun setEncuesta(encuesta:EncuestaRaw){
         try {
-            var sql = "INSERT INTO encuestas (idEncuesta, idPrimeraPregunta, numeroPreguntas, preguntaFinal) VALUES (${encuesta.idEncuesta}, ${encuesta.idPrimeraPregunta}, ${encuesta.numeroPreguntas}, ${encuesta.preguntaFinal})"
+            var sql = "INSERT INTO encuestas (idEncuesta, idPrimeraPregunta, numeroPreguntas, preguntaFinal, clave) VALUES (${encuesta.idEncuesta}, ${encuesta.idPrimeraPregunta}, ${encuesta.numeroPreguntas}, ${encuesta.preguntaFinal}, '${encuesta.clave}')"
+            Log.d("guardarEncuesta", sql)
             wDB.execSQL(sql)
         } catch (efg:Exception){Log.d("setEncuestaExcp", efg.message)}
     }
@@ -372,6 +375,23 @@ class NutriQuestExecuter{
                 existe = true
         }
         return existe
+    }
+
+    fun getClave(idEncuesta: Int):String{
+        var clave = ""
+        try{
+            val sql = "SELECT clave FROM encuestas WHERE idEncuesta = $idEncuesta;"
+            val cursor = rDB.rawQuery(sql, null)
+            if(cursor.moveToFirst()){
+                clave = cursor.getString(cursor.getColumnIndex("clave"))
+            }
+            cursor.close()
+
+        }catch (e:Exception){Log.d("getClaveExp", e.message)}
+        return clave
+    }
+
+    fun setClave(idEncuesta: Int){
     }
 
     companion object {

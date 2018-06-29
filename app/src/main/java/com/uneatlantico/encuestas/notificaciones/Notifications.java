@@ -51,7 +51,7 @@ public class Notifications extends FirebaseMessagingService {
     private void sendNotification(Map<String, String> messageBody) {
 
 
-        PendingIntent encuestaIntent = encuestaIntent(Integer.getInteger(messageBody.get("idPregunta")));
+        PendingIntent encuestaIntent = encuestaIntent(messageBody.get("idEncuesta"));
 
         String channelId = "nose";//getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -85,22 +85,19 @@ public class Notifications extends FirebaseMessagingService {
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
-    private PendingIntent encuestaIntent(int punteroSiguientePregunta){
+    private PendingIntent encuestaIntent(String punteroEncuesta){
         Intent intent = new Intent(this, NutriQuestMain.class);
-        intent.putExtra("idPregunta", punteroSiguientePregunta);
+        intent.putExtra("idEncuesta", Integer.valueOf(punteroEncuesta));
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT);
 
-        return pendingIntent;
+        return PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT);
     }
 
     private PendingIntent noIntent(){
         Intent noIntent = new Intent(this, ButtonReceiver.class);
-        PendingIntent k = PendingIntent.getActivity(this, 0, noIntent,
-                0);
 
-        return k;
+        return PendingIntent.getActivity(this, 0, noIntent, 0);
     }
 
     // [END receive_message]
