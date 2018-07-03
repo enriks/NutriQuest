@@ -394,6 +394,20 @@ class NutriQuestExecuter{
     fun setClave(idEncuesta: Int){
     }
 
+    fun idUsuario():String{
+        var idUsuario = ""
+        try{
+            val sql = "SELECT idPersona FROM usuario"
+            val cursor = rDB.rawQuery(sql, null)
+            if(cursor.moveToFirst()){
+                idUsuario = cursor.getString(cursor.getColumnIndex("idPersona"))
+            }
+            cursor.close()
+
+        }catch (e:Exception){Log.d("excepcionLeerUsuario", e.message)}
+        return idUsuario
+    }
+
     companion object {
         fun insertarUsuario(ct: Context, Usuario:List<String>){
 

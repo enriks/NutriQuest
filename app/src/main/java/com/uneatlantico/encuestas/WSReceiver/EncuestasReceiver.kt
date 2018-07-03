@@ -141,7 +141,7 @@ fun enviarUsuario(usuario: List<String>):String {
     return text
 }
 
-fun getPregunta(idEncuesta: Int, idPregunta: Int, clave:String):String {
+fun getPregunta(idEncuesta: Int, clave:String):String {
     var text = ""
     try {
 
@@ -165,6 +165,29 @@ fun getPregunta(idEncuesta: Int, idPregunta: Int, clave:String):String {
     return text
 }
 
+fun nQS(idPregunta: Int, idUsuario:String):String{
+    var text = ""
+    try {
+
+        val url = URL("http://172.22.1.3/php/encuestasT/nQS.php")
+        val conn = connectWS(url)
+
+        val jsonParam = JSONObject()
+        jsonParam.put("idPregunta", idPregunta)
+        jsonParam.put("id", idUsuario)
+
+
+        Log.d("JsonGetPregunta", jsonParam.toString())
+        text = enviarWS(conn, jsonParam)
+        Log.d("respuestagetPr", text)
+
+    } catch (e: Exception) {
+        Log.d("getPreguntaExcp", e.toString())
+    }
+    return text
+}
+
+
 fun enviarWS(conn: HttpURLConnection, jsonParam: JSONObject):String{
     val outputStream = conn.outputStream
     val outputStreamWriter = OutputStreamWriter(outputStream, "UTF-8")
@@ -176,8 +199,8 @@ fun enviarWS(conn: HttpURLConnection, jsonParam: JSONObject):String{
 
 fun connectWS(url:URL):HttpURLConnection{
     val conn = url.openConnection() as HttpURLConnection
-    conn.readTimeout = 2000
-    conn.connectTimeout = 2500
+    conn.readTimeout = 10000
+    conn.connectTimeout = 10500
     conn.requestMethod = "POST"
     //conn.setRequestProperty("Content-Type", "false")
     conn.setRequestProperty("Accept", "application/json;charset=utf-8")

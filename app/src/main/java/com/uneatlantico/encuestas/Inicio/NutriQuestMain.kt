@@ -37,7 +37,7 @@ class NutriQuestMain : AppCompatActivity() {
 
         //try {
             while (!inicioEncuesta(idEncuesta)) {
-                Thread.sleep(1000)
+                Thread.sleep(3000)
                 Log.d("reintentando", "si")
             }
         //}catch (e:Exception){Log.d("threadErrorReint", e.message)}

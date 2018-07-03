@@ -38,6 +38,7 @@ class QuestionFragment : Fragment() {
     private lateinit var cnt: NQController
     private lateinit var pregunta:Pregunta
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
@@ -46,11 +47,12 @@ class QuestionFragment : Fragment() {
         val ct = this.context
         //cnt = NQController(ct!!, idEncuesta)
 
+
         val idPreguntaAnterior = arguments!!.getInt("idPreguntaAnterior")
         //val idPregunta = arguments!!.getInt("idPreguntaActual")
 
         //if(idPreguntaAnterior != 0)
-            pregunta = cnt.preguntas[cnt.posicionPregunta] as Pregunta//cnt.formarPregunta(idPregunta)
+        pregunta = cnt.preguntias[cnt.idPreguntas[cnt.posicionPregunta]]!!//pregunta = cnt.preguntas[cnt.posicionPregunta] as Pregunta//cnt.formarPregunta(idPregunta)
         //else
             //doAsync { if(idPreguntaAnterior == 0) cnt.primeraConexion(idEncuesta) else cnt.recibirPreguntaX(idPregunta)}
         val idPregunta = pregunta._id

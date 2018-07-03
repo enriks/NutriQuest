@@ -17,6 +17,7 @@ class NQController{
 
     val idPreguntas:ArrayList<Int> = ArrayList()
     val preguntas = ArrayList<Pregunta>()
+    val preguntias = HashMap<Int, Pregunta>()
     //val preguntas = hashMapOf<Int, Pregunta>()
     var numeroPreguntas = 0
     var posicionPregunta = -1
@@ -24,12 +25,14 @@ class NQController{
     var idEncuesta = 1
     val ct:Context
     val idUsuario:String
+    private var clave = ""
 
     constructor(ct: Context, idEncuesta: Int){
         this.ct = ct
         exq = NutriQuestExecuter(ct)
         idUsuario = NutriQuestExecuter.idUsuario(ct)
         this.idEncuesta = idEncuesta
+
     }
 
     fun inicioEncuesta(idEncuesta: Int){
@@ -68,16 +71,17 @@ class NQController{
             pregunta.maxRespuestas = respuestas.size
         }
         val idPregunta = pregunta._id
-        preguntas.add(pregunta)
+        //preguntas.add(pregunta)
         posicionPregunta = 0
         idPreguntas.add(idPregunta)
-
-        exq.openRDB()
+        preguntias.put(idPregunta, pregunta)
+        /*exq.openRDB()
         if(exq.getClave(idEncuesta) == "") {
             exq.openWDB()
             exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta, clave))
         }
-        exq.closeDB()
+        exq.closeDB()*/
+        this.clave = clave
         return 0
     }
 
@@ -120,7 +124,7 @@ class NQController{
         val numeroPreguntas = json.getJSONObject("numeroPreguntas").getString("numeroPreguntas").toInt()
         this.numeroPreguntas = numeroPreguntas
 
-        exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta, ""))
+        //exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta, ""))
         //Log.d("numeroZ", numeroPreguntas.toString())
         doAsync {
             val encuestaBuilder = EncuestaBuilder(ct, idPreguntaSig, numeroPreguntas)
@@ -128,9 +132,20 @@ class NQController{
     }
 
     fun recibirPreguntaX(idPregunta: Int):Int{
+
         exq.openRDB()
-        val preguntaTemp = getPregunta( idEncuesta, idPregunta, exq.getClave(idEncuesta))
+        try {
+            val nQ = nQS(idPregunta, exq.idUsuario())
+            if (preguntias.containsKey(nQ.toInt())) {
+                Log.d("preguntasDisponibles", "idPreguntas: ${idPreguntas}")
+                posicionPregunta = idPreguntas.indexOf(nQ.toInt())
+                Log.d("preguntaDisponible2", "idPregunta: $nQ, posicionPregunta: $posicionPregunta")
+                exq.closeDB(); return 0
+            }
+        }catch (e:Exception){Log.d("RecibirPReguntaXExp", e.message)}
+        val preguntaTemp = getPregunta( idEncuesta, clave)
         exq.closeDB()
+
         if(preguntaTemp == "-1")
             return -1
         val gson = Gson()
@@ -162,10 +177,15 @@ class NQController{
             pregunta.maxRespuestas = respuestas.size
         }
         //Log.d("pregunta", )
-        Log.d("idPreguntax", pregunta._id.toString())
-        posicionPregunta ++
-        preguntas.add(posicionPregunta, pregunta)//gson.fromJson<Pregunta>(preguntaJson.toString(), Pregunta::class.java))
-        Log.d("siguientePregunta", preguntas[posicionPregunta].pregunta)
+
+
+        preguntias.put(pregunta._id, pregunta)
+        idPreguntas.add(pregunta._id)
+        posicionPregunta = idPreguntas.size-1
+        //preguntas.add(posicionPregunta, pregunta)//gson.fromJson<Pregunta>(preguntaJson.toString(), Pregunta::class.java))
+        //Log.d("idPreguntax", preguntias.toString())
+        //Log.d("outOFnothing", "posicion: $posicionPregunta, tamaño: ${idPreguntas.size}")
+        //Log.d("siguientePregunta", preguntas[posicionPregunta].pregunta)
 
         return 0
     }
@@ -288,7 +308,7 @@ class NQController{
      * Una vez que el usuario avance de pregunta guarda y envia las respuestas
      */
     fun manejarRespuestas(idPreguntaPrevia:Int, idPregunta:Int, respuestas:ArrayList<Respuesta>):Int{
-        exq.openWDB()
+        //exq.openWDB()
         val respuestasX = ArrayList<RespuestaRaw>()
         respuestas.forEach {
             Log.d("respuestasEnvIdPre", idPregunta.toString())
@@ -296,6 +316,9 @@ class NQController{
                 //respuestas[i]._id}, $idPregunta, ${respuestas[i].determinaCategoria}, $idPreguntaPrevia, ${respuestas[i].idPreguntaSiguiente}, ${respuestas[i].contestado}
                 val dC = if(it.determinaCategoria == null) 0 else it.determinaCategoria
                 respuestasX.add(RespuestaRaw(it._id, idPregunta, dC!!, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
+                val respuestas = preguntias[idPregunta]!!.posiblesRespuestas
+                preguntias[idPregunta]!!.posiblesRespuestas[respuestas.indexOf(it)].contestadoAnterior = 1
+                preguntias[idPregunta]!!.posiblesRespuestas[respuestas.indexOf(it)].contestado = 0
             }
         }
 
