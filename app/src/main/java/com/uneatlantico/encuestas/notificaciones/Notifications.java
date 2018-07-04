@@ -15,6 +15,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.uneatlantico.encuestas.Inicio.NutriQuestMain;
 import com.uneatlantico.encuestas.R;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Notifications extends FirebaseMessagingService {
@@ -36,8 +37,9 @@ public class Notifications extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             //Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
-            sendNotification(remoteMessage.getData());
+            Map<String, String> data = remoteMessage.getData();
+            Log.d("notificacion", data.toString());
+            sendNotification(data);
 
         }
 

@@ -118,9 +118,10 @@ class QuestionFragment : Fragment() {
                 doAsync {
 
                     //envio las respuestas
-                    if(cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas) == 1)
-                        Log.d("avanzar", "avanzo")
+                    val continuar = if(posicionClick.size>0) cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas) else 1
+                    if(continuar == 1) {
                         (activity as NutriQuestMain).changeFragment(idPregunta)
+                    }
                 }
             }
         }
@@ -137,13 +138,13 @@ class QuestionFragment : Fragment() {
 
     private fun verFlecha(){
         //Log.d("flechaAvvanze", "minimo $MINIMOS_ELEGIDOS - maximo $LIMITE_ELEGIDOS")
-       if( posicionClick.size in MINIMOS_ELEGIDOS..LIMITE_ELEGIDOS){
+        if( posicionClick.size in MINIMOS_ELEGIDOS..LIMITE_ELEGIDOS){
             forwardArrow.alpha = 1.0F
             forwardArrow.isClickable = true
         }
         else{
-            forwardArrow.alpha = 0.0F
-            forwardArrow.isClickable = false
+        forwardArrow.alpha = 0.0F
+        forwardArrow.isClickable = false
         }
     }
 
