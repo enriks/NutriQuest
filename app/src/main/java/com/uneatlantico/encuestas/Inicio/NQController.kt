@@ -327,7 +327,7 @@ class NQController{
         exq.updateRespuestaEncuesta(idPregunta, idEncuesta)
         exq.closeDB()*/
         //mando la respuesta a una pregunta a el ws
-        val respuesta = if(sendUserResponses(respuestasX, idUsuario) == "1") 1 else 0
+        val respuesta = if(sendUserResponses(respuestasX, idUsuario, clave) == "1") 1 else 0
         return respuesta
     }
 

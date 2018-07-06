@@ -35,7 +35,7 @@ fun recibirPregunta(idPregunta: Int, ct: Context):String {
     return text
 }
 
-fun sendUserResponses(a: ArrayList<RespuestaRaw>, idUsuario: String):String {
+fun sendUserResponses(a: ArrayList<RespuestaRaw>, idUsuario: String, clave:String):String {
     var text = ""
     try {
         //val url = URL("http://10.0.2.2/ws/encuestasWebService/respuesta.php")
@@ -58,7 +58,8 @@ fun sendUserResponses(a: ArrayList<RespuestaRaw>, idUsuario: String):String {
         }
 
         val json = JSONObject()
-        json.put("r", jsonA)
+        json.put("respuestas", jsonA)
+        json.put("clave", clave)
         Log.d("JsonEnviarResp", json.toString())
 
         text = enviarWS(conn, json)

@@ -24,7 +24,7 @@ class NutriQuestMain : AppCompatActivity() {
     private val mHandler = Handler()
     private var doubleBackToExitPressedOnce = false //boolean para controlar doble click
     lateinit var nQController: NQController
-    private lateinit var mensajeDespedida:TextView
+
     private lateinit var container:FrameLayout
     private lateinit var progress_bar: CardView
     private lateinit var bar: CardView
@@ -48,8 +48,8 @@ class NutriQuestMain : AppCompatActivity() {
         setContentView(R.layout.activity_nutri_quest_main)
         idEncuesta = intent.extras.getInt("idEncuesta")
         nQController = NQController(this.applicationContext, idEncuesta)
-        mensajeDespedida = findViewById(R.id.mensajeDespedida)
-        mensajeDespedida.alpha = 0.0F
+
+
         container = findViewById(R.id.container)
         progress_bar = findViewById(R.id.progress_bar)
         bar = findViewById(R.id.perma_bar)
@@ -233,7 +233,8 @@ class NutriQuestMain : AppCompatActivity() {
         }
 
         else {
-            nQController.posicionPregunta --
+            if(nQController.posicionPregunta>= 1)
+                nQController.posicionPregunta --
             super.onBackPressed()
         }
 
@@ -248,12 +249,7 @@ class NutriQuestMain : AppCompatActivity() {
         mHandler.removeCallbacks(mRunnable)
     }
 
-    private fun mensaje(msg: String= "no especificado", ttl:String="titulo generico" ) {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage(msg).setTitle(ttl)
-        val dialog = builder.create()
-        dialog.show()
-    }
+
 
     private fun percentajeLeft(idPregunta: Int){
         val anchMax = bar.width

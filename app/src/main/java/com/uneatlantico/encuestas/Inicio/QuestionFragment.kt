@@ -3,7 +3,10 @@ package com.uneatlantico.encuestas.Inicio
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatTextView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,6 +19,10 @@ import com.uneatlantico.encuestas.DB.Pregunta
 import com.uneatlantico.encuestas.DB.Respuesta
 import com.uneatlantico.encuestas.R
 import org.jetbrains.anko.doAsync
+import android.widget.Toast
+
+
+
 
 
 /**
@@ -118,9 +125,14 @@ class QuestionFragment : Fragment() {
                 doAsync {
 
                     //envio las respuestas
-                    val continuar = if(posicionClick.size>0) cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas) else 1
+                    //val continuar = if(posicionClick.size>0) cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas) else 1
+                    val continuar = cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas)
                     if(continuar == 1) {
                         (activity as NutriQuestMain).changeFragment(idPregunta)
+                    }
+                    else {
+                        Log.d("noMandaRespuesta", "idk")
+                        postToastMessage("Reintentelo de nuevo Porfavor")
                     }
                 }
             }
@@ -154,6 +166,19 @@ class QuestionFragment : Fragment() {
         pregunta.posiblesRespuestas.forEach {
             Log.d("respuesta$i", it.respuesta + " en " + it.visibilidad)
         }
+    }
+
+    fun postToastMessage(message: String) {
+        val handler = Handler(Looper.getMainLooper())
+
+        handler.post(Runnable { Toast.makeText(context, message, Toast.LENGTH_LONG).show() })
+    }
+
+    private fun mensaje(msg: String= "no especificado", ttl:String="titulo generico" ) {
+        val builder = AlertDialog.Builder(this.context!!)
+        builder.setMessage(msg).setTitle(ttl)
+        val dialog = builder.create()
+        dialog.show()
     }
 
     companion object {
@@ -242,5 +267,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
         fun unCheckClick(position: Int)
         //fun viewMore(v:View, position: Int)
     }
+
+
 
 }
