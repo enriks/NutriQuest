@@ -33,11 +33,14 @@ class NutriQuestMain : AppCompatActivity() {
     private var idEncuesta:Int = 1
     //private var fragmentTag:Int = 0
     private lateinit var reiniciar: CardView
+    private var atras = false
     private val reintentarConexion = thread {
 
         //try {
+
             while (!inicioEncuesta(idEncuesta)) {
-                Thread.sleep(1000)
+                Thread.sleep(3000)
+
                 Log.d("reintentando", "si")
             }
         //}catch (e:Exception){Log.d("threadErrorReint", e.message)}
@@ -49,7 +52,7 @@ class NutriQuestMain : AppCompatActivity() {
         idEncuesta = intent.extras.getInt("idEncuesta")
         nQController = NQController(this.applicationContext, idEncuesta)
 
-
+        //inicioFrag = InicioFragment()
         container = findViewById(R.id.container)
         progress_bar = findViewById(R.id.progress_bar)
         bar = findViewById(R.id.perma_bar)
@@ -58,11 +61,14 @@ class NutriQuestMain : AppCompatActivity() {
         //TODO calcular cual es la primera pregunta de la encuesta y volver ahi en lugar de 1
         reiniciar = findViewById(R.id.backEncuesta)
         reiniciar.alpha = 0.0F
+
         reiniciar.setOnClickListener {
-            deleteAll(this)
+            atras = true
+            Toast.makeText(this, "Ya puede ir atrás", Toast.LENGTH_SHORT).show()
+            /*deleteAll(this)
 
             //TODO arreglar el puntero de cambiar de fragmento
-            changeFragment(1)
+            changeFragment(1)*/
         }
 
         /*var idPreguntaInicio = 0
@@ -74,53 +80,16 @@ class NutriQuestMain : AppCompatActivity() {
             changeFragment(idPreguntaInicio)
         }
         else*/
+        carga()
         doAsync {
             if(!inicioEncuesta(idEncuesta)) if(!reintentarConexion.isAlive) reintentarConexion.start()
         }
     }
 
-    /**
-     *
-     */
-    /*fun changeFragment(idPregunta: Int){
-        val bundle = Bundle()
-
-        //place holder de la clase NQcontroller
-        val idActual = nQController.nextQuestion(idPregunta)
-        numeroPregunta = nQController.numeroPregunta
-        nQController.recibirPreguntaX(idPregunta)
-        //abrir el fragmento con la siguiente pregunta
-        if(idActual != -1){
-            bundle.putInt("idPreguntaAnterior", idPregunta)
-            bundle.putInt("idPreguntaActual", idActual)
-            bundle.putInt("idEncuesta", idEncuesta)
-
-            val tempfrag = QuestionFragment.newInstance()
-            tempfrag.setController(nQController)
-            tempfrag.arguments = (bundle)
-            openFragment(tempfrag)
-            reiniciar.alpha = 1.0F
-            percentajeLeft(idActual)
-        }
-
-        //No quedan mas preguntas, se acabo la encuesta
-        else {
-            //mandarTodasLasRespuestas(this)
-            removeFragment()
-            container.alpha = 0.0F
-            container.removeAllViews()
-            mensajeDespedida.alpha = 1.0F
-            percentajeLeft(questionNumber)
-        }
-
-    }*/
-
     fun changeFragment(idPregunta: Int){
         val bundle = Bundle()
 
-        //place holder de la clase NQcontroller
-        /*val idActual = nQController.nextQuestion(idPregunta)
-        numeroPregunta = nQController.numeroPregunta*/
+
         doAsync {
             if(nQController.recibirPreguntaX(idPregunta) == -1){
 
@@ -142,16 +111,6 @@ class NutriQuestMain : AppCompatActivity() {
             }
         }
 
-        //No quedan mas preguntas, se acabo la encuesta
-        /*else {
-            //mandarTodasLasRespuestas(this)
-            removeFragment()
-            container.alpha = 0.0F
-            container.removeAllViews()
-            mensajeDespedida.alpha = 1.0F
-            percentajeLeft(questionNumber)
-        }*/
-
     }
 
     /**
@@ -165,16 +124,19 @@ class NutriQuestMain : AppCompatActivity() {
         bundle.putInt("idEncuesta", idEncuesta)
         var inicio = true
         //doAsync {
+
         var resultadoInicio = 2
-        try{ resultadoInicio = nQController.primeraConexion(idEncuesta)}catch (e:Exception){}
-        if( resultadoInicio== -1){
+        try{ resultadoInicio = nQController.primeraConexion(idEncuesta)}catch (e:Exception){Log.d("excepcionInicioENc", e.toString())}
+        if( resultadoInicio == -1){
             val tempfrag = EndFragment.newInstance()
             openFragment(tempfrag)
             reiniciar.alpha = 0.0F
             percentajeLeft(questionNumber)
         }
         else if(resultadoInicio == 0){
+            //carga("Espere por favor")
             questionNumber = nQController.numeroPreguntas
+            percentajeLeft(5)
             val tempfrag = QuestionFragment.newInstance()
             tempfrag.setController(nQController)
             tempfrag.arguments = (bundle)
@@ -222,7 +184,7 @@ class NutriQuestMain : AppCompatActivity() {
      */
     override fun onBackPressed() {
 
-        if(fm.backStackEntryCount <=1){
+        if(fm.backStackEntryCount <=1 || !atras){
             if (doubleBackToExitPressedOnce) {
                 System.exit(0)
                 return
@@ -233,9 +195,9 @@ class NutriQuestMain : AppCompatActivity() {
         }
 
         else {
-            if(nQController.posicionPregunta>= 1)
-                nQController.posicionPregunta --
-            super.onBackPressed()
+                if (nQController.posicionPregunta >= 1)
+                    nQController.posicionPregunta--
+                super.onBackPressed()
         }
 
 
@@ -249,18 +211,33 @@ class NutriQuestMain : AppCompatActivity() {
         mHandler.removeCallbacks(mRunnable)
     }
 
+    private fun carga(texto:String = "Cargando la encuesta..."){
 
+        val bundle = Bundle()
+        bundle.putString("texto", texto)
+
+        val tempfrag = InicioFragment.newInstance()
+        tempfrag.arguments = (bundle)
+        openFragment(tempfrag)
+    }
 
     private fun percentajeLeft(idPregunta: Int){
         val anchMax = bar.width
         val questionNumber = nQController.numeroPreguntas
         Log.d("max/actual", "$anchMax / $questionNumber")
 
-        if(idPregunta == questionNumber || questionNumber == 0)
+        if(questionNumber == 0)
             progress_bar.layoutParams.width = bar.width
         else {
             val avance = anchMax / questionNumber
-            progress_bar.layoutParams.width = nQController.posicionPregunta * avance
+            progress_bar.layoutParams.width = (nQController.posicionPregunta+nQController.numeroPregunta) * avance
         }
+    }
+
+    private fun mensaje(msg: String= "no especificado", ttl:String="titulo generico" ) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(msg).setTitle(ttl)
+        val dialog = builder.create()
+        dialog.show()
     }
 }

@@ -117,11 +117,6 @@ class QuestionFragment : Fragment() {
             //termino la pregunta
             else {
 
-                try {
-                    forwardArrow.alpha = 0.0F
-                    forwardArrow.isClickable = false
-                } catch (excp:Exception){}
-
                 doAsync {
 
                     //envio las respuestas
@@ -129,10 +124,15 @@ class QuestionFragment : Fragment() {
                     val continuar = cnt.manejarRespuestas(idPreguntaAnterior, idPregunta, respuestas)
                     if(continuar == 1) {
                         (activity as NutriQuestMain).changeFragment(idPregunta)
+
+                        try {
+                            forwardArrow.alpha = 0.0F
+                            forwardArrow.isClickable = false
+                        } catch (excp:Exception){}
                     }
                     else {
                         Log.d("noMandaRespuesta", "idk")
-                        postToastMessage("Reintentelo de nuevo Porfavor")
+                        postToastMessage("Reintentelo de nuevo por favor")
                     }
                 }
             }
@@ -171,7 +171,7 @@ class QuestionFragment : Fragment() {
     fun postToastMessage(message: String) {
         val handler = Handler(Looper.getMainLooper())
 
-        handler.post(Runnable { Toast.makeText(context, message, Toast.LENGTH_LONG).show() })
+        handler.post(Runnable { Toast.makeText(context, message, Toast.LENGTH_SHORT).show() })
     }
 
     private fun mensaje(msg: String= "no especificado", ttl:String="titulo generico" ) {

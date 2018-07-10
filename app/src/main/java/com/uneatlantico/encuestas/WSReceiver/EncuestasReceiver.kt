@@ -200,8 +200,8 @@ fun enviarWS(conn: HttpURLConnection, jsonParam: JSONObject):String{
 
 fun connectWS(url:URL):HttpURLConnection{
     val conn = url.openConnection() as HttpURLConnection
-    conn.readTimeout = 10000
-    conn.connectTimeout = 10500
+    conn.readTimeout = 3000
+    conn.connectTimeout = 3500
     conn.requestMethod = "POST"
     //conn.setRequestProperty("Content-Type", "false")
     conn.setRequestProperty("Accept", "application/json;charset=utf-8")

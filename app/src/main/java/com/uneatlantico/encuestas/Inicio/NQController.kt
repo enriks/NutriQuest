@@ -48,8 +48,10 @@ class NQController{
         val datos = firstConexion2(ct, idEncuesta)
         if(datos == "-1")
             return -1
+
+
         val gson = Gson()
-        Log.d("todo",  datos)
+        Log.d("todo", datos)
         val json = JSONObject(datos)
         val preguntaTotal = json.getJSONObject("pregunta")
         val preguntaRaw = preguntaTotal.getJSONObject("pregunta")
@@ -63,11 +65,12 @@ class NQController{
             respuestas.add(respuesta)
         }
         numeroPreguntas = json.getString("numeroPreguntas").toInt()
+        numeroPregunta = json.getString("posicionPregunta").toInt()
         //preguntaRaw.put("respuestas", respuestas)
         //Log.d("preguntitatita", preguntaRaw.toString())
         val pregunta = gson.fromJson<Pregunta>(preguntaRaw.toString(), Pregunta::class.java)
         pregunta.posiblesRespuestas = respuestas
-        if(pregunta.maxRespuestas == 0) {
+        if (pregunta.maxRespuestas == 0) {
             pregunta.maxRespuestas = respuestas.size
         }
         val idPregunta = pregunta._id
@@ -75,12 +78,8 @@ class NQController{
         posicionPregunta = 0
         idPreguntas.add(idPregunta)
         preguntias.put(idPregunta, pregunta)
-        /*exq.openRDB()
-        if(exq.getClave(idEncuesta) == "") {
-            exq.openWDB()
-            exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta, clave))
-        }
-        exq.closeDB()*/
+
+
         this.clave = clave
         return 0
     }

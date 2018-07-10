@@ -63,10 +63,11 @@
             app:cardCornerRadius="5dp"
             android:clickable="true"
             android:focusable="true"
+            android:alpha="0.0"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="10dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="46dp"
+            android:layout_marginBottom="40dp"
             android:textColor="@color/colorPrimary"
 
             >
@@ -74,7 +75,7 @@
                 android:layout_centerInParent="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Reiniciar"
+                android:text="P.Atras"
                 android:fontFamily="@font/googlesans_regular"
                 android:textColor="@color/colorPrimary"
                 android:textAlignment="center"
