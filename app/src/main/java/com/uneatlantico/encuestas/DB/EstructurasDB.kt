@@ -75,7 +75,7 @@ class SoloPregunta(map: MutableMap<String, Any?>) {
     }
 }*/
 
-data class Respuesta(var _id:Int = 0, var respuesta:String,var categoriaVisibilidad:Int? = -1,var determinaCategoria: Int?,var visibilidad:Int? = 1,var  contestado:Int = 0, var contestadoAnterior:Int? = 0,var idPreguntaSiguiente:Int = 0)
+data class Respuesta(var _id:Int = 0, var respuesta:String, var categoriaVisibilidad:Int? = -1, var determinaCategoria: Int?,var visibilidad:Int? = 1,var  contestado:Int = 0, var contestadoAnterior:Int? = 0,var idPreguntaSiguiente:Int = 0)
 
 /**
  *

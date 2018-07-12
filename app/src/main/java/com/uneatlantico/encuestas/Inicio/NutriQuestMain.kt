@@ -65,21 +65,9 @@ class NutriQuestMain : AppCompatActivity() {
         reiniciar.setOnClickListener {
             atras = true
             Toast.makeText(this, "Ya puede ir atrás", Toast.LENGTH_SHORT).show()
-            /*deleteAll(this)
 
-            //TODO arreglar el puntero de cambiar de fragmento
-            changeFragment(1)*/
         }
 
-        /*var idPreguntaInicio = 0
-        try {
-            idPreguntaInicio= nQController.ultimaPregunta()
-        }catch (e:Exception){ Log.d("progresoExp", e.message) }
-
-        if(idPreguntaInicio != 0){
-            changeFragment(idPreguntaInicio)
-        }
-        else*/
         carga()
         doAsync {
             if(!inicioEncuesta(idEncuesta)) if(!reintentarConexion.isAlive) reintentarConexion.start()
@@ -123,7 +111,7 @@ class NutriQuestMain : AppCompatActivity() {
         //bundle.putInt("idPreguntaActual", idPregunta)
         bundle.putInt("idEncuesta", idEncuesta)
         var inicio = true
-        //doAsync {
+
 
         var resultadoInicio = 2
         try{ resultadoInicio = nQController.primeraConexion(idEncuesta)}catch (e:Exception){Log.d("excepcionInicioENc", e.toString())}
@@ -224,13 +212,16 @@ class NutriQuestMain : AppCompatActivity() {
     private fun percentajeLeft(idPregunta: Int){
         val anchMax = bar.width
         val questionNumber = nQController.numeroPreguntas
-        Log.d("max/actual", "$anchMax / $questionNumber")
+        val actual = nQController.numeroPregunta
 
-        if(questionNumber == 0)
+        if(questionNumber == 0 || actual == questionNumber || actual == 0 || actual ==-1)
             progress_bar.layoutParams.width = bar.width
         else {
             val avance = anchMax / questionNumber
-            progress_bar.layoutParams.width = (nQController.posicionPregunta+nQController.numeroPregunta) * avance
+            /*Log.d("avanceT", "anchMax: $anchMax / questionN: $questionNumber")
+            Log.d("avanceR", avance.toString())
+            Log.d("avance",(nQController.posicionPregunta+actual).toString())*/
+            progress_bar.layoutParams.width = actual*avance//(nQController.posicionPregunta+actual) * avance
         }
     }
 

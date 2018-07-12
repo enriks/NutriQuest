@@ -145,8 +145,8 @@ fun enviarUsuario(usuario: List<String>):String {
 fun getPregunta(idEncuesta: Int, clave:String):String {
     var text = ""
     try {
-
-        val url = URL("http://172.22.1.3/php/encuestasT/givePregunta.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/intermediarioGivePregunta.php")
+        //val url = URL("http://172.22.1.3/php/encuestasT/givePregunta.php")
         //val url = URL("http://10.0.2.2/ws/encuestasWebService/givePregunta.php")
         val conn = connectWS(url)
 
@@ -166,7 +166,7 @@ fun getPregunta(idEncuesta: Int, clave:String):String {
     return text
 }
 
-fun nQS(idPregunta: Int, idUsuario:String):String{
+fun nQS(idPregunta: Int, idUsuario:String, clave: String):String{
     var text = ""
     try {
 
@@ -175,6 +175,7 @@ fun nQS(idPregunta: Int, idUsuario:String):String{
 
         val jsonParam = JSONObject()
         jsonParam.put("idPregunta", idPregunta)
+        jsonParam.put("clave", clave)
         jsonParam.put("id", idUsuario)
 
 

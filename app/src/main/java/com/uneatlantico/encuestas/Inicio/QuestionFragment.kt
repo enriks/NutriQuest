@@ -132,7 +132,7 @@ class QuestionFragment : Fragment() {
                     }
                     else {
                         Log.d("noMandaRespuesta", "idk")
-                        postToastMessage("Reintentelo de nuevo por favor")
+                        postToastMessage("Reintentelo de nuevo por favor, vuelva a seleccionar las respuestas")
                     }
                 }
             }

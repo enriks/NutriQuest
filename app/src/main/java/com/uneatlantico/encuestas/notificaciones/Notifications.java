@@ -103,29 +103,6 @@ public class Notifications extends FirebaseMessagingService {
     }
 
     // [END receive_message]
-
-
-
-    /**
-     * Schedule a job using FirebaseJobDispatcher.
-     */
-    /*private void scheduleJob() {
-        // [START dispatch_job]
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
-        Job myJob = dispatcher.newJobBuilder()
-                .setService(MyJobService.class)
-                .setTag("my-job-tag")
-                .build();
-        dispatcher.schedule(myJob);
-        // [END dispatch_job]
-    }*/
-
-    /**
-     * Handle time allotted to BroadcastReceivers.
-     */
-    /*private void handleNow() {
-        Log.d(TAG, "Short lived task is done.");
-    }*/
 }
 
 

@@ -45,96 +45,61 @@ class NQController{
     }
 
     fun primeraConexion(idEncuesta: Int):Int{
-        val datos = firstConexion2(ct, idEncuesta)
-        if(datos == "-1")
-            return -1
+        var respuesta = 2
+        try {
+            val datos = firstConexion2(ct, idEncuesta)
 
 
-        val gson = Gson()
-        Log.d("todo", datos)
-        val json = JSONObject(datos)
-        val preguntaTotal = json.getJSONObject("pregunta")
-        val preguntaRaw = preguntaTotal.getJSONObject("pregunta")
-        val respuestasRaw = preguntaTotal.getJSONArray("respuestas")
-        val clave = json.getString("clave")
-        Log.d("clave", clave)
-        val respuestas = ArrayList<Respuesta>()
-        for (i in 0 until respuestasRaw.length()) {
-            val respuesta = gson.fromJson<Respuesta>(respuestasRaw[i].toString(), Respuesta::class.java)
-            respuesta.visibilidad = 1
-            respuestas.add(respuesta)
-        }
-        numeroPreguntas = json.getString("numeroPreguntas").toInt()
-        numeroPregunta = json.getString("posicionPregunta").toInt()
-        //preguntaRaw.put("respuestas", respuestas)
-        //Log.d("preguntitatita", preguntaRaw.toString())
-        val pregunta = gson.fromJson<Pregunta>(preguntaRaw.toString(), Pregunta::class.java)
-        pregunta.posiblesRespuestas = respuestas
-        if (pregunta.maxRespuestas == 0) {
-            pregunta.maxRespuestas = respuestas.size
-        }
-        val idPregunta = pregunta._id
-        //preguntas.add(pregunta)
-        posicionPregunta = 0
-        idPreguntas.add(idPregunta)
-        preguntias.put(idPregunta, pregunta)
+            if (datos == "-1")
+                return -1
 
+            val gson = Gson()
 
-        this.clave = clave
-        return 0
-    }
+            val json = JSONObject(datos)
+            val preguntaJson = json.getJSONObject("pregunta")
+            val clave = json.getString("clave")
+            val respuestasJson = json.getJSONArray("respuestas")
+            val respuestas = ArrayList<Respuesta>()
+            for(i in 0 until respuestasJson.length()){
+                val respuesta = gson.fromJson<Respuesta>(respuestasJson[i].toString(), Respuesta::class.java)
+                if(respuesta.visibilidad == null)
+                    respuesta.visibilidad = 1
+                if(respuesta.categoriaVisibilidad == null)
+                    respuesta.categoriaVisibilidad = 1
+                if(respuesta.contestadoAnterior == null)
+                    respuesta.contestadoAnterior = 0
+                if(respuesta.determinaCategoria == null)
+                    respuesta.determinaCategoria = 0
+                Log.d("determinoCategoria", respuesta.determinaCategoria.toString())
+                respuestas.add(respuesta)
 
-    private fun comenzarEncuesta(idEncuesta: Int){
-        val datos = firstConexion(ct, idEncuesta)
+            }
+            //preguntaJson.(respuestas)
+            Log.d("jsonPregunta", preguntaJson.toString())
+            val pregunta = gson.fromJson<Pregunta>(preguntaJson.toString(), Pregunta::class.java)
+            pregunta.posiblesRespuestas = respuestas
+            if(pregunta.maxRespuestas == 0) {
+                pregunta.maxRespuestas = respuestas.size
+            }
+            //Log.d("pregunta", )
 
-        Log.d("todo",  datos)
-        val json = JSONObject(datos)
-        val preguntaTotal = json.getJSONObject("pregunta")
-        val preguntaRaw = preguntaTotal.getJSONObject("pregunta")
-        val respuestasRaw = preguntaTotal.getJSONArray("respuestas")
-//        val visibilidadesRaw = preguntaTotal.getJSONArray("visibilidades")
-        val categoriasRaw = preguntaTotal.getJSONArray("categorias")
-        val gson = Gson()
+            numeroPregunta = json.getString("posicionPregunta").toInt()
+            numeroPreguntas = json.getString("numeroPreguntas").toInt()
+            preguntias.put(pregunta._id, pregunta)
+            idPreguntas.add(pregunta._id)
+            posicionPregunta = idPreguntas.size-1
 
-        val pregunta = gson.fromJson<PreguntaRaw>(preguntaRaw.toString(), PreguntaRaw::class.java)
-        val respuestas = ArrayList<RespuestaPosibleRaw>()
-        for (i in 0 until respuestasRaw.length()) {
-            respuestas.add(gson.fromJson<RespuestaPosibleRaw>(respuestasRaw[i].toString(), RespuestaPosibleRaw::class.java))
-        }
-
-        /*val visibilidades = ArrayList<VisibilidadRaw>()
-        for (i in 0 until visibilidadesRaw.length()) {
-            visibilidades.add(gson.fromJson<VisibilidadRaw>(respuestasRaw[i].toString(), VisibilidadRaw::class.java))
-        }*/
-
-        val categorias = ArrayList<CategoriaRaw>()
-        for (i in 0 until categoriasRaw.length()) {
-
-            categorias.add(gson.fromJson<CategoriaRaw>(categoriasRaw[i].toString(), CategoriaRaw::class.java))
-            //Log.d("categoria", categorias.get(i).toString())
-        }
-
-        exq.setPregunta(pregunta)
-        exq.setRespuesta(respuestas)
-        //exq.setVisibilidad(visibilidades)
-        exq.setCategorias(categorias)
-        val idPregunta = pregunta._id
-        var idPreguntaSig = json.getString("idPreguntaSiguiente").toInt()
-        val numeroPreguntas = json.getJSONObject("numeroPreguntas").getString("numeroPreguntas").toInt()
-        this.numeroPreguntas = numeroPreguntas
-
-        //exq.setEncuesta(EncuestaRaw(idEncuesta, idPregunta, numeroPreguntas, idPregunta, ""))
-        //Log.d("numeroZ", numeroPreguntas.toString())
-        doAsync {
-            val encuestaBuilder = EncuestaBuilder(ct, idPreguntaSig, numeroPreguntas)
-        }
+            this.clave = clave
+            respuesta = 0
+        }catch (e:Exception){Log.d("inicioEncExp", e.message)}
+        return respuesta
     }
 
     fun recibirPreguntaX(idPregunta: Int):Int{
 
         exq.openRDB()
         try {
-            val nQ = nQS(idPregunta, exq.idUsuario())
+            val nQ = nQS(idPregunta, exq.idUsuario(), clave)
             if (preguntias.containsKey(nQ.toInt())) {
                 Log.d("preguntasDisponibles", "idPreguntas: ${idPreguntas}")
                 posicionPregunta = idPreguntas.indexOf(nQ.toInt())
@@ -164,7 +129,7 @@ class NQController{
                 respuesta.contestadoAnterior = 0
             if(respuesta.determinaCategoria == null)
                 respuesta.determinaCategoria = 0
-            //Log.d("determinoCategoria", respuesta.determinaCategoria.toString())
+            Log.d("determinoCategoria", respuesta.determinaCategoria.toString())
             respuestas.add(respuesta)
 
         }
@@ -177,7 +142,7 @@ class NQController{
         }
         //Log.d("pregunta", )
 
-
+        numeroPregunta = preguntaTotal.getString("posicionPregunta").toInt()
         preguntias.put(pregunta._id, pregunta)
         idPreguntas.add(pregunta._id)
         posicionPregunta = idPreguntas.size-1
@@ -313,11 +278,12 @@ class NQController{
             Log.d("respuestasEnvIdPre", idPregunta.toString())
             if(it.contestado == 1) {
                 //respuestas[i]._id}, $idPregunta, ${respuestas[i].determinaCategoria}, $idPreguntaPrevia, ${respuestas[i].idPreguntaSiguiente}, ${respuestas[i].contestado}
-                val dC = if(it.determinaCategoria == null) 0 else it.determinaCategoria
+                val dC = it.determinaCategoria//if(it.determinaCategoria == null) 0 else it.determinaCategoria
+                Log.d("categoriaDeterminar", dC.toString())
                 respuestasX.add(RespuestaRaw(it._id, idPregunta, dC!!, idPreguntaPrevia, it.idPreguntaSiguiente, it.contestado))
-                val respuestas = preguntias[idPregunta]!!.posiblesRespuestas
-                preguntias[idPregunta]!!.posiblesRespuestas[respuestas.indexOf(it)].contestadoAnterior = 1
-                preguntias[idPregunta]!!.posiblesRespuestas[respuestas.indexOf(it)].contestado = 0
+                val respuestass = preguntias[idPregunta]!!.posiblesRespuestas
+                preguntias[idPregunta]!!.posiblesRespuestas[respuestass.indexOf(it)].contestadoAnterior = 1
+                preguntias[idPregunta]!!.posiblesRespuestas[respuestass.indexOf(it)].contestado = 0
             }
         }
 
