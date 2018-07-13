@@ -72,7 +72,9 @@ class QuestionFragment : Fragment() {
         Log.d("min-max", "$MINIMOS_ELEGIDOS  - $LIMITE_ELEGIDOS")
 
         tituloPregunta = v.findViewById(R.id.pregunta)
-        tituloPregunta.text = pregunta.pregunta
+
+        tituloPregunta.text = pregunta.pregunta//if(debug) pregunta.pregunta+pregunta. else pregunta.pregunta
+
 
         listaRespuestas = v.findViewById(R.id.listaRespuestas)
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this.context!!)
@@ -190,10 +192,12 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
 
     private val listaRespuestas: ArrayList<Respuesta>
     val onClickListener: NQAdapterListener
+    //val tipo:Int
 
-    constructor(listaRespuestas: ArrayList<Respuesta>, listener: NQAdapterListener) {
+    constructor(listaRespuestas: ArrayList<Respuesta>, listener: NQAdapterListener){//, tipo:Int) {
         this.listaRespuestas = listaRespuestas
         this.onClickListener = listener
+        //this.tipo = tipo
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
@@ -202,6 +206,7 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
 
     override fun onBindViewHolder(holder: NQViewHolder, position: Int) {
         //Log.d("visibilidad",listaRespuestas[position].visibilidad.toString())
+
         if(listaRespuestas[position].visibilidad == 1) {
 
             holder.bloque.visibility = View.VISIBLE
@@ -232,14 +237,11 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
     }
 
     override fun getItemCount():Int{
-        /*var size = 0
-        listaRespuestas.forEach{
-            if(it.visibilidad == 1)
-                size ++
-        }
-        if(size == 1)
-            size = 2*/
-        return listaRespuestas.size
+
+        var size = listaRespuestas.size
+
+
+        return size
     }
 
     inner class NQViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {

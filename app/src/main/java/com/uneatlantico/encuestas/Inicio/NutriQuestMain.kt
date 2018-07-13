@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.CardView
 import android.util.Log
+import android.view.View
 import android.widget.*
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.deleteAll
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.ultimaPregunta
@@ -38,11 +39,11 @@ class NutriQuestMain : AppCompatActivity() {
 
         //try {
 
-            while (!inicioEncuesta(idEncuesta)) {
-                Thread.sleep(3000)
+        while (!inicioEncuesta(idEncuesta)) {
+            Thread.sleep(3000)
 
-                Log.d("reintentando", "si")
-            }
+            Log.d("reintentando", "si")
+        }
         //}catch (e:Exception){Log.d("threadErrorReint", e.message)}
     }
 
@@ -61,7 +62,7 @@ class NutriQuestMain : AppCompatActivity() {
         //TODO calcular cual es la primera pregunta de la encuesta y volver ahi en lugar de 1
         reiniciar = findViewById(R.id.backEncuesta)
         reiniciar.alpha = 0.0F
-
+        reiniciar.visibility = View.GONE
         reiniciar.setOnClickListener {
             atras = true
             Toast.makeText(this, "Ya puede ir atrás", Toast.LENGTH_SHORT).show()
@@ -84,7 +85,7 @@ class NutriQuestMain : AppCompatActivity() {
                 val tempfrag = EndFragment.newInstance()
                 openFragment(tempfrag)
                 reiniciar.alpha = 0.0F
-                percentajeLeft(questionNumber)
+                percentajeLeft(-1)
             }
             else {
                 //abrir el fragmento con la siguiente pregunta
@@ -214,13 +215,13 @@ class NutriQuestMain : AppCompatActivity() {
         val questionNumber = nQController.numeroPreguntas
         val actual = nQController.numeroPregunta
 
-        if(questionNumber == 0 || actual == questionNumber || actual == 0 || actual ==-1)
+        if(questionNumber == 0 || actual == questionNumber || actual == 0 || actual ==-1 || idPregunta == -1)
             progress_bar.layoutParams.width = bar.width
         else {
             val avance = anchMax / questionNumber
-            /*Log.d("avanceT", "anchMax: $anchMax / questionN: $questionNumber")
+            Log.d("avanceT", "anchMax: $anchMax / questionN: $questionNumber")
             Log.d("avanceR", avance.toString())
-            Log.d("avance",(nQController.posicionPregunta+actual).toString())*/
+            Log.d("avance",(nQController.posicionPregunta+actual).toString())
             progress_bar.layoutParams.width = actual*avance//(nQController.posicionPregunta+actual) * avance
         }
     }

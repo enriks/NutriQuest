@@ -275,7 +275,7 @@ class NQController{
         //exq.openWDB()
         val respuestasX = ArrayList<RespuestaRaw>()
         respuestas.forEach {
-            Log.d("respuestasEnvIdPre", idPregunta.toString())
+            //Log.d("respuestasEnvIdPre", idPregunta.toString())
             if(it.contestado == 1) {
                 //respuestas[i]._id}, $idPregunta, ${respuestas[i].determinaCategoria}, $idPreguntaPrevia, ${respuestas[i].idPreguntaSiguiente}, ${respuestas[i].contestado}
                 val dC = it.determinaCategoria//if(it.determinaCategoria == null) 0 else it.determinaCategoria
