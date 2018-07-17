@@ -12,10 +12,9 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.uneatlantico.encuestas.Inicio.NutriQuestMain;
+import com.uneatlantico.encuestas.Encuestas.NutriQuestMain;
 import com.uneatlantico.encuestas.R;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Notifications extends FirebaseMessagingService {

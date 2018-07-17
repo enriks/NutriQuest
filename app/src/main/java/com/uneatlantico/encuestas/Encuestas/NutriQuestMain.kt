@@ -1,5 +1,6 @@
-package com.uneatlantico.encuestas.Inicio
+package com.uneatlantico.encuestas.Encuestas
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -10,12 +11,10 @@ import android.support.v7.widget.CardView
 import android.util.Log
 import android.view.View
 import android.widget.*
-import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.deleteAll
-import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.ultimaPregunta
+import com.uneatlantico.encuestas.Inicio.InicioActivity
 import com.uneatlantico.encuestas.R
-import com.uneatlantico.encuestas.WSReceiver.EncuestaBuilder
-import com.uneatlantico.encuestas.WSReceiver.firstConexion
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.startActivity
 import kotlin.concurrent.thread
 
 class NutriQuestMain : AppCompatActivity() {
@@ -86,6 +85,10 @@ class NutriQuestMain : AppCompatActivity() {
                 openFragment(tempfrag)
                 reiniciar.alpha = 0.0F
                 percentajeLeft(-1)
+                Thread.sleep(2000)
+                val intent = Intent(applicationContext, InicioActivity::class.java)
+                startActivity(intent)
+                finish()
             }
             else {
                 //abrir el fragmento con la siguiente pregunta
@@ -219,9 +222,9 @@ class NutriQuestMain : AppCompatActivity() {
             progress_bar.layoutParams.width = bar.width
         else {
             val avance = anchMax / questionNumber
-            Log.d("avanceT", "anchMax: $anchMax / questionN: $questionNumber")
+            /*Log.d("avanceT", "anchMax: $anchMax / questionN: $questionNumber")
             Log.d("avanceR", avance.toString())
-            Log.d("avance",(nQController.posicionPregunta+actual).toString())
+            Log.d("avance",(nQController.posicionPregunta+actual).toString())*/
             progress_bar.layoutParams.width = actual*avance//(nQController.posicionPregunta+actual) * avance
         }
     }

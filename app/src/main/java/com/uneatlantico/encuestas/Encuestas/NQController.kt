@@ -1,11 +1,10 @@
-package com.uneatlantico.encuestas.Inicio
+package com.uneatlantico.encuestas.Encuestas
 
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.uneatlantico.encuestas.DB.*
 import com.uneatlantico.encuestas.WSReceiver.*
-import org.jetbrains.anko.doAsync
 import org.json.JSONObject
 
 /**

@@ -1,6 +1,5 @@
-package com.uneatlantico.encuestas.Inicio
+package com.uneatlantico.encuestas.Encuestas
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
@@ -20,9 +19,6 @@ import com.uneatlantico.encuestas.DB.Respuesta
 import com.uneatlantico.encuestas.R
 import org.jetbrains.anko.doAsync
 import android.widget.Toast
-
-
-
 
 
 /**
@@ -234,6 +230,14 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
                 }
             })
         }
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 
     override fun getItemCount():Int{

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.uneatlantico.encuestas">
-    <!--package="com.appasistenciasuneat"-->
 
+    <!-- package="com.appasistenciasuneat" -->
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -26,8 +26,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Inicio.NutriQuestMain"
-            android:label="@string/title_activity_login"/>
+            android:name=".Encuestas.NutriQuestMain"
+            android:label="@string/title_activity_login" />
+
         <service android:name=".notificaciones.Notifications">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -37,11 +38,15 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/baseline_arrow_back_24" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <!--
+             Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
+
+        <activity android:name=".Inicio.InicioActivity"></activity>
     </application>
 
 </manifest>

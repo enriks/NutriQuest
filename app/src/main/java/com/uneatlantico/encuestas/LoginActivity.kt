@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.content.Intent
-import android.os.Looper
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
@@ -22,9 +21,9 @@ import com.google.android.gms.common.api.Status
 import java.util.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
-import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.ultimaPregunta
-import com.uneatlantico.encuestas.Inicio.NutriQuestMain
-import com.uneatlantico.encuestas.Inicio.NQController.Companion.guardarUsuario
+import com.uneatlantico.encuestas.Inicio.InicioActivity
+import com.uneatlantico.encuestas.Encuestas.NutriQuestMain
+import com.uneatlantico.encuestas.Encuestas.NQController.Companion.guardarUsuario
 import org.jetbrains.anko.doAsync
 
 
@@ -46,7 +45,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
         Log.d("hola", "hola")
         //Si ya hay un usuario logueado, pasar a la siguiente pantalla sin pasar por esta
         if (checkUsuario())
-            startNewActivity()
+            startInicio()
 
         //inicializo esta pantalla
         else {
@@ -136,7 +135,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
     private fun handleSignInResult(result: GoogleSignInResult) {
         if (result.isSuccess) {
             usuarioGoogle(result.signInAccount!!)
-            startNewActivity()
+            //startEncuesta()
         }
     }
 
@@ -154,7 +153,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
             val listaTemp = Arrays.asList<String>(idPersona[0], nombre, email, photoUrl, idDispositivo)
             doAsync {
                 if (guardarUsuario(applicationContext, listaTemp) == 1)
-                    startNewActivity()
+                    startEncuesta()
                 else Toast.makeText(applicationContext, "no tiene conexión a internet", Toast.LENGTH_LONG).show()
             }
 
@@ -183,7 +182,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
                val result = guardarUsuario(applicationContext, listaTemp)
                Log.d("resultado", result.toString())
                if(result == 1)
-                   startNewActivity()
+                   startEncuesta()
                else {
                    //Looper.prepare()
                    //Toast.makeText(applicationContext, "no tiene conexión a internet", Toast.LENGTH_LONG).show()
@@ -196,16 +195,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, GoogleApiClient
         return guardado
     }
 
-    private fun startNewActivity() {
+    private fun startEncuesta() {
         val i = Intent(this, NutriQuestMain::class.java)
-        //i.putExtra("account", acct);
         var idEncuesta = 1
-        /*var idPregunta = ultimaPregunta(this)
-        if(idPregunta == 0)
-            idPregunta = 1*/
         i.putExtra("idEncuesta", idEncuesta)
-        //Log.d("jsonaccount" ,acct.toJson());
-        //Kill the activity from which you will go to next activity
+
+        startActivity(i)
+        finish()
+    }
+
+    private fun startInicio() {
+        val i = Intent(this, InicioActivity::class.java)
+        /*var idEncuesta = 1
+        i.putExtra("idEncuesta", idEncuesta)*/
+
         startActivity(i)
         finish()
     }
