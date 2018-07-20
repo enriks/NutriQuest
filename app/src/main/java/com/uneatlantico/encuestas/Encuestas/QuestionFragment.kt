@@ -1,5 +1,6 @@
 package com.uneatlantico.encuestas.Encuestas
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
@@ -7,6 +8,7 @@ import android.os.Looper
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatTextView
+import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -30,7 +32,7 @@ import android.widget.Toast
  * create an instance of this fragment.
  *
  */
-class QuestionFragment : Fragment() {
+class QuestionFragment() : Fragment() {
 
     private lateinit var listaRespuestas:RecyclerView
     private lateinit var tituloPregunta:TextView
@@ -41,13 +43,17 @@ class QuestionFragment : Fragment() {
     private lateinit var cnt: NQController
     private lateinit var pregunta:Pregunta
 
+    @SuppressLint("ValidFragment")
+    constructor(nqController: NQController) : this() {
+        cnt = nqController
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
-        val idEncuesta = arguments!!.getInt("idEncuesta")
+        //val idEncuesta = arguments!!.getInt("idEncuesta")
         //Log.d("idEncuestaFrag", idEncuesta.toString())
-        val ct = this.context
+        //val ct = this.context
         //cnt = NQController(ct!!, idEncuesta)
 
 
@@ -180,7 +186,7 @@ class QuestionFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): QuestionFragment = QuestionFragment()
+        fun newInstance(nqController: NQController): QuestionFragment = QuestionFragment(nqController)
     }
 }
 
@@ -217,7 +223,11 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
             }
 
             holder.check.isChecked = (listaRespuestas[position].contestado == 1)
-
+            val imagen = listaRespuestas[position].imagen
+            if(imagen != null){
+                holder.tarjetaImagen.visibility = View.VISIBLE
+                holder.imagen.setImageBitmap(imagen)
+            }
             /**
              * click del check
              */
@@ -242,10 +252,8 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
 
     override fun getItemCount():Int{
 
-        var size = listaRespuestas.size
 
-
-        return size
+        return listaRespuestas.size
     }
 
     inner class NQViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
@@ -253,12 +261,16 @@ class NQAdapter : RecyclerView.Adapter<NQAdapter.NQViewHolder> {
         val respuestaPosible: AppCompatTextView
         val separador:ImageView
         val bloque:LinearLayout
+        val imagen:ImageView
+        val tarjetaImagen:CardView
 
         init {
             bloque = itemView.findViewById(R.id.bloque)
             check = itemView.findViewById(R.id.checky) as CheckBox
             respuestaPosible = itemView.findViewById(R.id.respuestaPosible) as AppCompatTextView
             separador = itemView.findViewById(R.id.separador)
+            imagen = itemView.findViewById(R.id.imagenRespuesta)
+            tarjetaImagen = itemView.findViewById(R.id.tarjetaImagenRespuesta)
             check.isClickable = false
         }
 

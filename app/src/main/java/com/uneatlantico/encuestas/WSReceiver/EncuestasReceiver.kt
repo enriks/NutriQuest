@@ -39,7 +39,7 @@ fun sendUserResponses(a: ArrayList<RespuestaRaw>, idUsuario: String, clave:Strin
     var text = ""
     try {
         //val url = URL("http://10.0.2.2/ws/encuestasWebService/respuesta.php")
-        val url = URL("http://172.22.1.3/php/encuestasT/respuesta.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/recibir/respuesta.php")
         val conn = connectWS(url)
 
         val jsonA = JSONArray()
@@ -72,30 +72,6 @@ fun sendUserResponses(a: ArrayList<RespuestaRaw>, idUsuario: String, clave:Strin
     return text
 }
 
-/**
- * starts a conexion for the first time with web service via Username
- */
-fun firstConexion(ct:Context, idEncuesta:Int):String {
-
-    var text = ""
-    try {
-        //val url = URL("http://10.0.2.2/ws/encuestasWebService/primera_conexionOG.php")
-        val url = URL("http://172.22.1.3/php/encuestasT/primera_conexionOG.php")
-        val conn = connectWS(url)
-
-        val jsonParam = JSONObject()
-        jsonParam.put("nombre", idUsuario(ct))
-        jsonParam.put("idEncuesta", idEncuesta)
-
-        Log.d("jsonPrimeraConn", jsonParam.toString())
-
-        text = enviarWS(conn, jsonParam)
-
-    } catch (e: Exception) {
-        Log.d("firstConexionExcp", e.toString())
-    }
-    return text
-}
 
 fun firstConexion2(ct:Context, idEncuesta:Int):String {
 
@@ -123,7 +99,7 @@ fun firstConexion2(ct:Context, idEncuesta:Int):String {
 fun enviarUsuario(usuario: List<String>):String {
     var text =""
     try {
-        val url = URL("http://172.22.1.3/php/encuestasT/registrar.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/recibir/registrar.php")
         val conn = connectWS(url)
 
         val jsonParam = JSONObject()
@@ -145,7 +121,7 @@ fun enviarUsuario(usuario: List<String>):String {
 fun getPregunta(idEncuesta: Int, clave:String):String {
     var text = ""
     try {
-        val url = URL("http://172.22.1.3/php/encuestasT/intermediarioGivePregunta.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/enviar/intermediarioGivePregunta.php")
         //val url = URL("http://172.22.1.3/php/encuestasT/givePregunta.php")
         //val url = URL("http://10.0.2.2/ws/encuestasWebService/givePregunta.php")
         val conn = connectWS(url)
@@ -170,7 +146,7 @@ fun nQS(idPregunta: Int, idUsuario:String, clave: String):String{
     var text = ""
     try {
 
-        val url = URL("http://172.22.1.3/php/encuestasT/nQS.php")
+        val url = URL("http://172.22.1.3/php/encuestasT/enviar/nQS.php")
         val conn = connectWS(url)
 
         val jsonParam = JSONObject()
@@ -185,6 +161,26 @@ fun nQS(idPregunta: Int, idUsuario:String, clave: String):String{
 
     } catch (e: Exception) {
         Log.d("getPreguntaExcp", e.toString())
+    }
+    return text
+}
+
+fun encuestasNot(idUsuario: String):String{
+    var text = ""
+    try {
+
+        val url = URL("http://172.22.1.3/php/encuestasT/enviar/pendientes.php")
+        val conn = connectWS(url)
+
+        val jsonParam = JSONObject()
+        jsonParam.put("id", idUsuario)
+
+        Log.d("jsonPendiente", jsonParam.toString())
+        text = enviarWS(conn, jsonParam)
+        Log.d("respPendientes", text)
+
+    } catch (e: Exception) {
+        Log.d("PendientesExcp", e.toString())
     }
     return text
 }

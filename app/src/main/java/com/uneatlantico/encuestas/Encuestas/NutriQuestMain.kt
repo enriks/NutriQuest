@@ -69,6 +69,7 @@ class NutriQuestMain : AppCompatActivity() {
         }
 
         carga()
+        //while (!(::nQController.isInitialized)) {}
         doAsync {
             if(!inicioEncuesta(idEncuesta)) if(!reintentarConexion.isAlive) reintentarConexion.start()
         }
@@ -94,8 +95,8 @@ class NutriQuestMain : AppCompatActivity() {
                 //abrir el fragmento con la siguiente pregunta
                 bundle.putInt("idPreguntaAnterior", idPregunta)
 
-                val tempfrag = QuestionFragment.newInstance()
-                tempfrag.setController(nQController)
+                val tempfrag = QuestionFragment.newInstance(nQController)
+                //tempfrag.setController()
                 tempfrag.arguments = (bundle)
                 openFragment(tempfrag)
                 reiniciar.alpha = 1.0F
@@ -112,13 +113,16 @@ class NutriQuestMain : AppCompatActivity() {
 
         val bundle = Bundle()
         bundle.putInt("idPreguntaAnterior", 0)
-        //bundle.putInt("idPreguntaActual", idPregunta)
         bundle.putInt("idEncuesta", idEncuesta)
         var inicio = true
 
 
         var resultadoInicio = 2
-        try{ resultadoInicio = nQController.primeraConexion(idEncuesta)}catch (e:Exception){Log.d("excepcionInicioENc", e.toString())}
+        try{
+            if(::nQController.isInitialized)
+                resultadoInicio = nQController.primeraConexion(idEncuesta)
+
+        }catch (e:Exception){Log.d("excepcionicioENc", e.toString())}
         if( resultadoInicio == -1){
             val tempfrag = EndFragment.newInstance()
             openFragment(tempfrag)
@@ -129,8 +133,9 @@ class NutriQuestMain : AppCompatActivity() {
             //carga("Espere por favor")
             questionNumber = nQController.numeroPreguntas
             percentajeLeft(5)
-            val tempfrag = QuestionFragment.newInstance()
-            tempfrag.setController(nQController)
+            val tempfrag = QuestionFragment.newInstance(nQController)
+            //tempfrag.setController(nQController)
+            Thread.sleep(1000)
             tempfrag.arguments = (bundle)
             resetFragment(tempfrag)
             reiniciar.alpha = 1.0F
@@ -171,28 +176,8 @@ class NutriQuestMain : AppCompatActivity() {
     }
 
 
-    /**
-     * Pulsar el boton de atras
-     */
     override fun onBackPressed() {
-
-        if(fm.backStackEntryCount <=1 || !atras){
-            if (doubleBackToExitPressedOnce) {
-                System.exit(0)
-                return
-            }
-            this.doubleBackToExitPressedOnce = true
-            Toast.makeText(this, "Presionar atrás de nuevo para salir", Toast.LENGTH_SHORT).show()
-            mHandler.postDelayed(mRunnable, 1000)
-        }
-
-        else {
-                if (nQController.posicionPregunta >= 1)
-                    nQController.posicionPregunta--
-                super.onBackPressed()
-        }
-
-
+        finish()
     }
 
     private val mRunnable = Runnable { doubleBackToExitPressedOnce = false }

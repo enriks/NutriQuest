@@ -166,23 +166,48 @@ class NutriQuestExecuter{
         return categoriasUsuario
     }
 
-    fun getEncuesta(idEncuesta:Int):EncuestaRaw{
+    fun getEncuestas():List<Encuesta>{
+        val encuestas = ArrayList<Encuesta>()
+        val sql = "SELECT * FROM encuestas"
+        val cursor = rDB.rawQuery(sql, null)
+        var idEncuesta = 0
+        var nombre = ""
+        var terminado:Int =0
+        var tipo:Int = 0
+        if(cursor.moveToFirst()) {
+            while(!cursor.isAfterLast) {
+                idEncuesta = cursor.getInt(cursor.getColumnIndex("idEncuesta"))
+                nombre = cursor.getString(cursor.getColumnIndex("nombre"))
+                terminado = cursor.getInt(cursor.getColumnIndex("terminado"))
+                //preguntaFinal = cursor.getInt(cursor.getColumnIndex("preguntaFinal"))
+                tipo = cursor.getInt(cursor.getColumnIndex("tipo"))
+
+            }
+            val encuesta = Encuesta(idEncuesta, nombre, tipo, terminado)
+            encuestas.add(encuesta)
+        }
+        cursor.close()
+        return encuestas//Encuesta(idEncuesta, nombre, tipo, terminado)
+    }
+
+    fun getEncuesta(idEncuesta:Int):Encuesta{
         val sql = "SELECT * FROM encuestas WHERE idEncuesta = $idEncuesta"
         val cursor = rDB.rawQuery(sql, null)
         var idEncuesta = 0
-        var numeroPreguntas = 0
-        var idPrimeraPregunta:Int =0
-        var preguntaFinal:Int = 0
-        var clave = ""
+        var nombre = ""
+        var terminado:Int =0
+        var tipo:Int = 0
         if(cursor.moveToFirst()) {
+
             idEncuesta = cursor.getInt(cursor.getColumnIndex("idEncuesta"))
-            numeroPreguntas = cursor.getInt(cursor.getColumnIndex("numeroPreguntas"))
-            idPrimeraPregunta = cursor.getInt(cursor.getColumnIndex("idPrimeraPregunta"))
-            preguntaFinal = cursor.getInt(cursor.getColumnIndex("preguntaFinal"))
-            clave = cursor.getString(cursor.getColumnIndex("clave"))
+            nombre = cursor.getString(cursor.getColumnIndex("nombre"))
+            terminado = cursor.getInt(cursor.getColumnIndex("terminado"))
+            //preguntaFinal = cursor.getInt(cursor.getColumnIndex("preguntaFinal"))
+            tipo = cursor.getInt(cursor.getColumnIndex("tipo"))
+
         }
 
-        return EncuestaRaw(idEncuesta, numeroPreguntas, idPrimeraPregunta, preguntaFinal, clave)
+        return Encuesta(idEncuesta, nombre, tipo, terminado)
     }
 
     fun setPregunta(pregunta:PreguntaRaw){
@@ -236,6 +261,17 @@ class NutriQuestExecuter{
             Log.d("guardarEncuesta", sql)
             wDB.execSQL(sql)
         } catch (efg:Exception){Log.d("setEncuestaExcp", efg.message)}
+    }
+
+    fun setEncuesta(encuesta: Encuesta){
+        val sql = "INSERT INTO encuestas (idEncuesta, nombre, terminado, tipo) VALUES (${encuesta.idEncuesta}, ${encuesta.nombre},${encuesta.terminado}, ${encuesta.tipo});"
+        wDB.execSQL(sql)
+    }
+
+    fun updateEncuesta(idEncuesta: Int, terminado:Int){
+        val sql = "UPDATE encuestas SET terminado = $terminado  WHERE idEncuesta = $idEncuesta;"
+        wDB.execSQL(sql)
+
     }
 
     fun guardarRespuesta(ct: Context, idPregunta: Int, respuestas:List<String>){
@@ -376,6 +412,7 @@ class NutriQuestExecuter{
         }
         return existe
     }
+
 
     fun getClave(idEncuesta: Int):String{
         var clave = ""

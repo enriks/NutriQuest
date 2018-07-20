@@ -1,11 +1,23 @@
 package com.uneatlantico.encuestas.Encuestas
 
 import android.content.Context
+import android.media.Image
 import android.util.Log
 import com.google.gson.Gson
 import com.uneatlantico.encuestas.DB.*
 import com.uneatlantico.encuestas.WSReceiver.*
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
+import java.io.File
+import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import android.util.Base64
+import android.util.Base64.NO_WRAP
+
+
+
+
+
 
 /**
  * 2 opciones
@@ -24,6 +36,8 @@ class NQController{
     var idEncuesta = 1
     val ct:Context
     val idUsuario:String
+    //enum class estado {comenzado, acabado}
+
     private var clave = ""
 
     constructor(ct: Context, idEncuesta: Int){
@@ -69,6 +83,11 @@ class NQController{
                     respuesta.contestadoAnterior = 0
                 if(respuesta.determinaCategoria == null)
                     respuesta.determinaCategoria = 0
+                if(respuesta.imagenDir != null) {
+                    //Log.d("imagen", respuesta.imagenDir.toString())
+                    respuesta.imagen = decodeImage(respuesta.imagenDir!!)
+
+                }
                 Log.d("determinoCategoria", respuesta.determinaCategoria.toString())
                 respuestas.add(respuesta)
 
@@ -89,6 +108,7 @@ class NQController{
             posicionPregunta = idPreguntas.size-1
 
             this.clave = clave
+            //dbEncuesta(Encuesta(idEncuesta, ))
             respuesta = 0
         }catch (e:Exception){Log.d("inicioEncExp", e.message)}
         return respuesta
@@ -109,8 +129,11 @@ class NQController{
         val preguntaTemp = getPregunta( idEncuesta, clave)
         exq.closeDB()
 
-        if(preguntaTemp == "-1")
+        if(preguntaTemp == "-1") {
+            //
+            // dbEncuesta(Encuesta(idEncuesta, ))
             return -1
+        }
         val gson = Gson()
 
         val preguntaTotal = JSONObject(preguntaTemp)
@@ -298,6 +321,35 @@ class NQController{
     fun ultimaPregunta():Int{
         val idPregunta = exq.getProgreso(idEncuesta)
         return idPregunta
+    }
+
+    fun dbEncuesta(encuesta: Encuesta){
+
+        try {
+            val encuestaT = exq.getEncuesta(idEncuesta)
+            //if(encuestaT.terminado == 1){
+            exq.updateEncuesta(encuesta.idEncuesta, encuesta.terminado)
+            //}
+        }catch (e:Exception){Log.d("guardarencuestademas", e.message)
+            try{
+                exq.setEncuesta(encuesta)
+            }catch (ex:Exception){Log.d("insertarEncuesta",ex.message)}
+        }
+
+    }
+
+    fun decodeImage(imagenX: String): Bitmap{
+        val imagenBA = imagenX.toByteArray()
+
+            val image_data = Base64.decode(imagenBA, Base64.NO_WRAP)
+
+            val options = BitmapFactory.Options()
+            options.outHeight = 32 //32 pixles
+            options.outWidth = 32 //32 pixles
+            options.outMimeType = "image/jpeg" //this could be image/jpeg, image/png, etc
+
+            return BitmapFactory.decodeByteArray(image_data, 0, image_data.size, options)
+
     }
 
     companion object {

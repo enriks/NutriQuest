@@ -1,6 +1,8 @@
 package com.uneatlantico.encuestas.DB
 
 import java.util.HashMap
+import android.graphics.Bitmap
+
 
 /**
  * TODAS LAS ESTRUCTURAS DE DATOS PARA TRANSFORMAR SQL EN OBJETOS MANEJABLES
@@ -75,7 +77,7 @@ class SoloPregunta(map: MutableMap<String, Any?>) {
     }
 }*/
 
-data class Respuesta(var _id:Int = 0, var respuesta:String, var categoriaVisibilidad:Int? = -1, var determinaCategoria: Int?,var visibilidad:Int? = 1,var  contestado:Int = 0, var contestadoAnterior:Int? = 0,var idPreguntaSiguiente:Int = 0)
+data class Respuesta(var _id:Int = 0, var respuesta:String, var categoriaVisibilidad:Int? = -1, var determinaCategoria: Int?,var visibilidad:Int? = 1,var  contestado:Int = 0, var contestadoAnterior:Int? = 0,var idPreguntaSiguiente:Int = 0, var imagen:Bitmap? = null, var imagenDir:String? = null)
 
 /**
  *
@@ -111,3 +113,5 @@ data class VisibilidadRaw(var _id:Int, var idElemento: Int, var tipoElemento:Int
 data class EncuestaRaw(var idEncuesta:Int, var idPrimeraPregunta:Int, var numeroPreguntas:Int, var preguntaFinal:Int, var clave:String)
 
 data class RespuestaRaw(var idRespuesta:Int ,var idPregunta:Int, var idCategoria:Int, var idPreguntaPrevia: Int, var idPreguntaPosterior: Int, var contestado:Int = 0)
+
+data class Encuesta(var idEncuesta: Int, var nombre:String, var terminado:Int = 0, var tipo:Int = 1, var imagen:Int = 0)
