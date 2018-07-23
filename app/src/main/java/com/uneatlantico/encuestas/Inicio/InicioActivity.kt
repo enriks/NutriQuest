@@ -1,12 +1,15 @@
 package com.uneatlantico.encuestas.Inicio
 
+import android.app.FragmentManager
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.widget.ImageButton
 import android.widget.ImageView
 import com.google.gson.Gson
 import com.uneatlantico.encuestas.DB.Encuesta
@@ -23,6 +26,9 @@ class InicioActivity : AppCompatActivity() {
     lateinit var tarjetaPrimeraEncuesta:CardView
     lateinit var listaEncuestas:RecyclerView
     lateinit var encuestas:ArrayList<Encuesta>
+    lateinit var botonMenu: ImageButton
+    lateinit var bottomFragment: BottomFragment
+    private val fm = supportFragmentManager
     var conseguido = false
     val imagenes:List<Int> = listOf(
             R.drawable.desayuno,
@@ -34,16 +40,23 @@ class InicioActivity : AppCompatActivity() {
             R.drawable.picoteo,
             R.drawable.manzanos
     )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inicio)
-        doAsync { encuestas = loadEncuestas(); conseguido = true }
+
+        bottomFragment = BottomFragment()
+        botonMenu = findViewById(R.id.menuButton)
+        botonMenu.setOnClickListener {
+            bottomFragment.show(fm, null)
+        }
+        val tempfrag = EncuestasFragment.newInstance()
+        openFragment(tempfrag)
+        /*doAsync { encuestas = loadEncuestas(); conseguido = true }
         //TODO llenar la imagen desde db
         imagenPrimeraEncuesta = findViewById(R.id.imagenPrimeraEncuesta)
 
         tarjetaPrimeraEncuesta = findViewById(R.id.tarjetaPrimeraEncuesta)
-        //
-        // if()
         tarjetaPrimeraEncuesta.setOnClickListener{startEncuesta(1)}
         listaEncuestas = findViewById(R.id.listaEncuestas)
 
@@ -57,11 +70,19 @@ class InicioActivity : AppCompatActivity() {
             }
         })
 
-        listaEncuestas.adapter = adaptador
+        listaEncuestas.adapter = adaptador*/
 
     }
 
-    private fun startEncuesta(idEncuesta:Int) {
+    private fun openFragment(fragment: Fragment) {
+        fm.beginTransaction()
+                .setCustomAnimations(R.anim.enter_right, R.anim.out_left, R.anim.enter_left,R.anim.out_right)
+                .replace(R.id.containerInicio, fragment)
+
+                .addToBackStack(null)
+                .commit()
+    }
+    /*private fun startEncuesta(idEncuesta:Int) {
         val i = Intent(this, NutriQuestMain::class.java)
         i.putExtra("idEncuesta", idEncuesta)
         startActivity(i)
@@ -82,7 +103,7 @@ class InicioActivity : AppCompatActivity() {
             }
         }catch (e:Exception){Log.d("loadEncuestasExp", e.message)}
         return encuestas
-    }
+    }*/
 
     /*override fun onBackPressed() {
 

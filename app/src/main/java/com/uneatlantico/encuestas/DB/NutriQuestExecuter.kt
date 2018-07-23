@@ -431,6 +431,37 @@ class NutriQuestExecuter{
     fun setClave(idEncuesta: Int){
     }
 
+    fun getUsuario():Usuario{
+        var usuario = Usuario()
+        try {
+            // val db = NutriQuestDB(ct).readableDatabase
+            //val sql1 = "select respuesta, t.idCategoria determinaCategoria,c.idCategoria categoriaVisibilidad, visibilidad from (select r._id, respuesta from RespuestasPosibles r where idPregunta = $idPregunta) t left join CategoriaElementoVisibilidad c on idElemento = t._id and tipoElemento = 1"
+            val sql = "select * from usuario"
+            val cursor = rDB.rawQuery(sql, null)
+            var idPersona: String
+            var nombre: String
+            var email: String
+            var photoUrl: String
+            var idAndroid: String
+
+            if(cursor.moveToFirst()){
+                while (!cursor.isAfterLast) {
+                    idPersona = cursor.getString(cursor.getColumnIndex("idPersona"))
+                    nombre = cursor.getString(cursor.getColumnIndex("nombre"))
+                    email = cursor.getString(cursor.getColumnIndex("email"))
+                    photoUrl = cursor.getString(cursor.getColumnIndex("photoUrl"))
+                    idAndroid = cursor.getString(cursor.getColumnIndex("idAndroid"))
+
+                    usuario = Usuario(idPersona, nombre, email, photoUrl, idAndroid)
+                    cursor.moveToNext()
+                }
+            }
+            cursor.close()
+            //db.close()
+        }catch (e:Exception){Log.d("getRespuestaException", e.message)}
+        return usuario
+    }
+
     fun idUsuario():String{
         var idUsuario = ""
         try{

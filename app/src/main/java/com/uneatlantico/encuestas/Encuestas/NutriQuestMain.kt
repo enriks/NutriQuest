@@ -34,7 +34,7 @@ class NutriQuestMain : AppCompatActivity() {
     //private var fragmentTag:Int = 0
     private lateinit var reiniciar: CardView
     private var atras = false
-    private val reintentarConexion = thread {
+    private val reintentarConexion = Thread {
 
         //try {
 
@@ -70,9 +70,14 @@ class NutriQuestMain : AppCompatActivity() {
 
         carga()
         //while (!(::nQController.isInitialized)) {}
-        doAsync {
-            if(!inicioEncuesta(idEncuesta)) if(!reintentarConexion.isAlive) reintentarConexion.start()
-        }
+        doAsync { if(!inicioEncuesta(idEncuesta)) if(!reintentarConexion.isAlive) reintentarConexion.start() }
+        /*doAsync {
+            val comenzo = inicioEncuesta(idEncuesta)
+            if(!comenzo) {
+                if (!reintentarConexion.isAlive)
+                    reintentarConexion.start()
+            }
+        }*/
     }
 
     fun changeFragment(idPregunta: Int){
@@ -140,7 +145,8 @@ class NutriQuestMain : AppCompatActivity() {
             resetFragment(tempfrag)
             reiniciar.alpha = 1.0F
         }
-        else{
+        else {
+
             inicio = false
         }
         Log.d("resultadoInicio", resultadoInicio.toString())

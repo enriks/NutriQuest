@@ -115,3 +115,5 @@ data class EncuestaRaw(var idEncuesta:Int, var idPrimeraPregunta:Int, var numero
 data class RespuestaRaw(var idRespuesta:Int ,var idPregunta:Int, var idCategoria:Int, var idPreguntaPrevia: Int, var idPreguntaPosterior: Int, var contestado:Int = 0)
 
 data class Encuesta(var idEncuesta: Int, var nombre:String, var terminado:Int = 0, var tipo:Int = 1, var imagen:Int = 0)
+
+data class Usuario(var idPersona:String ="", var nombre: String ="", var email:String ="", var photoUrl:String ="", var idAndroid:String ="")
