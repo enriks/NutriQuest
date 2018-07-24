@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:background="@drawable/white_round_corners"
+    android:weightSum="5"
+    android:orientation="vertical">
+
+    <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical">
+        <android.support.v7.widget.CardView
+            android:id="@+id/redondoImagen"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            app:cardCornerRadius="23dp"
+            android:innerRadius="0dp"
+            android:shape="ring"
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:background="@android:color/transparent"
+            android:thicknessRatio="1.9">
+            <ImageView
+                android:id="@+id/menuGoogleUserImage"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@android:drawable/sym_def_app_icon"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                />
+
+        </android.support.v7.widget.CardView>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toEndOf="@id/redondoImagen"
+            android:gravity="bottom"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:id="@+id/menuGoogleUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:textColor="@color/negro"
+                android:fontFamily="@font/googlesans_regular"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_marginTop="2dp"
+                android:id="@+id/menuGoogleUserEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/googlesans_regular"
+                android:textSize="12sp"
+                />
+        </LinearLayout>
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:alpha="0.3"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="3"
+        android:layout_height="0dp"
+        android:weightSum="4"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/Encuestas"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            >
+            <TextView
+                android:text="Encuestas"
+                android:layout_marginStart="@dimen/activity_vertical_margin"
+                android:layout_width="match_parent"
+                android:fontFamily="@font/googlesans_regular"
+                android:textSize="14sp"
+
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/respuestasAnteriores"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            >
+            <TextView
+                android:text="Respuestas Anteriores"
+                android:layout_marginStart="@dimen/activity_vertical_margin"
+                android:layout_width="match_parent"
+                android:fontFamily="@font/googlesans_regular"
+                android:textSize="14sp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/nose"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical">
+            <TextView
+                android:text="nose"
+                android:layout_marginStart="@dimen/activity_vertical_margin"
+                android:layout_width="match_parent"
+                android:fontFamily="@font/googlesans_regular"
+                android:textSize="14sp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/inf"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            >
+            <TextView
+                android:text="inf"
+                android:layout_marginStart="@dimen/activity_vertical_margin"
+                android:layout_width="match_parent"
+                android:fontFamily="@font/googlesans_regular"
+                android:textSize="14sp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:alpha="0.3"/>
+    <LinearLayout
+        android:id="@+id/Ajustes"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:gravity="center_vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="Ajustes"
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

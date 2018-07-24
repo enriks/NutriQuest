@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
 import com.google.gson.Gson
+import com.uneatlantico.encuestas.Alerta
 import com.uneatlantico.encuestas.DB.Encuesta
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
 import com.uneatlantico.encuestas.Encuestas.NutriQuestMain
@@ -72,6 +73,11 @@ class InicioActivity : AppCompatActivity() {
 
         listaEncuestas.adapter = adaptador*/
 
+    }
+
+
+    public fun alerta(idEncuesta:Int){
+        Alerta(this, idEncuesta).show()
     }
 
     private fun openFragment(fragment: Fragment) {
