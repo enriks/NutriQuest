@@ -117,3 +117,5 @@ data class RespuestaRaw(var idRespuesta:Int ,var idPregunta:Int, var idCategoria
 data class Encuesta(var idEncuesta: Int, var nombre:String, var terminado:Int = 0, var tipo:Int = 1, var imagen:Int = 0)
 
 data class Usuario(var idPersona:String ="", var nombre: String ="", var email:String ="", var photoUrl:String ="", var idAndroid:String ="")
+
+data class RespuestasEncuesta(var Pregunta:String, var respuestas:List<String>, var respuestasComp:List<String> = emptyList())

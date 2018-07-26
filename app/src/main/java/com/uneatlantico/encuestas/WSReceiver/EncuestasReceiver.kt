@@ -185,6 +185,27 @@ fun encuestasNot(idUsuario: String):String{
     return text
 }
 
+fun respuestasEncuestaT(idUsuario: String, idEncuesta: Int):String{
+    var text = ""
+    try {
+
+        val url = URL("http://172.22.1.3/php/encuestasT/enviar/respuestasAnteriores.php")
+        val conn = connectWS(url)
+
+        val jsonParam = JSONObject()
+        jsonParam.put("idUsuario", idUsuario)
+        jsonParam.put("idEncuesta", idEncuesta)
+
+        Log.d("jsonPendiente", jsonParam.toString())
+        text = enviarWS(conn, jsonParam)
+        Log.d("respPendientes", text)
+
+    } catch (e: Exception) {
+        Log.d("PendientesExcp", e.toString())
+    }
+    return text
+}
+
 
 fun enviarWS(conn: HttpURLConnection, jsonParam: JSONObject):String{
     val outputStream = conn.outputStream

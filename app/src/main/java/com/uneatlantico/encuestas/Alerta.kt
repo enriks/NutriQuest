@@ -36,6 +36,9 @@ class Alerta(var c: Activity, val idEncuesta:Int) : Dialog(c), android.view.View
             R.id.verRespuestas -> {
 
                 val tempfrag = RespuestasFragment.newInstance()
+                val bundle = Bundle()
+                bundle.putInt("idEncuesta", idEncuesta)
+                tempfrag.arguments = (bundle)
                 c.fragmentManager.beginTransaction().replace(R.id.containerInicio, tempfrag).commit()
             }
 
