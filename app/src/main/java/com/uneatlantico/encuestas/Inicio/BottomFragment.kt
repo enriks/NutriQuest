@@ -31,14 +31,20 @@ import kotlin.reflect.KClass
  * create an instance of this fragment.
  *
  */
-class BottomFragment : BottomSheetDialogFragment() {
+class BottomFragment : BottomSheetDialogFragment(), View.OnClickListener {
+    override fun onClick(v: View?) {
+        when(v!!.id){
+            R.id.Encuestas ->{(activity as InicioActivity).openFragment(EncuestasFragment.newInstance())}
+            R.id.respuestasAnteriores ->{}
+            R.id.Ajustes -> {}
+        }
+    }
 
     private lateinit var menuGoogleUserName:TextView
     private lateinit var menuGoogleUserEmail:TextView
     private lateinit var menuGoogleUserImage:ImageView
     private lateinit var encuestasPress:LinearLayout
     private lateinit var respuestasAnterioresPress:LinearLayout
-    //private lateinit var campusPress:LinearLayout
     private lateinit var horarioPress:LinearLayout
     private lateinit var settingsPress:LinearLayout
     private lateinit var campusPress:LinearLayout
@@ -54,53 +60,23 @@ class BottomFragment : BottomSheetDialogFragment() {
         menuGoogleUserImage = v.findViewById(R.id.menuGoogleUserImage)
 
         encuestasPress = v.findViewById(R.id.Encuestas)
-        encuestasPress.setOnClickListener{
-            activity!!.supportFragmentManager.beginTransaction().replace(R.id.containerInicio, EncuestasFragment.newInstance()).commit()
-            //Launch(ExtraActivity::class, "Asistencias")
-        }
+        encuestasPress.setOnClickListener(this)
 
         respuestasAnterioresPress = v.findViewById(R.id.respuestasAnteriores)
-        respuestasAnterioresPress.setOnClickListener {
-            activity!!.supportFragmentManager.beginTransaction().replace(R.id.containerInicio, EncuestasFragment.newInstance()).commit()
-        }
+        respuestasAnterioresPress.setOnClickListener(this)
 
         horarioPress = v.findViewById(R.id.nose)
-        horarioPress.setOnClickListener {
-            activity!!.supportFragmentManager.beginTransaction().replace(R.id.containerInicio, EncuestasFragment.newInstance()).commit()
-        }
+        horarioPress.setOnClickListener(this)
 
         //TODO cambiar lanzar actividad a campus cuando este completa
         campusPress = v.findViewById(R.id.inf)
-        campusPress.setOnClickListener {
-            activity!!.supportFragmentManager.beginTransaction().replace(R.id.containerInicio, EncuestasFragment.newInstance()).commit()
-        }
+        campusPress.setOnClickListener(this)
 
         settingsPress = v.findViewById(R.id.Ajustes)
-        settingsPress.setOnClickListener {
-            activity!!.supportFragmentManager.beginTransaction().replace(R.id.containerInicio, EncuestasFragment.newInstance()).commit()
-        }
+        settingsPress.setOnClickListener(this)
         initMenu()
         return v
     }
-
-
-    /*fun selectDrawerItem(menuItem: MenuItem) {
-        // Create a new fragment and specify the fragment to show based on nav item clicked
-        var hamActivitie: KClass<*>
-        when (menuItem.itemId) {
-            R.id.ham_notas -> hamActivitie = NotasActivity::class//openFragment(NotasFragment.newInstance())
-            R.id.ham_registro_asistencias -> hamActivitie = RegistroAsistenciaActivity::class //openFragment(RegistroAsistenciaFragment.newInstance())
-            R.id.ham_extra -> hamActivitie = ExtraActivity::class //openFragment(ExtraFragment.newInstance())
-            R.id.ham_settings ->hamActivitie = SettingsActivity::class //openFragment(SettingsFragment.newInstance())
-            else -> hamActivitie = SettingsActivity::class //openFragment(NotasFragment.newInstance())
-        }
-        //Highlight the selected item has been done by NavigationView
-        menuItem.isChecked = true
-        // Set action bar title
-        //title = menuItem.title
-        // Close the navigation drawer
-        Launch(hamActivitie, menuItem.title.toString())
-    }*/
 
     private fun Launch(ina: KClass<*>, ham_option_title:String) {
         val i = Intent(this.context, ina.java)

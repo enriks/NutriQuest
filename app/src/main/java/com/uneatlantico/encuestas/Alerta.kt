@@ -5,13 +5,17 @@ import android.os.Bundle
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.CardView
 import android.view.View
 import android.view.Window
 import android.widget.Button
+import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
 import com.uneatlantico.encuestas.Encuestas.NutriQuestMain
+import com.uneatlantico.encuestas.Inicio.InicioActivity
 import com.uneatlantico.encuestas.Inicio.RespuestasFragment
+import org.jetbrains.anko.doAsync
 
 
 class Alerta(var c: Activity, val idEncuesta:Int) : Dialog(c), android.view.View.OnClickListener {
@@ -34,12 +38,17 @@ class Alerta(var c: Activity, val idEncuesta:Int) : Dialog(c), android.view.View
     override fun onClick(v: View) {
         when (v.id) {
             R.id.verRespuestas -> {
+                doAsync {
+                    val tempfrag = RespuestasFragment.newInstance()
+                    tempfrag.interPretarRespuestas(idEncuesta, idUsuario(c.application.applicationContext))
+                    val bundle = Bundle()
 
-                val tempfrag = RespuestasFragment.newInstance()
-                val bundle = Bundle()
-                bundle.putInt("idEncuesta", idEncuesta)
-                tempfrag.arguments = (bundle)
-                c.fragmentManager.beginTransaction().replace(R.id.containerInicio, tempfrag).commit()
+                    bundle.putInt("idEncuesta", idEncuesta)
+                    tempfrag.arguments = (bundle)
+
+                    (c as InicioActivity).openFragment(tempfrag)
+                }//(c as InicioActivity).openFragment(fragment = tempfrag as Fragment)
+                //c.fragmentManager.beginTransaction().add(R.id.containerInicio, tempfrag).commit()
             }
 
             R.id.continuarEncuesta -> {

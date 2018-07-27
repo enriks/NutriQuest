@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/pregunta"
         android:layout_width="match_parent"
         android:fontFamily="@font/googlesans_bold"
-        android:textSize="30dp"
-        android:gravity="center"
+        android:textSize="20sp"
+        android:gravity="left"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_height="wrap_content"
         />
-
-    <android.support.v7.widget.RecyclerView
+    <TextView
         android:id="@+id/listaRespuestas"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"/>
+        android:fontFamily="@font/googlesans_regular"
+        android:textSize="16sp"
+        android:layout_marginStart="8dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="10dp"
+        android:background="@android:color/darker_gray"
+        android:alpha="0.3"/>
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/listaRespuestas"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginBottom="16dp"/>-->
 
 </LinearLayout>
