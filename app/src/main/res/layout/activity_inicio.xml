@@ -7,11 +7,13 @@
     tools:context=".Inicio.InicioActivity"
     android:background="@android:color/white"
     android:layout_marginTop="24dp">
+
     <FrameLayout
         android:id="@+id/containerInicio"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_above="@id/navBar"/>
+
     <LinearLayout
         android:id="@+id/navBar"
         android:layout_width="match_parent"
@@ -21,10 +23,12 @@
         android:background="@drawable/myrect"
         android:elevation="5dp"
         android:backgroundTint="@android:color/white">
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white">
+
                 <ImageButton
                     android:id="@+id/menuButton"
                     android:layout_width="wrap_content"
@@ -35,6 +39,7 @@
                     android:paddingStart="4dp"
                     android:src="@drawable/baseline_menu_black_18"
                     android:backgroundTint="@color/colorPrimary"/>
+
         </FrameLayout>
     </LinearLayout>
 </RelativeLayout>

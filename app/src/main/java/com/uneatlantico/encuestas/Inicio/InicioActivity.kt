@@ -1,25 +1,17 @@
 package com.uneatlantico.encuestas.Inicio
 
-import android.app.FragmentManager
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
-import com.google.gson.Gson
 import com.uneatlantico.encuestas.Alerta
 import com.uneatlantico.encuestas.DB.Encuesta
-import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
-import com.uneatlantico.encuestas.Encuestas.NutriQuestMain
 import com.uneatlantico.encuestas.R
-import com.uneatlantico.encuestas.WSReceiver.encuestasNot
-import org.jetbrains.anko.doAsync
-import org.json.JSONArray
+import com.uneatlantico.encuestas.SettingsActivity
 
 class InicioActivity : AppCompatActivity() {
 
@@ -48,6 +40,12 @@ class InicioActivity : AppCompatActivity() {
         Alerta(this, idEncuesta).show()
     }
 
+
+    fun openFragmentSure(fragment: Fragment){
+        if(fm.findFragmentByTag(fragment.tag) != null)
+            openFragment(fragment)
+    }
+
     fun openFragment(fragment: Fragment) {
         fm.beginTransaction()
                 //.setCustomAnimations(R.anim.enter_right, R.anim.out_left, R.anim.enter_left,R.anim.out_right)
@@ -57,12 +55,20 @@ class InicioActivity : AppCompatActivity() {
                 .commit()
     }
 
+    fun startAjustes() {
+        val i = Intent(this, SettingsActivity::class.java)
+        startActivity(i)
+        //finish()
+    }
+
     /*private fun startEncuesta(idEncuesta:Int) {
         val i = Intent(this, NutriQuestMain::class.java)
         i.putExtra("idEncuesta", idEncuesta)
         startActivity(i)
         //finish()
     }
+
+
 
     fun loadEncuestas():ArrayList<Encuesta>{
         val encuestas = ArrayList<Encuesta>()

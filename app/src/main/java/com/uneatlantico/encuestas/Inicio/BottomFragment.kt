@@ -32,11 +32,12 @@ import kotlin.reflect.KClass
  *
  */
 class BottomFragment : BottomSheetDialogFragment(), View.OnClickListener {
+
     override fun onClick(v: View?) {
         when(v!!.id){
-            R.id.Encuestas ->{(activity as InicioActivity).openFragment(EncuestasFragment.newInstance())}
-            R.id.respuestasAnteriores ->{}
-            R.id.Ajustes -> {}
+            R.id.Encuestas ->{(activity as InicioActivity).openFragmentSure(EncuestasFragment.newInstance())}
+            R.id.respuestasAnteriores ->{(activity as InicioActivity).openFragmentSure(EncuestasFragment.newInstance())}
+            R.id.Ajustes -> {(activity as InicioActivity).startAjustes()}
         }
     }
 
@@ -116,7 +117,7 @@ class BottomFragment : BottomSheetDialogFragment(), View.OnClickListener {
 
     fun convertDpToPixel(dp: Float): Int {
         val metrics = Resources.getSystem().displayMetrics
-        val px = dp * (metrics.densityDpi / 160f)
+        val px = dp * (metrics.densityDpi / 180f)
         return Math.round(px)
     }
 

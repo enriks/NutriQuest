@@ -21,7 +21,9 @@
 
 
 
-    <style name="ToolbarFont" parent="@android:style/TextAppearance.Material.Widget.Toolbar.Title">
+    <style
+        name="ToolbarFont"
+        parent="@android:style/TextAppearance.Material.Widget.Toolbar.Title">
 
     </style>
 
