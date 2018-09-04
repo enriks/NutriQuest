@@ -26,6 +26,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Encuestas.InicioEncuestaActivity"
+            android:label="k"></activity>
+        <activity
             android:name=".Encuestas.NutriQuestMain"
             android:label="@string/title_activity_login" />
 

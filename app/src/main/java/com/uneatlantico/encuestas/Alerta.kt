@@ -12,6 +12,7 @@ import android.view.View
 import android.view.Window
 import android.widget.Button
 import com.uneatlantico.encuestas.DB.NutriQuestExecuter.Companion.idUsuario
+import com.uneatlantico.encuestas.Encuestas.InicioEncuestaActivity
 import com.uneatlantico.encuestas.Encuestas.NutriQuestMain
 import com.uneatlantico.encuestas.Inicio.InicioActivity
 import com.uneatlantico.encuestas.Inicio.RespuestasFragment
@@ -52,7 +53,7 @@ class Alerta(var c: Activity, val idEncuesta:Int) : Dialog(c), android.view.View
             }
 
             R.id.continuarEncuesta -> {
-                val i = Intent(this.context, NutriQuestMain::class.java)
+                val i = Intent(this.context, InicioEncuestaActivity::class.java)
                 i.putExtra("idEncuesta", idEncuesta)
                 startActivity(this.context, i, null)
             }

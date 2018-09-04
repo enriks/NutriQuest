@@ -1,0 +1,50 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Encuestas.EndFragment"
+    android:background="@color/colorPrimary"
+    android:gravity="center_horizontal"
+    android:layout_marginTop="@dimen/status_bar_size">
+
+    <TextView
+        android:id="@+id/tituloEncuesta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textSize="@dimen/title_big_text_size"
+        android:text="Patatas"
+        />
+
+    <TextView
+        android:layout_gravity="center"
+        android:id="@+id/textoInicio"
+        android:layout_width="match_parent"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:padding="20dp"
+        android:layout_below="@id/tituloEncuesta"
+        android:textColor="@android:color/black"
+        android:text="Todo el texto sobre protección de datos, ahora mismo no se que poner asique este es un buen place holder hasta que haya uno mejor, gracias"
+
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+        <Button
+            android:id="@+id/botonEmpezarEncuesta"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="Aceptar"
+            android:textAllCaps="false"
+            android:background="@drawable/round_button"/>
+    </LinearLayout>
+
+</RelativeLayout>

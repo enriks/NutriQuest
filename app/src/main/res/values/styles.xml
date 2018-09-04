@@ -27,4 +27,8 @@
 
     </style>
 
+    <style name="White" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">#ffffff</item>
+    </style>
+
 </resources>

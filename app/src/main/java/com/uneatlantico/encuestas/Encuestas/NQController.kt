@@ -62,7 +62,6 @@ class NQController{
         try {
             val datos = firstConexion2(ct, idEncuesta)
 
-
             if (datos == "-1")
                 return -1
 

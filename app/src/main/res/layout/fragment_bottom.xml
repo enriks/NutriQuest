@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="250dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:background="@drawable/white_round_corners"
     android:weightSum="4"
     android:orientation="vertical">
@@ -64,12 +62,14 @@
                 android:textSize="12sp"
                 />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/Ajustes"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:gravity="center_vertical"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentEnd="true">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,24 +88,45 @@
         android:layout_height="0dp"
         android:weightSum="4"
         android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/Encuestas"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:focusable="true"
             android:clickable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            >
-            <TextView
-                android:text="Encuestas"
-                android:layout_marginStart="@dimen/activity_vertical_margin"
-                android:layout_width="match_parent"
-                android:fontFamily="@font/googlesans_regular"
-                android:textSize="14sp"
+            android:background="?android:attr/selectableItemBackground">
+            <ImageView
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/outline_event_note_black_24dp"/>
 
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:text="Encuestas por terminar"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
+                    android:layout_width="wrap_content"
+                    android:textSize="15sp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/NEncuestasTerminar"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="8sp"
+                    android:text="0 Encuestas por terminar"
+                    />
+
+            </LinearLayout>
+
         </LinearLayout>
         <LinearLayout
             android:id="@+id/respuestasAnteriores"
@@ -115,15 +136,22 @@
             android:focusable="true"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            >
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/outline_history_black_24dp"/>
+
             <TextView
                 android:text="Respuestas Anteriores"
                 android:layout_marginStart="@dimen/activity_vertical_margin"
                 android:layout_width="match_parent"
                 android:fontFamily="@font/googlesans_regular"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:layout_height="wrap_content" />
+
         </LinearLayout>
         <LinearLayout
             android:id="@+id/nose"
@@ -139,7 +167,7 @@
                 android:layout_marginStart="@dimen/activity_vertical_margin"
                 android:layout_width="match_parent"
                 android:fontFamily="@font/googlesans_regular"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
@@ -158,7 +186,7 @@
                 android:layout_marginStart="@dimen/activity_vertical_margin"
                 android:layout_width="match_parent"
                 android:fontFamily="@font/googlesans_regular"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>

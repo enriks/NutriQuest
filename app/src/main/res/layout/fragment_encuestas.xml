@@ -7,18 +7,16 @@
     <TextView
         android:id="@+id/pregunta"
         android:layout_width="match_parent"
-        android:fontFamily="@font/googlesans_bold"
-        android:textSize="35dp"
-        android:text="Inicio"
+        android:textStyle="bold"
+        android:textSize="@dimen/title_medium_text_size"
+        android:text="Encuestas"
         android:paddingTop="16dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
-
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content" />
 
-        />
     <android.support.v7.widget.CardView
         android:id="@+id/tarjetaPrimeraEncuesta"
         android:layout_width="match_parent"
@@ -51,8 +49,7 @@
                     android:gravity="center"
                     android:padding="8dp"
                     android:textColor="@android:color/black"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
             <ImageView
@@ -60,8 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/manzanos"
-                />
+                android:src="@drawable/manzanos" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
     <android.support.v7.widget.RecyclerView

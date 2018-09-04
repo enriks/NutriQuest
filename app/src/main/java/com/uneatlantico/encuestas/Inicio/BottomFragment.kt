@@ -1,5 +1,6 @@
 package com.uneatlantico.encuestas.Inicio
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
@@ -41,6 +42,7 @@ class BottomFragment : BottomSheetDialogFragment(), View.OnClickListener {
         }
     }
 
+    private lateinit var numeroEncuestas:TextView
     private lateinit var menuGoogleUserName:TextView
     private lateinit var menuGoogleUserEmail:TextView
     private lateinit var menuGoogleUserImage:ImageView
@@ -51,10 +53,12 @@ class BottomFragment : BottomSheetDialogFragment(), View.OnClickListener {
     private lateinit var campusPress:LinearLayout
     private lateinit var nutriQuestExecuter: NutriQuestExecuter
 
+    val preferencias = activity?.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_bottom, container, false)
-
+        numeroEncuestas = v.findViewById(R.id.NEncuestasTerminar)
+        numeroEncuestas.text = preferencias?.getInt("NEncuestasSinTerminar", 0).toString() + "Encuestas por terminar"
         nutriQuestExecuter = NutriQuestExecuter(this.context!!)
         menuGoogleUserName = v.findViewById(R.id.menuGoogleUserName)
         menuGoogleUserEmail = v.findViewById(R.id.menuGoogleUserEmail)
@@ -117,7 +121,7 @@ class BottomFragment : BottomSheetDialogFragment(), View.OnClickListener {
 
     fun convertDpToPixel(dp: Float): Int {
         val metrics = Resources.getSystem().displayMetrics
-        val px = dp * (metrics.densityDpi / 180f)
+        val px = dp * (metrics.densityDpi / 200f)
         return Math.round(px)
     }
 

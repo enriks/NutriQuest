@@ -1,5 +1,6 @@
 package com.uneatlantico.encuestas.Inicio
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -33,7 +34,7 @@ class EncuestasFragment : Fragment() {
     lateinit var botonMenu: ImageButton
     lateinit var bottomFragment: BottomFragment
     var conseguido = false
-    val imagenes:List<Int> = listOf(
+    private val imagenes:List<Int> = listOf(
             R.drawable.desayuno,
             R.drawable.mediamanana,
             R.drawable.comida,
@@ -43,6 +44,8 @@ class EncuestasFragment : Fragment() {
             R.drawable.picoteo,
             R.drawable.manzanos
     )
+    val preferencias = activity?.getSharedPreferences(
+            getString(R.string.preference_file_key), Context.MODE_PRIVATE)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_encuestas, container, false)
@@ -66,7 +69,9 @@ class EncuestasFragment : Fragment() {
         })
 
         listaEncuestas.adapter = adaptador
-
+        Log.d("tamanoEncuestas", encuestas.size.toString())
+        preferencias?.edit()?.putInt("NEncuestasSinTerminar", encuestas.size)?.apply()
+        //Log.d("heGuardado", preferencias?.getString("NEncuestasSinTerminar", "DEFAULT"))
         return view
     }
 
